@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
-from api.models import db, Goals
+from api.models import db
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
@@ -66,34 +66,6 @@ def serve_any_other_file(path):
     response = send_from_directory(static_file_dir, path)
     response.cache_control.max_age = 0  # avoid cache memory
     return response
-
-@app.route('/goals', methods=['GET'])
-def get_goals():
-    all_goals = Goals.query.all()
-    results = map(lambda goals: goals.serialize(),all_goals)
-
-    return jsonify (list(results)), 200
-
-@app.route('/goals', methods=['POST'])
-def create_goals():
-    goals_data = request.json
-    goal_to_create = Goals(**goals_data)
-
-    db.session.add(goal_to_create)
-    db.session.commit()
-
-    return jsonify(goal_to_create.serialize()), 200
-
-@app.route('/goals/<int:goal_id>', methods=['DELETE'])
-def delete_goal(goal_id):
-    goal = Goals.query.filter_by(id=goal_id).first()
-
-    db.session.delete(goal)
-    db.session.commit()
-
-    return jsonify({"Deleted": f"The goal was deleted"}), 200
-
-#Añadir función put para editar mi goal
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

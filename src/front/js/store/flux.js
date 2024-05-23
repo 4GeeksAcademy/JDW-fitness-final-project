@@ -2,6 +2,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			message: null,
+			goals: [],
 			demo: [
 				{
 					title: "FIRST",
@@ -33,6 +34,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error)
 				}
 			},
+
+			getGoals: () => {
+				fetch(process.env.BACKEND_URL+"/api/goals")
+				.then( (response) => response.json())
+				.then( data => setStore({ goals: data }))	
+			},
+			createGoal: (kind, description) => {
+				const requestOptions = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        "kind": kind,
+                        "description": description 
+                    })
+                };
+                fetch(process.env.BACKEND_URL + "/api/goals", requestOptions)
+                    .then(response => response.json())
+					.then(()=>getActions().getGoals())
+            },
 			changeColor: (index, color) => {
 				//get the store
 				const store = getStore();
@@ -46,6 +66,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//reset the global store
 				setStore({ demo: demo });
+			},
+			loadData: ()=>{
+				getActions().getGoals()
 			}
 		}
 	};

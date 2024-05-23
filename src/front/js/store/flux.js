@@ -1,3 +1,5 @@
+import { Availability } from "../pages/availability";
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -13,7 +15,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			availability: [],
+			single_availability: {}
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -46,6 +50,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//reset the global store
 				setStore({ demo: demo });
+			},
+			getAvailability: () => {
+				fetch(process.env.BACKEND_URL + "/api/availability")
+				.then( (response) => response.json())
+				.then( data => setStore({ availability: data }))	
+			},
+			addAvailabilityAPI: (day, hour) => {
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"day": day,
+						"hour": hour 
+					})
+				};
+				fetch(process.env.BACKEND_URL + "/api/availability", requestOptions)
+				.then(response => response.json())
+				.then(() => getActions().getAvailability())
+			},
+			loadBeginning: () => {
+				getActions().getAvailability()
 			}
 		}
 	};

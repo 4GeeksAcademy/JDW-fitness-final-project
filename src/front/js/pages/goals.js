@@ -18,12 +18,12 @@ export const Goals = () => {
                     <div>
                         <span>Kind:</span>
                         {goal.kind}
-                        <button className="btn btn-primary">Update</button>
+                        <button onClick={()=>actions.updateGoal(contact.id)} className="btn btn-primary">Update</button>
                     </div>
                     <div>
                         <span>Description:</span>
                         {goal.description}
-                        <button onClick={actions.deleteGoal(goal.id)} className="btn btn-danger">Delete</button>
+                        <button onClick={()=>actions.deleteGoal(goal.id)} className="btn btn-danger">Delete</button>
                     </div>
                 </li>
         

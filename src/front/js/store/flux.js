@@ -56,7 +56,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			deleteGoal: (idToDelete) => {
 				fetch(`${process.env.BACKEND_URL}/api/goals/${idToDelete}`, { method: 'DELETE' })
-				// .then(()=>getActions().getGoals())  ----> Este parametro es necesario para que recargue la pagina despues de borrar usando el boton, pero me ejecuta constantemente el Delete, revisar mañana
+				.then(()=>getActions().getGoals())
 			},
 
 			changeColor: (index, color) => {

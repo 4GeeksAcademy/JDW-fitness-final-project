@@ -26,7 +26,7 @@ export const Availability = () => {
 						<div className="d-flex">
 							<span className="fw-bold">Hour: </span>
 							{prop.hour}
-							<button className="btn btn-danger py-0 px-1 ms-auto mt-1">delete</button>
+							<button className="btn btn-danger py-0 px-1 ms-auto mt-1" onClick={() => actions.deleteAvailability(prop.id)}>delete</button>
 						</div>
 						</div>
 					</li>

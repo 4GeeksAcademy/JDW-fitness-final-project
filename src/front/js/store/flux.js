@@ -69,6 +69,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then(response => response.json())
 				.then(() => getActions().getAvailability())
 			},
+			deleteAvailability: (availabilityID) => {
+				fetch(process.env.BACKEND_URL + `/api/availability/${availabilityID}`, { method: 'DELETE' })
+				.then( () => getActions().getAvailability())
+			},
 			loadBeginning: () => {
 				getActions().getAvailability()
 			}

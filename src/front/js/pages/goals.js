@@ -23,7 +23,7 @@ export const Goals = () => {
                     <div>
                         <span>Description:</span>
                         {goal.description}
-                        <button className="btn btn-danger">Delete</button>
+                        <button onClick={actions.deleteGoal(goal.id)} className="btn btn-danger">Delete</button>
                     </div>
                 </li>
         

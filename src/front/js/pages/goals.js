@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
 export const Goals = () => {
 	const { store, actions } = useContext(Context);
+    const navigate = useNavigate()
+    useEffect(() => {
+		actions.setEditing(false);
+	}, [])
 
 	return (
 		<div className="container">
@@ -18,7 +22,9 @@ export const Goals = () => {
                     <div>
                         <span>Kind:</span>
                         {goal.kind}
-                        <button onClick={()=>actions.updateGoal(contact.id)} className="btn btn-primary">Update</button>
+                        <Link to="/goals/form">
+                            <button onClick={()=>actions.updateGoal(goal.id)} className="btn btn-primary">Update</button>
+                        </Link>
                     </div>
                     <div>
                         <span>Description:</span>

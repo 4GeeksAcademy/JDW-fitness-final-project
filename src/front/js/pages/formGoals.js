@@ -7,6 +7,8 @@ export const FormGoals = () => {
     const navigate = useNavigate()
     const [kind, setKind] = useState("");
     const [description, setDescription] = useState("");
+    useEffect(()=>{
+        },[])
 
     const addGoal = (e) => {
         e.preventDefault()
@@ -17,6 +19,15 @@ export const FormGoals = () => {
             navigate("/goals")
         }
     }
+
+    const updateGoal = (e) => {
+        e.preventDefault() 
+        if (kind.trim() !== "" && description.trim() !== "") {
+          actions.updateGoalAPI(kind, description,store.goalToUpdate.id)
+          actions.setEditing(false)
+          navigate("/goals");
+        }
+      }
 
 	return (
 		<div className="container">
@@ -29,7 +40,11 @@ export const FormGoals = () => {
                     <label htmlFor="exampleInputPassword1" className="form-label">Description</label>
                     <input value={description} onChange={(e)=>setDescription(e.target.value)} type="text" className="form-control" id="exampleInputPassword1"/>
                 </div>
-                <button onClick= {addGoal} type="text" className="btn btn-primary">Add</button>
+                {store.editing ?
+  <button onClick= {updateGoal} type="submit" className="btn btn-secondary">Save Modifications</button>
+  :
+  <button onClick= {addGoal} type="submit" className="btn btn-primary">add</button>
+  }
                 </form>
 		</div>
 	);

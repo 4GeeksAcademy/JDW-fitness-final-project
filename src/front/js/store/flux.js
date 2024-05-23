@@ -3,6 +3,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 			message: null,
 			goals: [],
+			goalToEdit: {},
+			editing: false,
 			demo: [
 				{
 					title: "FIRST",
@@ -59,6 +61,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then(()=>getActions().getGoals())
 			},
 
+			updateGoal: (iDSelected) => {
+				const goalSelected = getStore().goals.find(goal => goal.id === iDSelected)
+				setStore({ goalToUpdate: goalSelected })
+				setStore({editing: true })
+			},
+
+			updateGoalAPI: (kind, description, idToEdit) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"kind": kind,
+                        "description": description 
+					 })
+				};
+				fetch(`${process.env.BACKEND_URL}/api/goals/${idToEdit}`, requestOptions)
+					.then(response => response.json())
+					.then( setStore({ goalToUpdate: {} }))
+					.then(() => getActions().getGoals())
+			},
+
+			setEditing: (value) => {
+				setStore({ editing: value });
+			  },
 			changeColor: (index, color) => {
 				//get the store
 				const store = getStore();

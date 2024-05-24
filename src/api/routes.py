@@ -57,7 +57,7 @@ def delete_diseases(diseases_id):
 def update_diseases(diseases_id):
     diseases = Diseases.query.get(diseases_id)
     if not diseases:
-        return jsonify({'message': 'La enfermedad no existe'}), 404
+        return jsonify({'message': 'The disease does not exist'}), 404
 
     data = request.json
     if not data:
@@ -74,4 +74,13 @@ def update_diseases(diseases_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Error while updating the diseases', 'error': str(e)}), 500
+    
+
+      #ENDPOINT DE BUSQUEDA POR ID  
+@api.route('/diseases/<int:diseases_id>', methods=['GET'])
+def get_diseaseid(diseases_id):
+    disease = Diseases.query.filter_by(id=diseases_id).first()
+    if disease is None:
+        return jsonify({'message': 'Disease not found'}), 404
+    return jsonify(disease.serialize()), 200
     

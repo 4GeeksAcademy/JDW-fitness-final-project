@@ -26,11 +26,16 @@ def handle_hello():
     return jsonify(response_body), 200
 
 @api.route('/availability', methods=['GET'])
-def get_availability():
-    availability = Availability.query.all()
-    availability_list = list(map(lambda prop: prop.serialize(),availability))
+def get_availabilities():
+    availabilities = Availability.query.all()
+    availabilities_list = list(map(lambda prop: prop.serialize(),availabilities))
 
-    return jsonify(availability_list), 200
+    return jsonify(availabilities_list), 200
+
+@api.route('/availability/<int:availability_id>', methods=['GET'])
+def get_availability(availability_id):
+    availability = Availability.query.filter_by(id=availability_id).first()
+    return jsonify(availability.serialize()), 200
 
 @api.route('/availability', methods=['POST'])
 def add_availability():

@@ -1,5 +1,3 @@
-import { Availability } from "../pages/availability";
-
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -17,7 +15,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			],
 			availability: [],
-			single_availability: {}
+			singleAvailability: {}, 
+			availabilityToEdit: {}, 
+			editing: false
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -56,6 +56,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then( (response) => response.json())
 				.then( data => setStore({ availability: data }))	
 			},
+			getSingleAvailability: (availabilityID) => {
+				fetch(process.env.BACKEND_URL + `/api/availability/${availabilityID}`)
+				.then( (response) => response.json())
+				.then( data => setStore({ singleAvailability: data }))	
+			},
+			deleteSingleAvailability: () => {
+				setStore({ singleAvailability: {} })
+			},
 			addAvailabilityAPI: (day, hour) => {
 				const requestOptions = {
 					method: 'POST',
@@ -72,6 +80,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 			deleteAvailability: (availabilityID) => {
 				fetch(process.env.BACKEND_URL + `/api/availability/${availabilityID}`, { method: 'DELETE' })
 				.then( () => getActions().getAvailability())
+			},
+			updateAvailability: (availabilityID) => {
+				const availabilitySelected = getStore().availability.find(element => element.id === availabilityID)
+				setStore({ availabilityToEdit: availabilitySelected })
+				setStore({ editing: true })
+			},
+			updateAvailabilitytAPI: (day, hour, availabilityID) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"day": day,
+						"hour": hour
+					 })
+				};
+				fetch(process.env.BACKEND_URL + `/api/availability/${availabilityID}`, requestOptions)
+					.then(response => response.json())
+					.then(() => getActions().getAvailability())
+					.then( setStore({ availabilityToEdit: {} }))
+					.then( setStore({ editing: false }))
 			},
 			loadBeginning: () => {
 				getActions().getAvailability()

@@ -6,9 +6,6 @@ import { Context } from "../store/appContext";
 export const Goals = () => {
 	const { store, actions } = useContext(Context);
     const navigate = useNavigate()
-    useEffect(() => {
-		actions.setEditing(false);
-	}, [])
 
 	return (
 		<div className="container">
@@ -22,7 +19,7 @@ export const Goals = () => {
                     <div>
                         <span>Kind:</span>
                         {goal.kind}
-                        <Link to="/goals/form">
+                        <Link to="/goals/update/form">
                             <button onClick={()=>actions.updateGoal(goal.id)} className="btn btn-primary">Update</button>
                         </Link>
                     </div>
@@ -31,6 +28,9 @@ export const Goals = () => {
                         {goal.description}
                         <button onClick={()=>actions.deleteGoal(goal.id)} className="btn btn-danger">Delete</button>
                     </div>
+                    <Link to={`/goals/${goal.id}`} className="ms-auto my-1">
+						<button className="btn btn-info py-0 px-1 ms-auto">read more</button>					
+					</Link>
                 </li>
         
         )

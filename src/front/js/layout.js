@@ -8,6 +8,8 @@ import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import { Goals } from "./pages/goals";
 import { FormGoals } from "./pages/formGoals";
+import { UpdateGoalsForm } from "./pages/updateGoalsForm";
+import { SingleGoal } from "./pages/singleGoal";
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -31,6 +33,8 @@ const Layout = () => {
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Goals />} path="/goals" />
                         <Route element={<FormGoals />} path="/goals/form" />
+                        <Route element={<UpdateGoalsForm />} path="/goals/update/:goalID" />
+                        <Route element={<SingleGoal />} path="/goals/:goalID" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>

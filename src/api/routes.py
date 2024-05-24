@@ -28,6 +28,11 @@ def get_goals():
 
     return jsonify (list(results)), 200
 
+@api.route('/goals/<int:goal_id>', methods=['GET'])
+def get_goal(goal_id):
+    goal = Goals.query.filter_by(id=goal_id).first()
+    return jsonify(goal.serialize()), 200
+
 @api.route('/goals', methods=['POST'])
 def create_goals():
     goals_data = request.json

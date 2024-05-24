@@ -2,21 +2,20 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 
-export const FormGoals = () => {
+export const UpdateGoalsForm = () => {
 	const { store, actions } = useContext(Context);
     const navigate = useNavigate()
-    const [kind, setKind] = useState("");
-    const [description, setDescription] = useState("");
+    const [kind, setKind] = useState(store.goalToUpdate?.kind||"");
+    const [description, setDescription] = useState(store.goalToUpdate?.description||"");
 // Consultar que hace el ? segun jorge lo que hace es esperar que carge
-    const addGoal = (e) => {
-        e.preventDefault()
+
+    const updateGoal = (e) => {
+        e.preventDefault() 
         if (kind.trim() !== "" && description.trim() !== "") {
-            actions.createGoal(kind,description)
-            setKind("")
-            setDescription("")
-            navigate("/goals")
+          actions.updateGoalAPI(kind, description,store.goalToUpdate.id)
+          navigate("/goals");
         }
-    }
+      }
 
 	return (
 		<div className="container">
@@ -29,7 +28,8 @@ export const FormGoals = () => {
                     <label htmlFor="exampleInputPassword1" className="form-label">Description</label>
                     <input value={description} onChange={(e)=>setDescription(e.target.value)} type="text" className="form-control" id="exampleInputPassword1"/>
                 </div>
-                <button onClick= {addGoal} type="submit" className="btn btn-primary">add</button>
+
+                <button onClick= {updateGoal} type="submit" className="btn btn-secondary">Save Modifications</button>
                 </form>
 		</div>
 	);

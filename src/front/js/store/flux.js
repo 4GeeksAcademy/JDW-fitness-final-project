@@ -3,8 +3,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 			message: null,
 			goals: [],
-			goalToEdit: {},
-			editing: false,
+			goalToUpdate: {},
+			singleGoal:{},
+
 			demo: [
 				{
 					title: "FIRST",
@@ -41,6 +42,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL+"/api/goals")
 				.then( (response) => response.json())
 				.then( data => setStore({ goals: data }))	
+			},
+			getSingleGoal: (goalID) => {
+				fetch(process.env.BACKEND_URL + `api/goals/${goalID}`)
+				.then( (response) => response.json())
+				.then( data => setStore({ singleGoal: data }))	
+			},
+			deleteSingleGoal: () => {
+				setStore({ singleGoal: {} })
 			},
 			createGoal: (kind, description) => {
 				const requestOptions = {
@@ -81,10 +90,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then( setStore({ goalToUpdate: {} }))
 					.then(() => getActions().getGoals())
 			},
-
-			setEditing: (value) => {
-				setStore({ editing: value });
-			  },
 			changeColor: (index, color) => {
 				//get the store
 				const store = getStore();

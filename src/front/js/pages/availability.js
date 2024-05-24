@@ -6,12 +6,12 @@ import { Context } from "../store/appContext";
 export const Availability = () => {
 	const { store, actions } = useContext(Context);
 	let availabilityID = 0
-
+	console.log(store.singleAvailability);
 	return (
 		<div className="container">
 			<div className="d-grid">
 				<h1 className="text-center mt-3">Availability</h1>
-				<Link to="/availability/form" className="ms-auto my-1">
+				<Link to="/availability/add" className="ms-auto my-1">
 					<button className="btn btn-warning fw-bold">Add a new one</button>
 				</Link>
 			</div>
@@ -23,9 +23,9 @@ export const Availability = () => {
 							<span className="fw-bold">Day: </span>
 							{prop.day}
 							<Link to={`/availability/${prop.id}`} className="ms-auto my-1">
-								<button className="btn btn-info py-0 px-1 ms-auto" onClick={() => actions.getSingleAvailability(prop.id)}>show more</button>					
+								<button className="btn btn-info py-0 px-1 ms-auto">show more</button>					
 							</Link>
-							<Link to="/availability/form" className="ms-auto my-1">
+							<Link to={`/availability/update/${prop.id}`} className="ms-auto my-1">
 								<button className="btn btn-secondary py-0 px-1 ms-auto" onClick={() => actions.updateAvailability(prop.id)}>update</button>					
 							</Link>
 						</div>

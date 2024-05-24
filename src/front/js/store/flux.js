@@ -16,8 +16,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			availability: [],
 			singleAvailability: {}, 
-			availabilityToEdit: {}, 
-			editing: false
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -61,9 +59,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then( (response) => response.json())
 				.then( data => setStore({ singleAvailability: data }))	
 			},
-			deleteSingleAvailability: () => {
-				setStore({ singleAvailability: {} })
-			},
 			addAvailabilityAPI: (day, hour) => {
 				const requestOptions = {
 					method: 'POST',
@@ -83,8 +78,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			updateAvailability: (availabilityID) => {
 				const availabilitySelected = getStore().availability.find(element => element.id === availabilityID)
-				setStore({ availabilityToEdit: availabilitySelected })
-				setStore({ editing: true })
+				setStore({ singleAvailability: availabilitySelected })
 			},
 			updateAvailabilitytAPI: (day, hour, availabilityID) => {
 				const requestOptions = {
@@ -98,8 +92,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + `/api/availability/${availabilityID}`, requestOptions)
 					.then(response => response.json())
 					.then(() => getActions().getAvailability())
-					.then( setStore({ availabilityToEdit: {} }))
-					.then( setStore({ editing: false }))
+					.then( setStore({ singleAvailability: {} }))
 			},
 			loadBeginning: () => {
 				getActions().getAvailability()

@@ -3,11 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
-export const FormAvailability = () => {
+export const AddAvailability = () => {
 	const { store, actions } = useContext(Context);
     const navigate = useNavigate();
-    const [day, setDay] = useState(store.availabilityToEdit?.day || "")
-    const [hour, setHour] = useState(store.availabilityToEdit?.hour || "")
+    const [day, setDay] = useState("")
+    const [hour, setHour] = useState("")
     const [errorMessage, setErrorMessage] = useState(false)
 
     function addAvailability(e) {
@@ -24,27 +24,9 @@ export const FormAvailability = () => {
         }
     }
 
-    function updateAvailability(e) {
-        e.preventDefault()
-        if (day.trim() !== "" && hour.trim() !== "") {
-			actions.updateAvailabilitytAPI(day, hour, store.availabilityToEdit.id)
-			setDay("")
-			setHour("")
-            navigate("/availability")
-            setErrorMessage(false)
-		}
-        else {
-            setErrorMessage(true)
-        }
-    }
-
 	return (
 		<div className="container mt-3">
-            {!store.editing ? 
             <h3>Add availability</h3>
-            :
-            <h3>Update availability</h3>
-            }
             <form>
                 <div className="mb-3 mt-3">
                     <input 
@@ -69,11 +51,7 @@ export const FormAvailability = () => {
                     All fields must be filled
                 </div>
                 }
-                {!store.editing ? 
                 <button type="submit" className="btn btn-warning fw-bold" onClick={addAvailability}>Create</button>
-                :
-                <button type="submit" className="btn btn-warning fw-bold" onClick={updateAvailability}>Save changes</button>
-                }
                 <Link to="/availability">
 				    <button className="btn btn-primary ms-3 fw-bold" >Back to Availability list</button>
 			    </Link>

@@ -5,8 +5,13 @@ import { Context } from "../store/appContext";
 
 export const SingleAvailability = () => {
 	const { store, actions } = useContext(Context);
-    const params = useParams();
+    const { availabilityID } = useParams();
 
+    useEffect(() => {
+        actions.getSingleAvailability(availabilityID)
+        console.log(store.singleAvailability);
+    },[]);
+    
 	return (
 		<div className="container mt-3">
             <h3 className="text-decoration-underline fst-italic">Availability</h3>
@@ -21,7 +26,7 @@ export const SingleAvailability = () => {
                 </li>
             </ul>
             <Link to="/availability">
-				<button className="btn btn-primary ms-3 fw-bold" onClick={actions.deleteSingleAvailability}>Back to Availability list</button>
+				<button className="btn btn-primary ms-3 fw-bold" >Back to Availability list</button>
 			</Link>
 		</div>
 	);

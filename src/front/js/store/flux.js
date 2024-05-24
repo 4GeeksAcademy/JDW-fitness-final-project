@@ -4,7 +4,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			message: null,
 			diseases: [],
 			diseasesToEdit:{},
-
+            editing:  false,
+			singleDiseases: {},
 			demo: [
 				{
 					title: "FIRST",
@@ -44,6 +45,12 @@ const getState = ({ getStore, getActions, setStore }) => {
                     .then((data) => setStore({ diseases: data }));
             },
 
+			getSingleDiseases: (diseasesID) => {
+				fetch(process.env.BACKEND_URL + `/api/diseases/${diseasesID}`)
+				.then( (response) => response.json())
+				.then( data => setStore({ singleDiseases: data }))
+			},
+
 			createDisease: (kind, sintoms) => {
                 const requestOptions = {
                     method: 'POST',
@@ -74,14 +81,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then(response => response.json())
 				.then(() => {
 					setStore({ diseaseToEdit: {} });
+					setStore({editing:false})
 					getActions().getDiseases();
 				});
 		},
 
+		updateDiseases: (diseaseID) => {
+			const diseaseSelected = getStore().diseases.find(element => element.id === diseaseID)
+			setStore({ diseaseToEdit: diseaseSelected })
+			setStore({ editing: true })
+		},
+
+		
+
 		setEditing: (value) => {
 			setStore({ editing: value });
 		},
-
+		
+		deleteSingleDisease: () => {
+			setStore({ singleDisease: {} });
+		  },
 
 
 

@@ -18,7 +18,7 @@ def get_diseases():
     results = list(map(lambda diseases: diseases.serialize(), all_diseases))
     return jsonify(results), 200
 
-# ENDPOINT GET DISEASES
+# ENDPOINT POST DISEASES
 @api.route('/diseases', methods=['POST'])
 def create_diseases():
     data = request.json
@@ -35,3 +35,18 @@ def create_diseases():
         "msg": "Diseases created successfully"
     }
     return jsonify(response_body), 201
+
+@api.route('/diseases/<int:diseases_id>', methods=['DELETE'])
+def delete_diseases(diseases_id):
+     diseases = Diseases.query.get(diseases_id)
+     if not diseases:
+      return jsonify({'message': 'La enfermedad no existe'}), 404
+     
+     try:
+        db.session.delete(diseases)
+        db.session.commit()
+        return jsonify({'message': 'The Diseases was successfully eliminated.'}), 200
+     except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': 'Error while deleting the diseases', 'error': str(e)}), 500
+    

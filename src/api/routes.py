@@ -49,4 +49,29 @@ def delete_diseases(diseases_id):
      except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Error while deleting the diseases', 'error': str(e)}), 500
+
+
+        #ENDPOINT DE PUT  DISEASES  
+
+@api.route('/diseases/<int:diseases_id>', methods=['PUT'])
+def update_diseases(diseases_id):
+    diseases = Diseases.query.get(diseases_id)
+    if not diseases:
+        return jsonify({'message': 'La enfermedad no existe'}), 404
+
+    data = request.json
+    if not data:
+        return jsonify({'message': 'No input data provided'}), 400
+
+    try:
+        if 'kind' in data:
+            diseases.kind = data['kind']
+        if 'sintoms' in data:
+            diseases.sintoms = data['sintoms']
+        
+        db.session.commit()
+        return jsonify({'message': 'The Diseases was successfully updated.'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': 'Error while updating the diseases', 'error': str(e)}), 500
     

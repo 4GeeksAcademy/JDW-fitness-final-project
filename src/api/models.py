@@ -30,7 +30,7 @@ class Diseases(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "email": self.kind,
+            "kind": self.kind,
             "sintoms": self.sintoms
             # do not serialize the password, its a security breach
         }

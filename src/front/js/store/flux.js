@@ -68,7 +68,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			fetch(`${process.env.BACKEND_URL}/api/diseases/${idToDelete}`, { method: 'DELETE' })
 				.then(() => getActions().getDiseases());
 		},
-		updateDiseaseAPI: (kind, sintoms, idToEdit) => {
+		updateDiseaseAPI: (kind, sintoms, diseaseID) => {
 			const requestOptions = {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
@@ -77,7 +77,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					"symptoms": sintoms 
 				})
 			};
-			fetch(`${process.env.BACKEND_URL}/api/diseases/${idToEdit}`, requestOptions)
+			fetch(`${process.env.BACKEND_URL}/api/diseases/${diseaseID}`, requestOptions)
 				.then(response => response.json())
 				.then(() => {
 					setStore({ diseaseToEdit: {} });
@@ -88,8 +88,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 		updateDiseases: (diseaseID) => {
 			const diseaseSelected = getStore().diseases.find(element => element.id === diseaseID)
-			setStore({ diseaseToEdit: diseaseSelected })
-			setStore({ editing: true })
+			setStore({ singleDiseases: diseaseSelected })
+			
 		},
 
 		

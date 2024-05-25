@@ -7,7 +7,6 @@ import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import { Diseases } from "./pages/diseases";
-import { FormDiseases } from "./pages/formDiseases";
 import {AddDiseases} from "./pages/addDiseases";
 import { SingleDiseases } from "./pages/singleDiseases";
 import { UpdateDisease } from "./pages/updateDiseases";

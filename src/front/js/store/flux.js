@@ -74,13 +74,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ 
 					"kind": kind,
-					"symptoms": sintoms 
+					"sintoms": sintoms 
 				})
 			};
 			fetch(`${process.env.BACKEND_URL}/api/diseases/${diseaseID}`, requestOptions)
 				.then(response => response.json())
 				.then(() => {
-					setStore({ diseaseToEdit: {} });
+					setStore({ singleDiseases: {} });
 					setStore({editing:false})
 					getActions().getDiseases();
 				});

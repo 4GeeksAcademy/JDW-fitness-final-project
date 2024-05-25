@@ -14,7 +14,7 @@ export const Diseases = () => {
           <button className="btn btn-warning fw-bold">Add a new Disease</button>
         </Link>
       </div>
-      
+  
       <div className="list-group">
         {store.diseases.map((disease, index) => (
           <div key={index} className="list-group-item list-group-item-action mb-2 p-3 d-flex justify-content-between align-items-center">
@@ -28,13 +28,11 @@ export const Diseases = () => {
               </div>
             </div>
             <div>
-              <Link to="/diseases/diseasesID">
-                <button
-                  onClick={() => actions.updateDisease(disease.id)}
-                  className="btn btn-primary me-2">
-                  Update
-                </button>
-              </Link>
+            <Link to={`/diseases/update/${disease.id}`} className="btn btn-primary">
+    Update
+</Link>
+
+
               <button
                 onClick={() => actions.deleteDisease(disease.id)}
                 className="btn btn-danger">

@@ -13,7 +13,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			availability: [],
+			singleAvailability: {}, 
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -46,6 +48,54 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//reset the global store
 				setStore({ demo: demo });
+			},
+			getAvailability: () => {
+				fetch(process.env.BACKEND_URL + "/api/availability")
+				.then( (response) => response.json())
+				.then( data => setStore({ availability: data }))	
+			},
+			getSingleAvailability: (availabilityID) => {
+				fetch(process.env.BACKEND_URL + `/api/availability/${availabilityID}`)
+				.then( (response) => response.json())
+				.then( data => setStore({ singleAvailability: data }))	
+			},
+			addAvailabilityAPI: (day, hour) => {
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"day": day,
+						"hour": hour 
+					})
+				};
+				fetch(process.env.BACKEND_URL + "/api/availability", requestOptions)
+				.then(response => response.json())
+				.then(() => getActions().getAvailability())
+			},
+			deleteAvailability: (availabilityID) => {
+				fetch(process.env.BACKEND_URL + `/api/availability/${availabilityID}`, { method: 'DELETE' })
+				.then( () => getActions().getAvailability())
+			},
+			updateAvailability: (availabilityID) => {
+				const availabilitySelected = getStore().availability.find(element => element.id === availabilityID)
+				setStore({ singleAvailability: availabilitySelected })
+			},
+			updateAvailabilitytAPI: (day, hour, availabilityID) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"day": day,
+						"hour": hour
+					 })
+				};
+				fetch(process.env.BACKEND_URL + `/api/availability/${availabilityID}`, requestOptions)
+					.then(response => response.json())
+					.then(() => getActions().getAvailability())
+					.then( setStore({ singleAvailability: {} }))
+			},
+			loadBeginning: () => {
+				getActions().getAvailability()
 			}
 		}
 	};

@@ -17,3 +17,19 @@ class User(db.Model):
             "email": self.email,
             # do not serialize the password, its a security breach
         }
+    
+class Availability(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    day = db.Column(db.String(120), unique=False, nullable=False)
+    hour = db.Column(db.String(80), unique=False, nullable=False)
+
+    def __repr__(self):
+        return f'<Availability {self.id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "day": self.day,
+            "hour": self.hour,
+            # do not serialize the password, its a security breach
+        }

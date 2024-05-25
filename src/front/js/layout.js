@@ -6,6 +6,11 @@ import { BackendURL } from "./component/backendURL";
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
+import { Diseases } from "./pages/diseases";
+import { FormDiseases } from "./pages/formDiseases";
+import {AddDiseases} from "./pages/addDiseases";
+import { SingleDiseases } from "./pages/singleDiseases";
+import { UpdateDisease } from "./pages/updateDiseases";
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -28,6 +33,13 @@ const Layout = () => {
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
+                        <Route element={<Diseases />} path="/diseases" />
+                        <Route element={<AddDiseases />} path="/diseases/add" />
+                        <Route element={<SingleDiseases />}  path="/diseases/:diseasesID" />
+                        <Route element={<UpdateDisease />} path="/diseases/update/:diseaseID" />
+
+
+                        
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />

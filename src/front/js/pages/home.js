@@ -10,10 +10,10 @@ export const Home = () => {
 		<div className="text-center mt-5">
 			<h1>Hello Rigo!!</h1>
 			<p>
-				<img src={rigoImageUrl} />
+			 Traer info
 			</p>
 			<div className="alert alert-info">
-				{store.message || "Loading message from the backend (make sure your python backend is running)..."}
+				{store.message || "Componente  a editar para la vista de JDW"}
 			</div>
 			<p>
 				This boilerplate comes with lots of documentation:{" "}

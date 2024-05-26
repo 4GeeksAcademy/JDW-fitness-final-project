@@ -7,8 +7,8 @@ import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
 import { Goals } from "./pages/goals";
-import { FormGoals } from "./pages/formGoals";
-import { UpdateGoalsForm } from "./pages/updateGoalsForm";
+import { AddGoal } from "./pages/addGoal";
+import { UpdateGoal } from "./pages/updateGoal";
 import { SingleGoal } from "./pages/singleGoal";
 import injectContext from "./store/appContext";
 
@@ -32,8 +32,8 @@ const Layout = () => {
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Goals />} path="/goals" />
-                        <Route element={<FormGoals />} path="/goals/form" />
-                        <Route element={<UpdateGoalsForm />} path="/goals/update/:goalID" />
+                        <Route element={<AddGoal />} path="/goals/form" />
+                        <Route element={<UpdateGoal />} path="/goals/update/:goalID" />
                         <Route element={<SingleGoal />} path="/goals/:goalID" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />

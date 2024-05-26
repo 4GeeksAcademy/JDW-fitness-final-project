@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 
-export const UpdateGoalsForm = () => {
+export const UpdateGoal = () => {
 	const { store, actions } = useContext(Context);
     const navigate = useNavigate()
     const [kind, setKind] = useState(store.goalToUpdate?.kind||"");

@@ -19,7 +19,7 @@ export const Goals = () => {
                     <div>
                         <span>Kind:</span>
                         {goal.kind}
-                        <Link to="/goals/update/form">
+                        <Link to={`/goals/update/${goal.id}`}>
                             <button onClick={()=>actions.updateGoal(goal.id)} className="btn btn-primary">Update</button>
                         </Link>
                     </div>

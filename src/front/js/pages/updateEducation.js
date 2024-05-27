@@ -12,7 +12,7 @@ export const UpdateEducation = () => {
 
     useEffect(() => {
         actions.getSingleEducation(educationID);
-    }, [educationID, actions]);
+    }, []);
 
     useEffect(() => {
         if (store.singleEducation && !rank) {

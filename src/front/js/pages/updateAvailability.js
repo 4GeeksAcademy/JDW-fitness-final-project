@@ -13,14 +13,14 @@ export const UpdateAvailability = () => {
 
     useEffect(() => {
         actions.getSingleAvailability(availabilityID);
-    }, [availabilityID, actions]);
+    }, []);
 
     useEffect(() => {
         if (store.singleAvailability && !day && !hour) {
             setDay(store.singleAvailability.day || "");
             setHour(store.singleAvailability.hour || "");
         }
-    }, [store.singleAvailability, day, hour]);
+    }, [store.singleAvailability]);
 
     function updateAvailability(e) {
         e.preventDefault()

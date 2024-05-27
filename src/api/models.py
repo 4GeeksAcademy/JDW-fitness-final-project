@@ -62,14 +62,14 @@ class Diseases(db.Model):
 class Experience(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     time = db.Column(db.String(120), unique=True, nullable=False)
-
+    
     def __repr__(self):
         return f'<Experience {self.id}>'
     def serialize(self):
         return {
             "id": self.id,
             "time": self.time,
-        }      
+        }  
 
 class Education(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -81,5 +81,16 @@ class Education(db.Model):
         return {
             "id": self.id,
             "rank": self.rank,
-        }
+        } 
 
+class Activity_Frequency(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mode = db.Column(db.String(120), unique=True)
+
+    def __repr__(self):
+        return f'<Activity_Frequency {self.mode}>'  
+    def serialize(self):
+        return {
+            "id": self.id,
+            "mode": self.mode,
+          }

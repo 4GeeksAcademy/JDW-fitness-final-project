@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Availability, Goals, Diseases, Experience, Education
+from api.models import db, User, Availability, Goals, Diseases, Experience, Education, Activity_Frequency
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -298,3 +298,47 @@ def del_education(education_id):
     db.session.commit()
 
     return jsonify({"deleted": f"Education '{education.rank}' was deleted successfully"}), 200 
+  
+# ACTIVITY FREQUENCY ENDPOINTS  
+@api.route('/activities', methods=['GET'])
+def get_activity_frequency():
+    all_activities = Activity_Frequency.query.all()
+    results = map(lambda activities: activities.serialize(),all_activities)
+
+    return jsonify (list(results)), 200
+
+@api.route('/activities/<int:activity_id>', methods=['GET'])
+def get_singleActivity_frequency(activity_id):
+    activity = Activity_Frequency.query.filter_by(id=activity_id).first()
+    return jsonify(activity.serialize()), 200
+
+@api.route('/activities', methods=['POST'])
+def create_activity_frequency():
+    activities_data = request.json
+    activity_to_create = Activity_Frequency(**activities_data)
+
+    db.session.add(activity_to_create)
+    db.session.commit()
+
+    return jsonify(activity_to_create.serialize()), 200
+  
+@api.route('/activities/<int:activity_id>', methods=['PUT'])
+def updateActivityFrequency(activity_id):
+    activity_data = request.json
+    activity = Activity_Frequency.query.get(activity_id)
+    if not activity:
+        return jsonify({"Error": f"The activity id was not found"}), 400
+    
+    activity.mode = activity_data["mode"]
+    db.session.commit()
+
+    return jsonify(activity.serialize()), 200
+
+@api.route('/activities/<int:activity_id>', methods=['DELETE'])
+def deleteActivityFrequency(activity_id):
+    activity = Activity_Frequency.query.filter_by(id=activity_id).first()
+
+    db.session.delete(activity)
+    db.session.commit()
+
+    return jsonify({"Deleted": f"The activity was deleted"}), 200

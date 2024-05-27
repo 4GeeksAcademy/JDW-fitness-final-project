@@ -10,6 +10,14 @@ import { Availability } from "./pages/availability";
 import { AddAvailability } from "./pages/addAvailability";
 import { UpdateAvailability } from "./pages/updateAvailability";
 import { SingleAvailability } from "./pages/singleAvailability";
+import { Goals } from "./pages/goals";
+import { AddGoal } from "./pages/addGoal";
+import { UpdateGoal } from "./pages/updateGoal";
+import { SingleGoal } from "./pages/singleGoal";
+import { Diseases } from "./pages/diseases";
+import { AddDiseases } from "./pages/addDiseases";
+import { SingleDiseases } from "./pages/singleDiseases";
+import { UpdateDisease } from "./pages/updateDiseases";
 import { Experience } from "./pages/experience";
 import { AddExperience } from "./pages/addExperience";
 import { UpdateExperience } from "./pages/updateExperience";
@@ -35,11 +43,19 @@ const Layout = () => {
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
-                        <Route element={<Single />} path="/single/:theid" />
+                        <Route element={<Single />} path="/single/:theid" />  
                         <Route element={<Availability />} path="/availability" />
                         <Route element={<SingleAvailability />} path="/availability/:availabilityID" />
                         <Route element={<AddAvailability />} path="/availability/add" />
                         <Route element={<UpdateAvailability />} path="/availability/update/:availabilityID" />
+                        <Route element={<Goals />} path="/goals" />
+                        <Route element={<SingleGoal />} path="/goals/:goalID" />
+                        <Route element={<AddGoal />} path="/goals/form" />
+                        <Route element={<UpdateGoal />} path="/goals/update/:goalID" />
+                        <Route element={<Diseases />} path="/diseases" />
+                        <Route element={<SingleDiseases />}  path="/diseases/:diseasesID" />
+                        <Route element={<AddDiseases />} path="/diseases/add" />    
+                        <Route element={<UpdateDisease />} path="/diseases/update/:diseaseID" />  
                         <Route element={<Experience />} path="/experience" />
                         <Route element={<SingleExperience />} path="/experience/:experienceID" />
                         <Route element={<AddExperience />} path="/experience/add" />

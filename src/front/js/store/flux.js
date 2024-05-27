@@ -2,10 +2,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			message: null,
-			goals: [],
-			goalToUpdate: {},
-			singleGoal:{},
-
 			demo: [
 				{
 					title: "FIRST",
@@ -17,14 +13,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			availability: [],
+			singleAvailability: {}, 
+      goals: [],
+			goalToUpdate: {},
+			singleGoal:{},
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
-
 			getMessage: async () => {
 				try{
 					// fetching data from the backend
@@ -36,9 +36,74 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}catch(error){
 					console.log("Error loading message from backend", error)
 				}
-			},
+			},	
+			changeColor: (index, color) => {
+				//get the store
+				const store = getStore();
 
-			getGoals: () => {
+				//we have to loop the entire demo array to look for the respective index
+				//and change its color
+				const demo = store.demo.map((elm, i) => {
+					if (i === index) elm.background = color;
+					return elm;
+				});
+
+				//reset the global store
+				setStore({ demo: demo });
+			},
+      
+      // AVAILABILITY
+      getAvailability: () => {
+				fetch(process.env.BACKEND_URL + "/api/availability")
+				.then( (response) => response.json())
+				.then( data => setStore({ availability: data }))	
+      },
+			getSingleAvailability: (availabilityID) => {
+				fetch(process.env.BACKEND_URL + `/api/availability/${availabilityID}`)
+				.then( (response) => response.json())
+				.then( data => setStore({ singleAvailability: data }))	
+			},
+			addAvailabilityAPI: (day, hour) => {
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"day": day,
+						"hour": hour 
+					})
+				};
+				fetch(process.env.BACKEND_URL + "/api/availability", requestOptions)
+				.then(response => response.json())
+				.then(() => getActions().getAvailability())
+			},
+			deleteAvailability: (availabilityID) => {
+				fetch(process.env.BACKEND_URL + `/api/availability/${availabilityID}`, { method: 'DELETE' })
+				.then( () => getActions().getAvailability())
+			},
+			updateAvailability: (availabilityID) => {
+				const availabilitySelected = getStore().availability.find(element => element.id === availabilityID)
+				setStore({ singleAvailability: availabilitySelected })
+			},
+			updateAvailabilitytAPI: (day, hour, availabilityID) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"day": day,
+						"hour": hour
+					 })
+				};
+				fetch(process.env.BACKEND_URL + `/api/availability/${availabilityID}`, requestOptions)
+					.then(response => response.json())
+					.then(() => getActions().getAvailability())
+					.then( setStore({ singleAvailability: {} }))
+			},
+			loadBeginning: () => {
+        getActions().getGoals()
+			}
+      
+      // GOALS
+      getGoals: () => {
 				fetch(process.env.BACKEND_URL+"/api/goals")
 				.then( (response) => response.json())
 				.then( data => setStore({ goals: data }))	
@@ -90,23 +155,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then( setStore({ goalToUpdate: {} }))
 					.then(() => getActions().getGoals())
 			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
-
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-
-				//reset the global store
-				setStore({ demo: demo });
-			},
-			loadData: ()=>{
-				getActions().getGoals()
-			}
 		}
 	};
 };

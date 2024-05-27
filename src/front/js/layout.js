@@ -6,6 +6,10 @@ import { BackendURL } from "./component/backendURL";
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
+import { Availability } from "./pages/availability";
+import { AddAvailability } from "./pages/addAvailability";
+import { UpdateAvailability } from "./pages/updateAvailability";
+import { SingleAvailability } from "./pages/singleAvailability";
 import { Goals } from "./pages/goals";
 import { AddGoal } from "./pages/addGoal";
 import { UpdateGoal } from "./pages/updateGoal";
@@ -31,11 +35,15 @@ const Layout = () => {
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
+                        <Route element={<Single />} path="/single/:theid" />  
+                        <Route element={<Availability />} path="/availability" />
+                        <Route element={<SingleAvailability />} path="/availability/:availabilityID" />
+                        <Route element={<AddAvailability />} path="/availability/add" />
+                        <Route element={<UpdateAvailability />} path="/availability/update/:availabilityID" />  
                         <Route element={<Goals />} path="/goals" />
                         <Route element={<AddGoal />} path="/goals/form" />
                         <Route element={<UpdateGoal />} path="/goals/update/:goalID" />
                         <Route element={<SingleGoal />} path="/goals/:goalID" />
-                        <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />

@@ -18,6 +18,21 @@ class User(db.Model):
             # do not serialize the password, its a security breach
         }
     
+class Availability(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    day = db.Column(db.String(120), unique=False, nullable=False)
+    hour = db.Column(db.String(80), unique=False, nullable=False)
+
+    def __repr__(self):
+        return f'<Availability {self.id}>'
+          
+    def serialize(self):
+        return {
+            "id": self.id,            
+            "day": self.day,
+            "hour": self.hour, 
+        }
+      
 class Goals(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     kind = db.Column(db.String(120), unique=False, nullable=False)
@@ -25,11 +40,15 @@ class Goals(db.Model):
 
     def __repr__(self):
         return f'<Goals {self.kind}>'
-
+      
     def serialize(self):
         return {
             "id": self.id,
             "kind": self.kind,
             "description": self.description
-            # do not serialize the password, its a security breach
-        }
+          }
+
+
+
+
+       

@@ -6,6 +6,10 @@ export const Diseases = () => {
   const { store, actions } = useContext(Context);
   const navigate = useNavigate();
 
+  useEffect(()=>{
+    actions.getDiseases()
+    },[])
+
   return (
     <div className="container mt-5">
       <div className="d-flex justify-content-between align-items-center mb-4">

@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link,useNavigate } from "react-router-dom";
+import { Link,useNavigate, useParams } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
 export const Goals = () => {
 	const { store, actions } = useContext(Context);
-    const navigate = useNavigate()
+
+    useEffect(()=>{
+        actions.getGoals()
+        },[])
 
 	return (
 		<div className="container">

@@ -16,17 +16,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			availability: [],
 			singleAvailability: {}, 
-      goals: [],
+      		goals: [],
 			singleGoal:{},
-      diseases: [],
+      		diseases: [],
 			diseasesToEdit:{},
 			singleDiseases: {},
-      experience: [],
+      		experience: [],
 			singleExperience: {},
-      education: [],
+      		education: [],
 			singleEducation: {},   
-	    activities: [],
-		  singleActivityFrequency:{},
+	    	activities: [],
+		  	singleActivityFrequency:{},
 		},
 
 		actions: {
@@ -258,10 +258,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then(response => response.json())
 				.then(() => {
 					setStore({ singleDiseases: {} });
-					setStore({editing:false})
 					getActions().getDiseases();
-			},	  
-     deleteSingleDisease: () => {
+					}),
+		},					  
+    deleteSingleDisease: () => {
 			setStore({ singleDisease: {} });
 		  },  
 
@@ -356,8 +356,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
      
       loadBeginning: () => {
-        getActions().getDiseases()
-		  }    
+
+		  },    
 	  }
   };
 };

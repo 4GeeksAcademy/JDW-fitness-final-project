@@ -25,7 +25,7 @@ export const UpdateAvailability = () => {
     function updateAvailability(e) {
         e.preventDefault()
         if (day.trim() !== "" && hour.trim() !== "") {
-			actions.updateAvailabilitytAPI(day, hour, store.singleAvailability.id)
+			actions.updateAvailabilityAPI(day, hour, store.singleAvailability.id)
 			setDay("")
 			setHour("")
             navigate("/availability")

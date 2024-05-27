@@ -16,6 +16,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			availability: [],
 			singleAvailability: {}, 
+			experience: [],
+			singleExperience: {}, 
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -49,6 +51,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				//reset the global store
 				setStore({ demo: demo });
 			},
+
+			// AVAILABILITY
 			getAvailability: () => {
 				fetch(process.env.BACKEND_URL + "/api/availability")
 				.then( (response) => response.json())
@@ -80,7 +84,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const availabilitySelected = getStore().availability.find(element => element.id === availabilityID)
 				setStore({ singleAvailability: availabilitySelected })
 			},
-			updateAvailabilitytAPI: (day, hour, availabilityID) => {
+			updateAvailabilityAPI: (day, hour, availabilityID) => {
 				const requestOptions = {
 					method: 'PUT',
 					headers: { 'Content-Type': 'application/json' },
@@ -94,8 +98,53 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(() => getActions().getAvailability())
 					.then( setStore({ singleAvailability: {} }))
 			},
+
+			// EXPERIENCE
+			getExperience: () => {
+				fetch(process.env.BACKEND_URL + "/api/experience")
+				.then( (response) => response.json())
+				.then( data => setStore({ experience: data }))	
+			},
+			getSingleExperience: (experienceID) => {
+				fetch(process.env.BACKEND_URL + `/api/experience/${experienceID}`)
+				.then( (response) => response.json())
+				.then( data => setStore({ singleExperience: data }))	
+			},
+			addExperienceAPI: (time) => {
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"time": time,
+					})
+				};
+				fetch(process.env.BACKEND_URL + "/api/experience", requestOptions)
+				.then(response => response.json())
+				.then(() => getActions().getExperience())
+			},
+			deleteExperience: (experienceID) => {
+				fetch(process.env.BACKEND_URL + `/api/experience/${experienceID}`, { method: 'DELETE' })
+				.then( () => getActions().getExperience())
+			},
+			updateExperience: (experienceID) => {
+				const experienceSelected = getStore().experience.find(element => element.id === experienceID)
+				setStore({ singleExperience: experienceSelected })
+			},
+			updateExperienceAPI: (time, experienceID) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"time": time,
+					 })
+				};
+				fetch(process.env.BACKEND_URL + `/api/experience/${experienceID}`, requestOptions)
+					.then(response => response.json())
+					.then(() => getActions().getExperience())
+					.then( setStore({ singleExperience: {} }))
+			},
 			loadBeginning: () => {
-				getActions().getAvailability()
+				
 			}
 		}
 	};

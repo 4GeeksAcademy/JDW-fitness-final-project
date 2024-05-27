@@ -10,6 +10,10 @@ import { Availability } from "./pages/availability";
 import { AddAvailability } from "./pages/addAvailability";
 import { UpdateAvailability } from "./pages/updateAvailability";
 import { SingleAvailability } from "./pages/singleAvailability";
+import { Experience } from "./pages/experience";
+import { AddExperience } from "./pages/addExperience";
+import { UpdateExperience } from "./pages/updateExperience";
+import { SingleExperience } from "./pages/singleExperience";
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -36,6 +40,10 @@ const Layout = () => {
                         <Route element={<SingleAvailability />} path="/availability/:availabilityID" />
                         <Route element={<AddAvailability />} path="/availability/add" />
                         <Route element={<UpdateAvailability />} path="/availability/update/:availabilityID" />
+                        <Route element={<Experience />} path="/experience" />
+                        <Route element={<SingleExperience />} path="/experience/:experienceID" />
+                        <Route element={<AddExperience />} path="/experience/add" />
+                        <Route element={<UpdateExperience />} path="/experience/update/:experienceID" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />

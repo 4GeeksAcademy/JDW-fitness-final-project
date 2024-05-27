@@ -14,10 +14,15 @@ export const Navbar = () => {
 					</Link>
 				</div>
 				<div className="ml-auto">
+					<Link to="/goals">
+						<button className="btn btn-primary">Check the Goals</button>
+          </Link>
+        </div>
+        <div className="ml-auto">
 					<Link to="/availability">
 						<button className="btn btn-success">Check the Availability</button>
-					</Link>
-				</div>
+          </Link>
+        </div>				
 			</div>
 		</nav>
 	);

@@ -16,13 +16,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			availability: [],
 			singleAvailability: {}, 
+      goals: [],
+			goalToUpdate: {},
+			singleGoal:{},
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
-
 			getMessage: async () => {
 				try{
 					// fetching data from the backend
@@ -34,7 +36,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}catch(error){
 					console.log("Error loading message from backend", error)
 				}
-			},
+			},	
 			changeColor: (index, color) => {
 				//get the store
 				const store = getStore();
@@ -49,11 +51,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				//reset the global store
 				setStore({ demo: demo });
 			},
-			getAvailability: () => {
+      
+      // AVAILABILITY
+      getAvailability: () => {
 				fetch(process.env.BACKEND_URL + "/api/availability")
 				.then( (response) => response.json())
 				.then( data => setStore({ availability: data }))	
-			},
+      },
 			getSingleAvailability: (availabilityID) => {
 				fetch(process.env.BACKEND_URL + `/api/availability/${availabilityID}`)
 				.then( (response) => response.json())
@@ -95,8 +99,62 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then( setStore({ singleAvailability: {} }))
 			},
 			loadBeginning: () => {
-				getActions().getAvailability()
+        getActions().getGoals()
 			}
+      
+      // GOALS
+      getGoals: () => {
+				fetch(process.env.BACKEND_URL+"/api/goals")
+				.then( (response) => response.json())
+				.then( data => setStore({ goals: data }))	
+			},
+			getSingleGoal: (goalID) => {
+				fetch(process.env.BACKEND_URL + `api/goals/${goalID}`)
+				.then( (response) => response.json())
+				.then( data => setStore({ singleGoal: data }))	
+			},
+			deleteSingleGoal: () => {
+				setStore({ singleGoal: {} })
+			},
+			createGoal: (kind, description) => {
+				const requestOptions = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        "kind": kind,
+                        "description": description 
+                    })
+                };
+                fetch(process.env.BACKEND_URL + "/api/goals", requestOptions)
+                    .then(response => response.json())
+					.then(()=>getActions().getGoals())
+            },
+
+			deleteGoal: (idToDelete) => {
+				fetch(`${process.env.BACKEND_URL}/api/goals/${idToDelete}`, { method: 'DELETE' })
+				.then(()=>getActions().getGoals())
+			},
+
+			updateGoal: (iDSelected) => {
+				const goalSelected = getStore().goals.find(goal => goal.id === iDSelected)
+				setStore({ goalToUpdate: goalSelected })
+				setStore({editing: true })
+			},
+
+			updateGoalAPI: (kind, description, idToEdit) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"kind": kind,
+                        "description": description 
+					 })
+				};
+				fetch(`${process.env.BACKEND_URL}/api/goals/${idToEdit}`, requestOptions)
+					.then(response => response.json())
+					.then( setStore({ goalToUpdate: {} }))
+					.then(() => getActions().getGoals())
+			},
 		}
 	};
 };

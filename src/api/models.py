@@ -25,11 +25,30 @@ class Availability(db.Model):
 
     def __repr__(self):
         return f'<Availability {self.id}>'
+          
+    def serialize(self):
+        return {
+            "id": self.id,            
+            "day": self.day,
+            "hour": self.hour, 
+        }
+      
+class Goals(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    kind = db.Column(db.String(120), unique=False, nullable=False)
+    description = db.Column(db.String(180), unique=False, nullable=True)
 
+    def __repr__(self):
+        return f'<Goals {self.kind}>'
+      
     def serialize(self):
         return {
             "id": self.id,
-            "day": self.day,
-            "hour": self.hour,
-            # do not serialize the password, its a security breach
-        }
+            "kind": self.kind,
+            "description": self.description
+          }
+
+
+
+
+       

@@ -28,6 +28,8 @@ export const UpdateDisease = () => {
     e.preventDefault();
     if (kind.trim() !== "" && sintoms.trim() !== "") {
       actions.updateDiseaseAPI(kind, sintoms, diseaseID); // Llamada a la acción con los parámetros correctos
+      setKind("")
+      setSintoms("")
       navigate("/diseases");
       setErrorMessage(false);
     } else {

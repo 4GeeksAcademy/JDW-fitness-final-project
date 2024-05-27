@@ -19,7 +19,6 @@ const getState = ({ getStore, getActions, setStore }) => {
       		goals: [],
 			singleGoal:{},
       		diseases: [],
-			diseasesToEdit:{},
 			singleDiseases: {},
       		experience: [],
 			singleExperience: {},
@@ -108,8 +107,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then( setStore({ singleAvailability: {} }))
 			},
       
-      // GOALS
-      getGoals: () => {
+      		// GOALS
+      		getGoals: () => {
 				fetch(process.env.BACKEND_URL+"/api/goals")
 				.then( (response) => response.json())
 				.then( data => setStore({ goals: data }))	
@@ -157,115 +156,60 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then( setStore({ singleGoal: {} }))
 				.then(() => getActions().getGoals())
 			},
-			
-			
-			// ACTIVITY FREQUENCY
-			getActivityFrequency: () => {
-				fetch(process.env.BACKEND_URL+"api/activities")
-				.then( (response) => response.json())
-				.then( data => setStore({ activities: data }))	
-			},
-			getSingleActivityFrequency: (activityFrequencyID) => {
-				fetch(process.env.BACKEND_URL + `api/activities/${activityFrequencyID}`)
-				.then( (response) => response.json())
-				.then( data => setStore({ singleActivityFrequency: data }))	
-			},
-			deleteSingleActivityFrequency: () => {
-				setStore({ singleActivityFrequency: {} })
-			},
-			createActivityFrequency: (mode) => {
-				const requestOptions = {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ 
-						"mode": mode,
-					})
-				};
-				fetch(process.env.BACKEND_URL + "api/activities", requestOptions)
-				.then(response => response.json())
-				.then(()=>getActions().getActivityFrequency())
-			},
-			
-			deleteActivityFrequency: (idToDelete) => {
-				fetch(`${process.env.BACKEND_URL}/api/activities/${idToDelete}`, { method: 'DELETE' })
-				.then(()=>getActions().getActivityFrequency())
-			},
-			
-			updateActivityFrequency: (iDSelected) => {
-				const activityFrequencySelected = getStore().activities.find(activityFrequency => activityFrequency.id === iDSelected)
-				setStore({ singleActivityFrequency: activityFrequencySelected })
-			},
-			
-			updateActivityFrequencyAPI: (mode, idToEdit) => {
-				const requestOptions = {
-					method: 'PUT',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ 
-						"mode": mode,
-					})
-				};
-				fetch(`${process.env.BACKEND_URL}/api/activities/${idToEdit}`, requestOptions)
-				.then(response => response.json())
-				.then( setStore({ singleActivityFrequency: {} }))
-				.then(() => getActions().getActivityFrequency())
-			},
-			loadBeginning: () => {
-			getActions().getGoals()
-			},
       
-      // DISEASES
-      getDiseases: () => {
-         fetch(process.env.BACKEND_URL + "/api/diseases")
-         .then((response) => response.json())
-         .then((data) => setStore({ diseases: data }));
-      },
+			// DISEASES
+			getDiseases: () => {
+				fetch(process.env.BACKEND_URL + "/api/diseases")
+				.then((response) => response.json())
+				.then((data) => setStore({ diseases: data }));
+			},
 			getSingleDiseases: (diseasesID) => {
-				fetch(process.env.BACKEND_URL + `/api/diseases/${diseasesID}`)
-				.then( (response) => response.json())
-				.then( data => setStore({ singleDiseases: data }))
+					fetch(process.env.BACKEND_URL + `/api/diseases/${diseasesID}`)
+					.then( (response) => response.json())
+					.then( data => setStore({ singleDiseases: data }))
 			},   
-      createDisease: (kind, sintoms) => {
-        const requestOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            "kind": kind,
-            "sintoms": sintoms 
-            })
-          };
-				fetch(process.env.BACKEND_URL + "/api/diseases", requestOptions)
-				.then(response => response.json())
-				.then(() => getActions().getDiseases());
-		},
-		deleteDisease: (idToDelete) => {
-			fetch(`${process.env.BACKEND_URL}/api/diseases/${idToDelete}`, { method: 'DELETE' })
-				.then(() => getActions().getDiseases());
-		},   
-    updateDiseases: (diseaseID) => {
-			const diseaseSelected = getStore().diseases.find(element => element.id === diseaseID)
-			setStore({ singleDiseases: diseaseSelected })	
-		},
-    updateDiseaseAPI: (kind, sintoms, diseaseID) => {
-			const requestOptions = {
-				method: 'PUT',
+			createDisease: (kind, sintoms) => {
+				const requestOptions = {
+				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ 
 					"kind": kind,
 					"sintoms": sintoms 
-				})
-			};
-			fetch(`${process.env.BACKEND_URL}/api/diseases/${diseaseID}`, requestOptions)
-				.then(response => response.json())
-				.then(() => {
+					})
+				};
+					fetch(process.env.BACKEND_URL + "/api/diseases", requestOptions)
+					.then(response => response.json())
+					.then(() => getActions().getDiseases());
+				},
+				deleteDisease: (idToDelete) => {
+					fetch(`${process.env.BACKEND_URL}/api/diseases/${idToDelete}`, { method: 'DELETE' })
+					.then(() => getActions().getDiseases());
+				},   
+			updateDiseases: (diseaseID) => {
+					const diseaseSelected = getStore().diseases.find(element => element.id === diseaseID)
+					setStore({ singleDiseases: diseaseSelected })	
+				},
+    		updateDiseaseAPI: (kind, sintoms, diseaseID) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"kind": kind,
+						"sintoms": sintoms 
+					})
+				};
+				fetch(`${process.env.BACKEND_URL}/api/diseases/${diseaseID}`, requestOptions)
+					.then(response => response.json())
+					.then(() => {
 					setStore({ singleDiseases: {} });
 					getActions().getDiseases();
-					}),
-		},					  
-    deleteSingleDisease: () => {
-			setStore({ singleDisease: {} });
-		  },  
+					})
+			},					  
+    		deleteSingleDisease: () => {
+				setStore({ singleDisease: {} });
+		  	},  
 
-      // EXPERIENCE
+      		// EXPERIENCE
 			getExperience: () => {
 				fetch(process.env.BACKEND_URL + "/api/experience")
 				.then( (response) => response.json())
@@ -322,11 +266,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then( data => setStore({ singleEducation: data }))	
 			},
 			addEducationAPI: (rank) => {
-        const requestOptions = {
+        		const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ 
-            "rank": rank,
+            			"rank": rank,
 					})
 				};
 				fetch(process.env.BACKEND_URL + "/api/education", requestOptions)
@@ -355,6 +299,57 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then( setStore({ singleEducation: {} }))
 			},
      
+			// ACTIVITY FREQUENCY
+			getActivityFrequency: () => {
+				fetch(process.env.BACKEND_URL+"api/activities")
+				.then( (response) => response.json())
+				.then( data => setStore({ activities: data }))	
+			},
+			getSingleActivityFrequency: (activityFrequencyID) => {
+				fetch(process.env.BACKEND_URL + `api/activities/${activityFrequencyID}`)
+				.then( (response) => response.json())
+				.then( data => setStore({ singleActivityFrequency: data }))	
+			},
+			deleteSingleActivityFrequency: () => {
+				setStore({ singleActivityFrequency: {} })
+			},
+			createActivityFrequency: (mode) => {
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"mode": mode,
+					})
+				};
+				fetch(process.env.BACKEND_URL + "api/activities", requestOptions)
+				.then(response => response.json())
+				.then(()=>getActions().getActivityFrequency())
+			},
+			
+			deleteActivityFrequency: (idToDelete) => {
+				fetch(`${process.env.BACKEND_URL}/api/activities/${idToDelete}`, { method: 'DELETE' })
+				.then(()=>getActions().getActivityFrequency())
+			},
+			
+			updateActivityFrequency: (iDSelected) => {
+				const activityFrequencySelected = getStore().activities.find(activityFrequency => activityFrequency.id === iDSelected)
+				setStore({ singleActivityFrequency: activityFrequencySelected })
+			},
+			
+			updateActivityFrequencyAPI: (mode, idToEdit) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"mode": mode,
+					})
+				};
+				fetch(`${process.env.BACKEND_URL}/api/activities/${idToEdit}`, requestOptions)
+				.then(response => response.json())
+				.then( setStore({ singleActivityFrequency: {} }))
+				.then(() => getActions().getActivityFrequency())
+			},
+
       loadBeginning: () => {
 
 		  },    

@@ -16,6 +16,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			availability: [],
 			singleAvailability: {}, 
+			education: [],
+			singleEducation: {}, 
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -49,6 +51,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				//reset the global store
 				setStore({ demo: demo });
 			},
+
+			// AVAILABILITY
 			getAvailability: () => {
 				fetch(process.env.BACKEND_URL + "/api/availability")
 				.then( (response) => response.json())
@@ -80,7 +84,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const availabilitySelected = getStore().availability.find(element => element.id === availabilityID)
 				setStore({ singleAvailability: availabilitySelected })
 			},
-			updateAvailabilitytAPI: (day, hour, availabilityID) => {
+			updateAvailabilityAPI: (day, hour, availabilityID) => {
 				const requestOptions = {
 					method: 'PUT',
 					headers: { 'Content-Type': 'application/json' },
@@ -94,8 +98,53 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(() => getActions().getAvailability())
 					.then( setStore({ singleAvailability: {} }))
 			},
+
+			// EDUCATION
+			getEducation: () => {
+				fetch(process.env.BACKEND_URL + "/api/education")
+				.then( (response) => response.json())
+				.then( data => setStore({ education: data }))	
+			},
+			getSingleEducation: (educationID) => {
+				fetch(process.env.BACKEND_URL + `/api/education/${educationID}`)
+				.then( (response) => response.json())
+				.then( data => setStore({ singleEducation: data }))	
+			},
+			addEducationAPI: (rank) => {
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"rank": rank,
+					})
+				};
+				fetch(process.env.BACKEND_URL + "/api/education", requestOptions)
+				.then(response => response.json())
+				.then(() => getActions().getEducation())
+			},
+			deleteEducation: (educationID) => {
+				fetch(process.env.BACKEND_URL + `/api/education/${educationID}`, { method: 'DELETE' })
+				.then( () => getActions().getEducation())
+			},
+			updateEducation: (educationID) => {
+				const educationSelected = getStore().education.find(element => element.id === educationID)
+				setStore({ singleEducation: educationSelected })
+			},
+			updateEducationAPI: (rank, educationID) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"rank": rank,
+					 })
+				};
+				fetch(process.env.BACKEND_URL + `/api/education/${educationID}`, requestOptions)
+					.then(response => response.json())
+					.then(() => getActions().getEducation())
+					.then( setStore({ singleEducation: {} }))
+			},
 			loadBeginning: () => {
-				getActions().getAvailability()
+
 			}
 		}
 	};

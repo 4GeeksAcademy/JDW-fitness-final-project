@@ -10,6 +10,10 @@ import { Availability } from "./pages/availability";
 import { AddAvailability } from "./pages/addAvailability";
 import { UpdateAvailability } from "./pages/updateAvailability";
 import { SingleAvailability } from "./pages/singleAvailability";
+import { Education } from "./pages/education";
+import { AddEducation } from "./pages/addEducation";
+import { UpdateEducation } from "./pages/updateEducation";
+import { SingleEducation } from "./pages/singleEducation";
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -36,6 +40,10 @@ const Layout = () => {
                         <Route element={<SingleAvailability />} path="/availability/:availabilityID" />
                         <Route element={<AddAvailability />} path="/availability/add" />
                         <Route element={<UpdateAvailability />} path="/availability/update/:availabilityID" />
+                        <Route element={<Education />} path="/education" />
+                        <Route element={<SingleEducation />} path="/education/:educationID" />
+                        <Route element={<AddEducation />} path="/education/add" />
+                        <Route element={<UpdateEducation />} path="/education/update/:educationID" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />

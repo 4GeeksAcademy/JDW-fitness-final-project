@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Availability, Goals, Diseases
+from api.models import db, User, Availability, Goals, Diseases, Experience
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -188,4 +188,58 @@ def delete_diseases(diseases_id):
      except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Error while deleting the diseases', 'error': str(e)}), 500
+  
+# EXPERIENCE ENDPOINTS
+@api.route('/experience', methods=['GET'])
+def get_experiences():
+    experiences = Experience.query.all()
+    experiences_list = list(map(lambda prop: prop.serialize(),experiences))
 
+    return jsonify(experiences_list), 200
+
+@api.route('/experience/<int:experience_id>', methods=['GET'])
+def get_experience(experience_id):
+    experience = Experience.query.filter_by(id=experience_id).first()
+    return jsonify(experience.serialize()), 200
+
+@api.route('/experience', methods=['POST'])
+def add_experience():
+    experience_data = request.json
+
+    if "time" not in experience_data: return jsonify({"error": f"The property 'time' was not properly written"}), 400 
+    
+    if experience_data["time"] == "": return jsonify({"error": f"The 'time' must not be empty"}), 400 
+
+    experience_to_add = Experience(**experience_data)
+    db.session.add(experience_to_add)
+    db.session.commit()
+
+    return jsonify(experience_to_add.serialize()), 200
+
+@api.route('/experience/<int:experience_id>', methods=['PUT'])
+def update_experience(experience_id):
+    experience_data = request.json
+    new_time = experience_data.get('time')
+
+    if "time" not in experience_data: return jsonify({"error": f"The property 'time' was not properly written"}), 400 
+    
+    if experience_data["time"] == "": return jsonify({"error": f"The 'time' must not be empty"}), 400 
+
+    experience = Experience.query.get(experience_id)
+
+    if experience is None:
+        return jsonify({"error": f"The ID '{experience_id}' was not found in experience"}), 400
+
+    experience.time = new_time
+    db.session.commit()
+
+    return jsonify(experience.serialize()), 200
+
+@api.route('/experience/<int:experience_id>', methods=['DELETE'])
+def del_experience(experience_id):
+    experience = Experience.query.get(experience_id)
+    if not experience: return jsonify({"error": f"The ID '{experience_id}' was not found in experience"}), 400
+    db.session.delete(experience)
+    db.session.commit()
+
+    return jsonify({"deleted": f"Experience '{experience.time}' was deleted successfully"}), 200 

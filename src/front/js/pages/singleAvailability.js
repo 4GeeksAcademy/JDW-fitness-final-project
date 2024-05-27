@@ -9,7 +9,6 @@ export const SingleAvailability = () => {
 
     useEffect(() => {
         actions.getSingleAvailability(availabilityID)
-        console.log(store.singleAvailability);
     },[]);
     
 	return (

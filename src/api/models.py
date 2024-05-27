@@ -57,4 +57,17 @@ class Diseases(db.Model):
             "id": self.id,
             "kind": self.kind,
             "sintoms": self.sintoms
-        }   
+        }    
+    
+class Experience(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    time = db.Column(db.String(120), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f'<Experience {self.id}>'
+    def serialize(self):
+        return {
+            "id": self.id,
+            "time": self.time,
+        }
+

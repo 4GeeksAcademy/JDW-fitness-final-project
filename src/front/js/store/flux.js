@@ -22,6 +22,8 @@ const getState = ({ getStore, getActions, setStore }) => {
       diseases: [],
 			diseasesToEdit:{},
 			singleDiseases: {},
+      experience: [],
+			singleExperience: {},   
 		},
 
 		actions: {
@@ -52,10 +54,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				if (i === index) elm.background = color;
 				return elm;
 			});
-
-			//reset the global store
-			setStore({ demo: demo });
-		},
+				//reset the global store
+				setStore({ demo: demo });
+			},
       
       // AVAILABILITY
       getAvailability: () => {
@@ -89,7 +90,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const availabilitySelected = getStore().availability.find(element => element.id === availabilityID)
 				setStore({ singleAvailability: availabilitySelected })
 			},
-			updateAvailabilitytAPI: (day, hour, availabilityID) => {
+			updateAvailabilityAPI: (day, hour, availabilityID) => {
 				const requestOptions = {
 					method: 'PUT',
 					headers: { 'Content-Type': 'application/json' },
@@ -131,25 +132,22 @@ const getState = ({ getStore, getActions, setStore }) => {
                     .then(response => response.json())
 					.then(()=>getActions().getGoals())
             },
-
 			deleteGoal: (idToDelete) => {
 				fetch(`${process.env.BACKEND_URL}/api/goals/${idToDelete}`, { method: 'DELETE' })
 				.then(()=>getActions().getGoals())
 			},
-
 			updateGoal: (iDSelected) => {
 				const goalSelected = getStore().goals.find(goal => goal.id === iDSelected)
 				setStore({ goalToUpdate: goalSelected })
 				setStore({editing: true })
 			},
-
 			updateGoalAPI: (kind, description, idToEdit) => {
 				const requestOptions = {
 					method: 'PUT',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ 
-						"kind": kind,
-                        "description": description 
+          		"kind": kind,
+              "description": description 
 					 })
 				};
 				fetch(`${process.env.BACKEND_URL}/api/goals/${idToEdit}`, requestOptions)
@@ -169,8 +167,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + `/api/diseases/${diseasesID}`)
 				.then( (response) => response.json())
 				.then( data => setStore({ singleDiseases: data }))
-			},  
-        
+			},   
       createDisease: (kind, sintoms) => {
         const requestOptions = {
           method: 'POST',
@@ -187,14 +184,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 		deleteDisease: (idToDelete) => {
 			fetch(`${process.env.BACKEND_URL}/api/diseases/${idToDelete}`, { method: 'DELETE' })
 				.then(() => getActions().getDiseases());
-		},
-      
+		},   
     updateDiseases: (diseaseID) => {
 			const diseaseSelected = getStore().diseases.find(element => element.id === diseaseID)
 			setStore({ singleDiseases: diseaseSelected })	
 		},
-    
-     updateDiseaseAPI: (kind, sintoms, diseaseID) => {
+    updateDiseaseAPI: (kind, sintoms, diseaseID) => {
 			const requestOptions = {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
@@ -210,17 +205,61 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({editing:false})
 					getActions().getDiseases();
 			},	  
-     
      deleteSingleDisease: () => {
 			setStore({ singleDisease: {} });
 		  },         
-              
-    loadBeginning: () => {
+    
+    // EXPERIENCE
+			getExperience: () => {
+				fetch(process.env.BACKEND_URL + "/api/experience")
+				.then( (response) => response.json())
+				.then( data => setStore({ experience: data }))	
+			},
+			getSingleExperience: (experienceID) => {
+				fetch(process.env.BACKEND_URL + `/api/experience/${experienceID}`)
+				.then( (response) => response.json())
+				.then( data => setStore({ singleExperience: data }))	
+			},
+			addExperienceAPI: (time) => {
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"time": time,
+					})
+				};
+				fetch(process.env.BACKEND_URL + "/api/experience", requestOptions)
+				.then(response => response.json())
+				.then(() => getActions().getExperience())
+			},
+			deleteExperience: (experienceID) => {
+				fetch(process.env.BACKEND_URL + `/api/experience/${experienceID}`, { method: 'DELETE' })
+				.then( () => getActions().getExperience())
+			},
+			updateExperience: (experienceID) => {
+				const experienceSelected = getStore().experience.find(element => element.id === experienceID)
+				setStore({ singleExperience: experienceSelected })
+			},
+			updateExperienceAPI: (time, experienceID) => {
+        	const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+            	"time": time,
+					 })
+				};
+				fetch(process.env.BACKEND_URL + `/api/experience/${experienceID}`, requestOptions)
+					.then(response => response.json())
+					.then(() => getActions().getExperience())
+					.then( setStore({ singleExperience: {} }))
+			},    
+        
+      loadBeginning: () => {
         getActions().getGoals()
         getActions().getDiseases()
-		}  
-	}
-};
+		  }    
+	  }
+  };
 };
 
 export default getState;

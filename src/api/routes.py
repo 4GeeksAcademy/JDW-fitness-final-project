@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Availability, Goals, Diseases, Experience
+from api.models import db, User, Availability, Goals, Diseases, Experience, Education
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -74,8 +74,8 @@ def del_availability(availability_id):
     if not availability: return jsonify({"error": f"The ID '{availability_id}' was not found in Availability"}), 400
     db.session.delete(availability)
     db.session.commit()
-
-    return jsonify({"deleted": f"Availability '{availability.day}' and '{availability.hour}' was deleted successfully"}), 200 
+    
+    return jsonify({"deleted": f"Availability '{availability.day}' and '{availability.hour}' was deleted successfully"}), 200
   
 # GOALS ENDPOINTS  
 @api.route('/goals', methods=['GET'])
@@ -188,7 +188,7 @@ def delete_diseases(diseases_id):
      except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Error while deleting the diseases', 'error': str(e)}), 500
-  
+      
 # EXPERIENCE ENDPOINTS
 @api.route('/experience', methods=['GET'])
 def get_experiences():
@@ -242,4 +242,59 @@ def del_experience(experience_id):
     db.session.delete(experience)
     db.session.commit()
 
-    return jsonify({"deleted": f"Experience '{experience.time}' was deleted successfully"}), 200 
+    return jsonify({"deleted": f"Experience '{experience.time}' was deleted successfully"}), 200  
+
+# EDUCATION ENDPOINTS
+@api.route('/education', methods=['GET'])
+def get_educations():
+    educations = Education.query.all()
+    educations_list = list(map(lambda prop: prop.serialize(),educations))
+
+    return jsonify(educations_list), 200
+
+@api.route('/education/<int:education_id>', methods=['GET'])
+def get_education(education_id):
+    education = Education.query.filter_by(id=education_id).first()
+    return jsonify(education.serialize()), 200
+
+@api.route('/education', methods=['POST'])
+def add_education():
+    education_data = request.json
+
+    if "rank" not in education_data: return jsonify({"error": f"The property 'rank' was not properly written"}), 400 
+    
+    if education_data["rank"] == "": return jsonify({"error": f"The 'rank' must not be empty"}), 400 
+
+    education_to_add = Education(**education_data)
+    db.session.add(education_to_add)
+    db.session.commit()
+
+    return jsonify(education_to_add.serialize()), 200
+
+@api.route('/education/<int:education_id>', methods=['PUT'])
+def update_education(education_id):
+    education_data = request.json
+    new_rank = education_data.get('rank')
+
+    if "rank" not in education_data: return jsonify({"error": f"The property 'rank' was not properly written"}), 400 
+    
+    if education_data["rank"] == "": return jsonify({"error": f"The 'rank' must not be empty"}), 400 
+
+    education = Education.query.get(education_id)
+
+    if education is None:
+        return jsonify({"error": f"The ID '{education_id}' was not found in education"}), 400
+
+    education.rank = new_rank
+    db.session.commit()
+
+    return jsonify(education.serialize()), 200
+
+@api.route('/education/<int:education_id>', methods=['DELETE'])
+def del_education(education_id):
+    education = Education.query.get(education_id)
+    if not education: return jsonify({"error": f"The ID '{education_id}' was not found in education"}), 400
+    db.session.delete(education)
+    db.session.commit()
+
+    return jsonify({"deleted": f"Education '{education.rank}' was deleted successfully"}), 200 

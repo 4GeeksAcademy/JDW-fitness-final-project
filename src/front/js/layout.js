@@ -22,6 +22,10 @@ import { Experience } from "./pages/experience";
 import { AddExperience } from "./pages/addExperience";
 import { UpdateExperience } from "./pages/updateExperience";
 import { SingleExperience } from "./pages/singleExperience";
+import { Education } from "./pages/education";
+import { AddEducation } from "./pages/addEducation";
+import { UpdateEducation } from "./pages/updateEducation";
+import { SingleEducation } from "./pages/singleEducation";
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -59,7 +63,11 @@ const Layout = () => {
                         <Route element={<Experience />} path="/experience" />
                         <Route element={<SingleExperience />} path="/experience/:experienceID" />
                         <Route element={<AddExperience />} path="/experience/add" />
-                        <Route element={<UpdateExperience />} path="/experience/update/:experienceID" />
+                        <Route element={<UpdateExperience />} path="/experience/update/:experienceID" />  
+                        <Route element={<Education />} path="/education" />
+                        <Route element={<SingleEducation />} path="/education/:educationID" />
+                        <Route element={<AddEducation />} path="/education/add" />
+                        <Route element={<UpdateEducation />} path="/education/update/:educationID" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />

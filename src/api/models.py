@@ -69,5 +69,17 @@ class Experience(db.Model):
         return {
             "id": self.id,
             "time": self.time,
+        }      
+
+class Education(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    rank = db.Column(db.String(120), unique=False, nullable=False)
+
+    def __repr__(self):
+        return f'<Education {self.id}>'
+    def serialize(self):
+        return {
+            "id": self.id,
+            "rank": self.rank,
         }
 

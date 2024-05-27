@@ -23,7 +23,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			diseasesToEdit:{},
 			singleDiseases: {},
       experience: [],
-			singleExperience: {},   
+			singleExperience: {},
+      education: [],
+			singleEducation: {},   
 		},
 
 		actions: {
@@ -155,14 +157,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then( setStore({ goalToUpdate: {} }))
 					.then(() => getActions().getGoals())
 			},
-        
+      
       // DISEASES
       getDiseases: () => {
          fetch(process.env.BACKEND_URL + "/api/diseases")
          .then((response) => response.json())
          .then((data) => setStore({ diseases: data }));
       },
-
 			getSingleDiseases: (diseasesID) => {
 				fetch(process.env.BACKEND_URL + `/api/diseases/${diseasesID}`)
 				.then( (response) => response.json())
@@ -207,9 +208,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},	  
      deleteSingleDisease: () => {
 			setStore({ singleDisease: {} });
-		  },         
-    
-    // EXPERIENCE
+		  },  
+
+      // EXPERIENCE
 			getExperience: () => {
 				fetch(process.env.BACKEND_URL + "/api/experience")
 				.then( (response) => response.json())
@@ -225,7 +226,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ 
-						"time": time,
+            	"time": time,
 					})
 				};
 				fetch(process.env.BACKEND_URL + "/api/experience", requestOptions)
@@ -252,8 +253,53 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(response => response.json())
 					.then(() => getActions().getExperience())
 					.then( setStore({ singleExperience: {} }))
-			},    
+			},      
         
+			// EDUCATION
+			getEducation: () => {
+				fetch(process.env.BACKEND_URL + "/api/education")
+				.then( (response) => response.json())
+				.then( data => setStore({ education: data }))	
+			},
+			getSingleEducation: (educationID) => {
+				fetch(process.env.BACKEND_URL + `/api/education/${educationID}`)
+				.then( (response) => response.json())
+				.then( data => setStore({ singleEducation: data }))	
+			},
+			addEducationAPI: (rank) => {
+        const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+            "rank": rank,
+					})
+				};
+				fetch(process.env.BACKEND_URL + "/api/education", requestOptions)
+				.then(response => response.json())
+				.then(() => getActions().getEducation())
+			},
+			deleteEducation: (educationID) => {
+				fetch(process.env.BACKEND_URL + `/api/education/${educationID}`, { method: 'DELETE' })
+				.then( () => getActions().getEducation())
+			},
+			updateEducation: (educationID) => {
+				const educationSelected = getStore().education.find(element => element.id === educationID)
+				setStore({ singleEducation: educationSelected })
+			},
+			updateEducationAPI: (rank, educationID) => {
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"rank": rank,
+					 })
+				};
+				fetch(process.env.BACKEND_URL + `/api/education/${educationID}`, requestOptions)
+					.then(response => response.json())
+					.then(() => getActions().getEducation())
+					.then( setStore({ singleEducation: {} }))
+			},
+     
       loadBeginning: () => {
         getActions().getGoals()
         getActions().getDiseases()

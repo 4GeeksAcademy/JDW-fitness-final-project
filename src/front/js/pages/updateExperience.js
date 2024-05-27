@@ -12,7 +12,7 @@ export const UpdateExperience = () => {
 
     useEffect(() => {
         actions.getSingleExperience(experienceID);
-    }, [experienceID, actions]);
+    }, []);
 
     useEffect(() => {
         if (store.singleExperience && !time) {

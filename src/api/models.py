@@ -35,7 +35,7 @@ class Availability(db.Model):
       
 class Goals(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    kind = db.Column(db.String(120), unique=False, nullable=False)
+    kind = db.Column(db.String(120), unique=True, nullable=False)
     description = db.Column(db.String(180), unique=False, nullable=True)
 
     def __repr__(self):
@@ -48,7 +48,18 @@ class Goals(db.Model):
             "description": self.description
           }
 
+class Activity_Frequency(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    mode = db.Column(db.String(120), unique=True)
 
+    def __repr__(self):
+        return f'<Activity_Frequency {self.mode}>'
+      
+    def serialize(self):
+        return {
+            "id": self.id,
+            "mode": self.mode,
+          }
 
 
        

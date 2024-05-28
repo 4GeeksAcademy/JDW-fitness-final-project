@@ -14,6 +14,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
+			clients: [],
+			singleClient: {},
+			errorClient: undefined,
 			availability: [],
 			singleAvailability: {}, 
       		goals: [],
@@ -59,7 +62,54 @@ const getState = ({ getStore, getActions, setStore }) => {
 				//reset the global store
 				setStore({ demo: demo });
 			},
-      
+
+	// COACH
+	getClients: () => {
+		fetch(process.env.BACKEND_URL + "/api/client")
+		.then( (response) => response.json())
+		.then( data => setStore({ clients: data }))	
+	  },
+	getSingleCoach: (clientID) => {
+		fetch(process.env.BACKEND_URL + `/api/client/${clientID}`)
+		.then( (response) => response.json())
+		.then( data => setStore({ singleClient: data }))	
+	},
+	clientSignUp: (email, username, password, firstName,lastName,age,height,weight,gender,physicalHabits,activityFrequencyID) => {
+		const requestBody = {
+			"username": username,
+			"email": email,
+			"password": password,
+		};
+	
+		if (firstName) {
+			requestBody["first_name"] = firstName;
+		}
+		if (lastName) {
+			requestBody["last_name"] = lastName;
+		}
+		if (activityFrequencyID !== 0) {
+			requestBody["activity_frequency_id"] = activityFrequencyID;
+		}
+	
+		const requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(requestBody)
+		};
+		fetch(process.env.BACKEND_URL + "/api/client/signup", requestOptions)
+		.then(response => {
+			if(response.status == 200) {
+				setStore({ errorClient: undefined })
+			}
+			return response.json()
+		})
+		.then(data => {
+			if(data.error) {
+				setStore({ errorClient: data.error })
+			}
+		})
+	},
+			
       // AVAILABILITY
       getAvailability: () => {
 				fetch(process.env.BACKEND_URL + "/api/availability")

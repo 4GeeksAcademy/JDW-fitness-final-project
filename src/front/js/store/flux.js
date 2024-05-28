@@ -14,6 +14,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
+			coaches: [],
+			singleCoach: {},
 			availability: [],
 			singleAvailability: {}, 
       		goals: [],
@@ -59,13 +61,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 				//reset the global store
 				setStore({ demo: demo });
 			},
-      
-      // AVAILABILITY
-      getAvailability: () => {
+            // COACH
+			getCoaches: () => {
+				fetch(process.env.BACKEND_URL + "/api/coach")
+				.then( (response) => response.json())
+				.then( data => setStore({ coaches: data }))	
+      		},
+			getSingleCoach: (coachID) => {
+				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`)
+				.then( (response) => response.json())
+				.then( data => setStore({ singleCoach: data }))	
+			},
+      		// AVAILABILITY
+      		getAvailability: () => {
 				fetch(process.env.BACKEND_URL + "/api/availability")
 				.then( (response) => response.json())
 				.then( data => setStore({ availability: data }))	
-      },
+      		},
 			getSingleAvailability: (availabilityID) => {
 				fetch(process.env.BACKEND_URL + `/api/availability/${availabilityID}`)
 				.then( (response) => response.json())

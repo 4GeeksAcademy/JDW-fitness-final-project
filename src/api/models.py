@@ -64,7 +64,7 @@ class Experience(db.Model):
     time = db.Column(db.String(120), unique=True, nullable=False)
     
     def __repr__(self):
-        return f'<Experience {self.id}>'
+        return f'<Experience {self.time}>'
     def serialize(self):
         return {
             "id": self.id,
@@ -76,7 +76,7 @@ class Education(db.Model):
     rank = db.Column(db.String(120), unique=False, nullable=False)
 
     def __repr__(self):
-        return f'<Education {self.id}>'
+        return f'<Education {self.rank}>'
     def serialize(self):
         return {
             "id": self.id,

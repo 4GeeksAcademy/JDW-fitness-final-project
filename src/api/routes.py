@@ -356,7 +356,7 @@ def get_coach(coach_id):
     coach = Coach.query.filter_by(id=coach_id).first()
     return jsonify(coach.serialize()), 200
 
-@api.route('/coach', methods=['POST'])
+@api.route('/coach/signup', methods=['POST'])
 def add_coach():
     coach_data = request.json
     required_properties = ["username", "email", "password"]
@@ -364,8 +364,20 @@ def add_coach():
     for prop in required_properties:
         if prop not in coach_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
     
-    for key in coach_data:
+    for key in required_properties:
         if coach_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+
+    existing_username = Coach.query.filter_by(username=coach_data["username"]).first()
+    existing_email = Coach.query.filter_by(email=coach_data["email"]).first()
+
+    if existing_username:
+        serialized_existing_username = existing_username.serialize()
+        return jsonify({"error": f"The username '{serialized_existing_username['username']}' already exists in the database"}), 400
+
+    if existing_email:
+        serialized_existing_email = existing_email.serialize()
+        return jsonify({"error": f"The email '{serialized_existing_email['email']}' already exists in the database"}), 400
+
 
     coach_to_add = Coach(**coach_data)
     db.session.add(coach_to_add)

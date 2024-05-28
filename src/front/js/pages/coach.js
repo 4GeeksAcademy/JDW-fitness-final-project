@@ -9,13 +9,13 @@ export const Coach = () => {
 
 	useEffect(() => {
         actions.getCoaches()
-    },[]);
+    },[store.coaches]);
 
 	return (
 		<div className="container">
 			<div className="d-grid">
 				<h1 className="text-center mt-3">Coach List</h1>
-				<Link to="/coach/add" className="ms-auto my-1">
+				<Link to="/coach/signup" className="ms-auto my-1">
 					<button className="btn btn-warning fw-bold">Sign up</button>
 				</Link>
 			</div>

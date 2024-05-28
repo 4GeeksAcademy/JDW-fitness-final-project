@@ -84,6 +84,7 @@ class Education(db.Model):
         } 
 
 class Activity_Frequency(db.Model):
+    __tablename__ = 'activity_frequency'
     id = db.Column(db.Integer, primary_key=True)
     mode = db.Column(db.String(120), unique=True)
 
@@ -93,4 +94,38 @@ class Activity_Frequency(db.Model):
         return {
             "id": self.id,
             "mode": self.mode,
+          }
+class Client(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    username = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(80), unique=False, nullable=False)
+    first_name = db.Column(db.String(120), unique=False, nullable=True)
+    last_name = db.Column(db.String(120), unique=False, nullable=True)
+    age = db.Column(db.Integer, unique=False, nullable=True)
+    height = db.Column(db.Integer, unique=False, nullable=True)
+    weight = db.Column(db.Integer, unique=False, nullable=True)
+    gender = db.Column(db.String(120), unique=False, nullable=True)
+    # Cambiar a valor unique = True de momento dejarlo así
+    physical_habits = db.Column(db.String(120), unique=False, nullable=True)
+    # Cambiar a valor unique true como el anterior
+    activity_frequency_id = db.Column(db.Integer, db.ForeignKey('activity_frequency.id'))
+    activity_frequency = db.relationship('Activity_Frequency', backref='clients') 
+# El backref nos permitirá en el futuro acceder a todos los clientes que existan en client y tengan una activity_frequency determinada
+    
+    def __repr__(self):
+        return f'<Client {self.id}>'  
+    def serialize(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "username": self.username,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "age": self.age,
+            "height": self.height,
+            "weight": self.weight,
+            "gender": self.gender,
+            "physical_habits": self.physical_habits,
+            "activity_frequency_id": self.activity_frequency_id,
           }

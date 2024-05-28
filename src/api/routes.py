@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Availability, Goals, Diseases, Experience, Education, Activity_Frequency
+from api.models import db, User, Availability, Goals, Diseases, Experience, Education, Activity_Frequency, Client
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -342,3 +342,76 @@ def deleteActivityFrequency(activity_id):
     db.session.commit()
 
     return jsonify({"Deleted": f"The activity was deleted"}), 200
+
+# CLIENT ENDPOINTS
+
+@api.route('/client', methods=['POST'])
+def signup_client():
+    client_data = request.json
+    required_properties = ["username", "email", "password"]
+
+    for prop in required_properties:
+        if prop not in client_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
+    
+    for key in client_data:
+        if client_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+
+    existing_username = Client.query.filter_by(username=client_data["username"]).first()
+    existing_email = Client.query.filter_by(email=client_data["email"]).first()
+
+    if existing_username:
+        serialized_existing_username = existing_username.serialize()
+        return jsonify({"error": f"The username '{serialized_existing_username['username']}' already exists in the database"}), 400
+
+    if existing_email:
+        serialized_existing_email = existing_email.serialize()
+        return jsonify({"error": f"The email '{serialized_existing_email['email']}' already exists in the database"}), 400
+
+
+    client_to_add = Client(**client_data)
+    db.session.add(client_to_add)
+    db.session.commit()
+
+    return jsonify(client_to_add.serialize()), 200
+
+@api.route('/client/<int:client_id>', methods=['PUT'])
+def update_client(client_id):
+    client_data = request.json
+    required_properties = ["username", "email", "password"]
+
+    for prop in required_properties:
+        if prop not in client_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
+    
+    for key in client_data:
+        if client_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+
+    existing_username = Client.query.filter_by(username=client_data["username"]).first()
+    existing_email = Client.query.filter_by(email=client_data["email"]).first()
+
+    if existing_username:
+        serialized_existing_username = existing_username.serialize()
+        return jsonify({"error": f"The username '{serialized_existing_username['username']}' already exists in the database"}), 400
+
+    if existing_email:
+        serialized_existing_email = existing_email.serialize()
+        return jsonify({"error": f"The email '{serialized_existing_email['email']}' already exists in the database"}), 400
+
+@api.route('/client/<int:client_id>', methods=['DELETE'])
+def del_client(client_id):
+    client = Client.query.get(client_id)
+    if not client: return jsonify({"error": f"The ID '{client_id}' was not found in client"}), 400
+    db.session.delete(client)
+    db.session.commit()
+
+    return jsonify({"deleted": f"Client '{client.username}' was deleted successfully"}), 200
+@api.route('/client', methods=['GET'])
+def get_clients():
+    clients = Client.query.all()
+    clients_list = list(map(lambda prop: prop.serialize(),clients))
+
+    return jsonify(clients_list), 200
+
+@api.route('/client/<int:client_id>', methods=['GET'])
+def get_client(client_id):
+    client = Client.query.filter_by(id=client_id).first()
+    return jsonify(client.serialize()), 200

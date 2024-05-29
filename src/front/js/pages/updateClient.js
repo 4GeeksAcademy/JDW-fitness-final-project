@@ -168,7 +168,7 @@ export const UpdateClient = () => {
                 <div className="d-flex justify-content-center">
                     <button type="submit" className="btn btn-warning fw-bold mt-2" onClick={updateClient}>Save changes</button>
                     <Link to="/client">
-                        <button className="btn btn-primary ms-3 fw-bold mt-2" >Back to Client list</button>
+                        <button className="btn btn-primary ms-3 fw-bold mt-2" >Back to Client list.</button>
                     </Link>
                 </div>
             </form>

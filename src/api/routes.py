@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
 
-from api.models import db, User, Availability, Goals, Availability_client, Client
+from api.models import db, User, Availability, Goals, Availability_client, Client, Coach, Availability_coach
 
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
@@ -184,3 +184,13 @@ def add_availability_client():
     }
     
     return jsonify(response_body), 201
+
+
+    # ENDPOINT GET AVAILABLE_COACH  
+
+@api.route('/availability_coach', methods=['GET'])
+def get_availability_coach():
+    all_availablity_coach=Availability_coach.query.all()
+    results = list(map(lambda availability_coach: availability_coach.serialize(), all_availablity_coach))
+    return jsonify(results), 200
+

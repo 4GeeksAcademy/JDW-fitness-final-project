@@ -345,7 +345,7 @@ def deleteActivityFrequency(activity_id):
 
 # CLIENT ENDPOINTS
 
-@api.route('/client', methods=['POST'])
+@api.route('/client/signup', methods=['POST'])
 def signup_client():
     client_data = request.json
     required_properties = ["username", "email", "password"]

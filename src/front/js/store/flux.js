@@ -63,14 +63,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ demo: demo });
 			},
 
-	// COACH
+	// CLIENT
 	getClients: () => {
 		fetch(process.env.BACKEND_URL + "/api/client")
 		.then( (response) => response.json())
 		.then( data => setStore({ clients: data }))	
 	  },
-	getSingleCoach: (clientID) => {
-		fetch(process.env.BACKEND_URL + `/api/client/${clientID}`)
+	getSingleClient: (clientID) => {
+		fetch(process.env.BACKEND_URL + `api/client/${clientID}`)
 		.then( (response) => response.json())
 		.then( data => setStore({ singleClient: data }))	
 	},
@@ -86,6 +86,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 		}
 		if (lastName) {
 			requestBody["last_name"] = lastName;
+		}
+		if (age) {
+			requestBody["age"] = age;
+		}
+		if (height) {
+			requestBody["height"] = height;
+		}
+		if (weight) {
+			requestBody["weight"] = weight;
+		}
+		if (gender) {
+			requestBody["gender"] = gender;
+		}
+		if (physicalHabits) {
+			requestBody["physical_habits"] = physicalHabits;
 		}
 		if (activityFrequencyID !== 0) {
 			requestBody["activity_frequency_id"] = activityFrequencyID;
@@ -108,6 +123,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ errorClient: data.error })
 			}
 		})
+	},
+	deleteClient: (clientID) => {
+		fetch(process.env.BACKEND_URL + `/api/client/${clientID}`, { method: 'DELETE' })
+		.then( () => getActions().getClients())
 	},
 			
       // AVAILABILITY

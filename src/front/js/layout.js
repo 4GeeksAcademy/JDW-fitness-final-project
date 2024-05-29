@@ -28,6 +28,9 @@ import { ActivityFrequency } from "./pages/activityFrequency";
 import { AddActivity } from "./pages/addActivity";
 import { UpdateActivity } from "./pages/updateActivity";
 import { SingleActivity } from "./pages/singleActivity";
+import { Client } from "./pages/client";
+import { SingleClient } from "./pages/singleClient";
+import { AddClient } from "./pages/addClient";
 
 import injectContext from "./store/appContext";
 
@@ -80,6 +83,12 @@ const Layout = () => {
                         <Route element={<UpdateActivity />} path="/activities/update/:activityID" />
                         <Route element={<SingleActivity />} path="/activities/:activityID" />
                         <Route element={<h1>Not found!</h1>} />
+                        {/* CLIENT PATH */}
+                        <Route element={<Client />} path="/client" />
+                        <Route element={<SingleClient />} path="/client/:clientID" />
+                        <Route element={<AddClient />} path="/client/signup" />
+
+
                     </Routes>
                     <Footer />
                 </ScrollToTop>

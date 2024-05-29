@@ -393,7 +393,7 @@ def update_coach(coach_id):
     for prop in required_properties:
         if prop not in coach_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
     
-    for key in coach_data:
+    for key in required_properties:
         if coach_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
 
     coach = Coach.query.get(coach_id)

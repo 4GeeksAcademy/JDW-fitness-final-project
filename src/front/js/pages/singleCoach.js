@@ -12,23 +12,26 @@ export const SingleCoach = () => {
     
     useEffect(() => {
         actions.getSingleCoach(coachID);
-        if (store.singleCoach.education_id) {
-            actions.getSingleEducation(store.singleCoach.education_id);
-        }
-        if (store.singleCoach.experience_id) {
-            actions.getSingleExperience(store.singleCoach.experience_id);
-        }
-    }, []);
-    
-    useEffect(() => {
-        if (store.singleEducation && store.singleExperience) {
-            setEducation(store.singleEducation.rank || "")
-            setExperience(store.singleExperience.time || "")
-        }
-    }, [store.singleEducation, store.singleExperience]);
+    }, [coachID]);
 
-    console.log(store.singleEducation);
-    console.log(store.singleExperience);
+    useEffect(() => {
+        if (store.singleCoach) {
+            if (store.singleCoach.education_id) actions.getSingleEducation(store.singleCoach.education_id);
+            else setEducation("");
+
+            if (store.singleCoach.experience_id) actions.getSingleExperience(store.singleCoach.experience_id);
+            else  setExperience("");
+        }
+    }, [store.singleCoach]);
+
+    useEffect(() => {
+        if (store.singleCoach.education_id) setEducation(store.singleEducation.rank);
+    }, [store.singleEducation]);
+
+    useEffect(() => {
+        if (store.singleCoach.experience_id) setExperience(store.singleExperience.time);
+    }, [store.singleExperience]);
+
 	return (
 		<div className="container mt-3">
             <h3 className="mb-2">Coach: {store.singleCoach.username}</h3>

@@ -11,9 +11,7 @@ export const UpdateCoach = () => {
     const [password, setPassword] = useState("")
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
-    const [selectedEducation, setSelectedEducation] = useState("Education");
     const [educationID, setEducationID] = useState(0)
-    const [selectedExperience, setSelectedExperience] = useState("Experience");
     const [experienceID, setExperienceID] = useState(0)
     const [showPassword, setShowPassword] = useState(false)
     const { coachID } = useParams();
@@ -31,6 +29,8 @@ export const UpdateCoach = () => {
             setPassword(store.singleCoach.password || "");
             setFirstName(store.singleCoach.first_name || "");
             setLastName(store.singleCoach.last_name || "");
+            setEducationID(store.singleCoach.education_id || 0);
+            setExperienceID(store.singleCoach.experience_id || 0);
         }
     }, [store.singleCoach]);
 
@@ -98,7 +98,8 @@ export const UpdateCoach = () => {
                     placeholder="Last Name"
                     />
                 </div>
-                <select value={educationID !== 0 ? educationID : "Select your education"} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onChange={(e) => setEducationID(e.target.value)}>
+                <select value={educationID} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onChange={(e) => setEducationID(e.target.value)}>
+                    {educationID == 0 && <option defaultValue>Select your education</option>}
                     {store.education.map((element, index) => (
                             <option key={index} value={element.id}>
                                     {element.rank}
@@ -106,6 +107,7 @@ export const UpdateCoach = () => {
                     ))}
                 </select>
                 <select value={experienceID} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onChange={(e) => setExperienceID(e.target.value)}>
+                    {experienceID == 0 && <option defaultValue>Select your experience</option>}  
                     {store.experience.map((element, index) => (
                             <option key={index} value={element.id}>
                                     {element.time}

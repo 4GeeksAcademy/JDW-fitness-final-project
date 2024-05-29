@@ -69,12 +69,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 		.then( (response) => response.json())
 		.then( data => setStore({ clients: data }))	
 	  },
-	getSingleClient: (clientID) => {
-		fetch(process.env.BACKEND_URL + `api/client/${clientID}`)
-		.then( (response) => response.json())
-		.then( data => setStore({ singleClient: data }))	
+	  getSingleClient: async (clientID) => {
+		try {
+			const response = await fetch(process.env.BACKEND_URL + `api/client/${clientID}`);
+			const data = await response.json();
+			setStore({ singleClient: data });
+		} catch (error) {
+			console.error("Error fetching single client:", error);
+		}
 	},
-	clientSignUp: (email, username, password, firstName,lastName,age,height,weight,gender,physicalHabits,activityFrequencyID) => {
+	clientSignUp: (username, email, password, firstName,lastName,age,height,weight,gender,physicalHabits,activityFrequencyID) => {
 		const requestBody = {
 			"username": username,
 			"email": email,
@@ -128,7 +132,56 @@ const getState = ({ getStore, getActions, setStore }) => {
 		fetch(process.env.BACKEND_URL + `/api/client/${clientID}`, { method: 'DELETE' })
 		.then( () => getActions().getClients())
 	},
-			
+	updateClientAPI: (username, email, password, firstName,lastName,age,height,weight,gender,physicalHabits,activityFrequencyID,clientID) => {
+		const requestBody = {
+			"username": username,
+			"email": email,
+			"password": password,
+		};
+	
+		if (firstName) {
+			requestBody["first_name"] = firstName;
+		}
+		if (lastName) {
+			requestBody["last_name"] = lastName;
+		}
+		if (age) {
+			requestBody["age"] = age;
+		}
+		if (height) {
+			requestBody["height"] = height;
+		}
+		if (weight) {
+			requestBody["weight"] = weight;
+		}
+		if (gender) {
+			requestBody["gender"] = gender;
+		}
+		if (physicalHabits) {
+			requestBody["physical_habits"] = physicalHabits;
+		}
+		if (activityFrequencyID !== 0) {
+			requestBody["activity_frequency_id"] = activityFrequencyID;
+		}
+	
+		const requestOptions = {
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(requestBody)
+		};
+		fetch(process.env.BACKEND_URL + `api/client/${clientID}`, requestOptions)
+		.then(response => {
+			if(response.status == 200) {
+				setStore({ errorClient: undefined })
+			}
+			return response.json()
+		})
+		.then(data => {
+			if(data.error) {
+				setStore({ errorClient: data.error })
+			}
+		})
+	},
       // AVAILABILITY
       getAvailability: () => {
 				fetch(process.env.BACKEND_URL + "/api/availability")
@@ -374,10 +427,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then( (response) => response.json())
 				.then( data => setStore({ activities: data }))	
 			},
-			getSingleActivityFrequency: (activityFrequencyID) => {
-				fetch(process.env.BACKEND_URL + `api/activities/${activityFrequencyID}`)
-				.then( (response) => response.json())
-				.then( data => setStore({ singleActivityFrequency: data }))	
+			getSingleActivityFrequency: async (activityFrequencyID) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `api/activities/${activityFrequencyID}`);
+					const data = await response.json();
+					setStore({ singleActivityFrequency: data });
+				} catch (error) {
+					console.error("Error fetching activity frequency:", error);
+				}
 			},
 			deleteSingleActivityFrequency: () => {
 				setStore({ singleActivityFrequency: {} })

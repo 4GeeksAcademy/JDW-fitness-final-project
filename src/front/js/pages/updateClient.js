@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
-export const AddClient = () => {
+export const UpdateClient = () => {
 	const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const [username, setUsername] = useState("")
@@ -18,20 +18,38 @@ export const AddClient = () => {
     const [physicalHabits, setPhysicalHabits] = useState("");
     const [activityFrequencyID, setActivityFrequencyID] = useState(0)
     const [showPassword, setShowPassword] = useState(false)
+    const {clientID} = useParams();
     
     useEffect(() => {
         actions.getActivityFrequency()
+        actions.getSingleClient(clientID);
+
     },[])
 
-    function addClient(e) {
+    useEffect(() => {
+        if (store.singleClient && !username && !email && !password && !firstName && !lastName) {
+            setUsername(store.singleClient.username || "");
+            setEmail(store.singleClient.email || "");
+            setPassword(store.singleClient.password || "");
+            setFirstName(store.singleClient.first_name || "");
+            setLastName(store.singleClient.last_name || "");
+            setAge(store.singleClient.age || "");
+            setHeight(store.singleClient.height || "");
+            setWeight(store.singleClient.weight || "");
+            setGender(store.singleClient.gender || "");
+            setPhysicalHabits(store.singleClient.physical_habits || "");
+        }
+    }, [store.singleClient]);
+
+    function updateClient(e) {
         e.preventDefault()
-		actions.clientSignUp(username, email, password, firstName, lastName, age, height, weight, gender, physicalHabits, activityFrequencyID)
+		actions.updateClientAPI(username, email, password, firstName,lastName,age,height,weight,gender,physicalHabits,activityFrequencyID,clientID)
         if(username !== "" && email !== "" && password !== "") {
             navigate("/client")
         }
     }
 
-	return (
+    return (
 		<div className="container mt-3">
             <h3 className="text-center mb-2">Client Sign up</h3>
             <form>
@@ -132,8 +150,9 @@ export const AddClient = () => {
                     placeholder="Physical Habits"
                     />
                 </div>
-                <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onChange={(e) => setActivityFrequencyID(e.target.value)}>
-                    <option defaultValue>Select your Activity Frequency</option>
+                <select value={activityFrequencyID} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onChange={(e) => setActivityFrequencyID(e.target.value)}>
+                    {activityFrequencyID == 0 && 
+                    <option defaultValue>Select your activity frequency</option>}  
                     {store.activities.map((element, index) => (
                             <option key={index} value={element.id}>
                                     {element.mode}
@@ -147,7 +166,7 @@ export const AddClient = () => {
                 }
                 </div>
                 <div className="d-flex justify-content-center">
-                    <button type="submit" className="btn btn-warning fw-bold mt-2" onClick={addClient}>Create Client</button>
+                    <button type="submit" className="btn btn-warning fw-bold mt-2" onClick={updateClient}>Save changes</button>
                     <Link to="/client">
                         <button className="btn btn-primary ms-3 fw-bold mt-2" >Back to Client list</button>
                     </Link>

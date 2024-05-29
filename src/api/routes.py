@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Availability, Goals, Diseases, Experience, Education, Activity_Frequency, Client
+from api.models import db, User, Availability, Goals, Diseases, Experience, Education, ActivityFrequency, Client
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -302,20 +302,20 @@ def del_education(education_id):
 # ACTIVITY FREQUENCY ENDPOINTS  
 @api.route('/activities', methods=['GET'])
 def get_activity_frequency():
-    all_activities = Activity_Frequency.query.all()
+    all_activities = ActivityFrequency.query.all()
     results = map(lambda activities: activities.serialize(),all_activities)
 
     return jsonify (list(results)), 200
 
 @api.route('/activities/<int:activity_id>', methods=['GET'])
 def get_singleActivity_frequency(activity_id):
-    activity = Activity_Frequency.query.filter_by(id=activity_id).first()
+    activity = ActivityFrequency.query.filter_by(id=activity_id).first()
     return jsonify(activity.serialize()), 200
 
 @api.route('/activities', methods=['POST'])
 def create_activity_frequency():
     activities_data = request.json
-    activity_to_create = Activity_Frequency(**activities_data)
+    activity_to_create = ActivityFrequency(**activities_data)
 
     db.session.add(activity_to_create)
     db.session.commit()
@@ -325,7 +325,7 @@ def create_activity_frequency():
 @api.route('/activities/<int:activity_id>', methods=['PUT'])
 def updateActivityFrequency(activity_id):
     activity_data = request.json
-    activity = Activity_Frequency.query.get(activity_id)
+    activity = ActivityFrequency.query.get(activity_id)
     if not activity:
         return jsonify({"Error": f"The activity id was not found"}), 400
     
@@ -336,7 +336,7 @@ def updateActivityFrequency(activity_id):
 
 @api.route('/activities/<int:activity_id>', methods=['DELETE'])
 def deleteActivityFrequency(activity_id):
-    activity = Activity_Frequency.query.filter_by(id=activity_id).first()
+    activity = ActivityFrequency.query.filter_by(id=activity_id).first()
 
     db.session.delete(activity)
     db.session.commit()
@@ -353,7 +353,7 @@ def signup_client():
     for prop in required_properties:
         if prop not in client_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
     
-    for key in client_data:
+    for key in required_properties:
         if client_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
 
     existing_username = Client.query.filter_by(username=client_data["username"]).first()
@@ -382,7 +382,7 @@ def update_client(client_id):
     for prop in required_properties:
         if prop not in client_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
     
-    for key in client_data:
+    for key in required_properties:
         if client_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
 
     existing_username = Client.query.filter_by(username=client_data["username"]).first()

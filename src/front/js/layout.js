@@ -31,6 +31,7 @@ import { SingleActivity } from "./pages/singleActivity";
 import { Client } from "./pages/client";
 import { SingleClient } from "./pages/singleClient";
 import { AddClient } from "./pages/addClient";
+import { UpdateClient } from "./pages/updateClient";
 
 import injectContext from "./store/appContext";
 
@@ -87,6 +88,7 @@ const Layout = () => {
                         <Route element={<Client />} path="/client" />
                         <Route element={<SingleClient />} path="/client/:clientID" />
                         <Route element={<AddClient />} path="/client/signup" />
+                        <Route element={<UpdateClient />} path="/client/update/:clientID" />
 
 
                     </Routes>

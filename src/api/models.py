@@ -83,13 +83,12 @@ class Education(db.Model):
             "rank": self.rank,
         } 
 
-class Activity_Frequency(db.Model):
-    __tablename__ = 'activity_frequency'
+class ActivityFrequency(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     mode = db.Column(db.String(120), unique=True)
 
     def __repr__(self):
-        return f'<Activity_Frequency {self.mode}>'  
+        return f'<ActivityFrequency {self.mode}>'  
     def serialize(self):
         return {
             "id": self.id,
@@ -110,7 +109,7 @@ class Client(db.Model):
     physical_habits = db.Column(db.String(120), unique=False, nullable=True)
     # Cambiar a valor unique true como el anterior
     activity_frequency_id = db.Column(db.Integer, db.ForeignKey('activity_frequency.id'))
-    activity_frequency = db.relationship('Activity_Frequency', backref='clients') 
+    activity_frequency = db.relationship('ActivityFrequency', backref='clients') 
 # El backref nos permitirá en el futuro acceder a todos los clientes que existan en client y tengan una activity_frequency determinada
     
     def __repr__(self):

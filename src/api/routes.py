@@ -159,6 +159,37 @@ def get_client_availabilities(availability_client_id):
 
 
 
+# ENDPOINT TO DELETE A SINGLE AVAILABILITY_CLIENT ENTRY
+
+@api.route('/availability_client/<int:id>', methods=['DELETE'])
+def delete_availability_client(id):
+    availability_client = Availability_client.query.get(id)
+    
+    if availability_client is None:
+        return jsonify({'message': 'Availability client entry not found'}), 404
+    
+    db.session.delete(availability_client)
+    db.session.commit()
+    
+    return jsonify({'message': 'Availability client entry deleted successfully'}), 200
+
+# ENDPOINT TO DELETE ALL AVAILABILITY_CLIENT ENTRIES FOR A SPECIFIC CLIENT.
+@api.route('/availability_client/client/<int:client_id>', methods=['DELETE'])
+def delete_all_availability_client_for_client(client_id):
+    availability_clients = Availability_client.query.filter_by(client_id=client_id).all()
+    
+    if not availability_clients:
+        return jsonify({'message': 'No availabilities found for the given client_id'}), 404
+    
+    for availability_client in availability_clients:
+        db.session.delete(availability_client)
+    
+    db.session.commit()
+    
+    return jsonify({'message': 'All availability client entries for the client deleted successfully'}), 200
+
+
+
 
 # Availability_client POST ENDPOINTS
 

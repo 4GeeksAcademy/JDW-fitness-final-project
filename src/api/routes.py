@@ -148,42 +148,39 @@ def get_availability_client():
 @api.route('/availability_client', methods=['POST'])
 def add_availability_client():
     data = request.json
-
-    # Verificación de campos obligatorios
-    if not all(key in data for key in ('email', 'availability_day')):
-        return jsonify({'error': 'Missing fields'}), 400
-
-    # Verificación de email y availability_day no vacíos
-    if not data['email'] or not data['availability_day']:
-        return jsonify({'error': 'Email and Availability Day cannot be empty'}), 400
-
-    # Buscar el cliente por email
+    
+    # Verify required fields
+    required_fields = ['email', 'availability_day']
+    for field in required_fields:
+        if field not in data or not data[field]:
+            return jsonify({'error': f'{field.capitalize()} is required and cannot be empty'}), 400
+    
+    # Customer search
     client = Client.query.filter_by(email=data['email']).first()
     if not client:
         return jsonify({'error': 'Client not found'}), 404
-
-    # Buscar la disponibilidad por día
+    
+    # Search availability
     availability = Availability.query.filter_by(day=data['availability_day']).first()
     if not availability:
         return jsonify({'error': 'Availability not found'}), 404
-
-    # Verificar si ya existe una entrada para el cliente y la disponibilidad
-    existing_entry = Availability_client.query.filter_by(client_id=client.id, availability_id=availability.id).first()
-    if existing_entry:
+    
+    # Check if the relationship already exists
+    if Availability_client.query.filter_by(client_id=client.id, availability_id=availability.id).first():
         return jsonify({'error': 'This availability is already assigned to the client'}), 400
-
-    # Crear nueva entrada en AvailabilityClient
-    availability_client = Availability_client(
+    
+    # Create and save new entry
+    new_availability_client = Availability_client(
         client_id=client.id,
         availability_id=availability.id
     )
-
-    db.session.add(availability_client)
+    db.session.add(new_availability_client)
     db.session.commit()
-
+    
+    # Successful response
     response_body = {
         "msg": "Availability created successfully",
-        "availability_client": availability_client.serialize()
+        "availability_client": new_availability_client.serialize()
     }
-
+    
     return jsonify(response_body), 201

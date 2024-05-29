@@ -5,11 +5,12 @@ import { Context } from "../store/appContext";
 
 export const Coach = () => {
 	const { store, actions } = useContext(Context);
-	let coachID = 0  
+	const [ coachID, setCoachID ] = useState(0)
 
 	useEffect(() => {
         actions.getCoaches()
     },[store.coaches]);
+
 
 	return (
 		<div className="container">
@@ -31,7 +32,7 @@ export const Coach = () => {
 							<Link to={`/coach/${coach.id}`} className="mb-1">
 								<button className="btn btn-info py-0 px-1 ms-auto">show more information</button>					
 							</Link>
-							<button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> coachID = coach.id}>delete</button>
+							<button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> setCoachID(coach.id)}>delete</button>
 						</div>
 						</div>
 					</li>
@@ -46,7 +47,7 @@ export const Coach = () => {
 					</div>
 					<div className="modal-footer">
 						<button type="button" className="btn btn-dark" data-bs-dismiss="modal">Noooo!</button>
-						<button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={()=>actions.deleteEducation(coachID)}>Yes, of course!</button>
+						<button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={()=>actions.deleteCoach(coachID)}>Yes, of course!</button>
 					</div>
 					</div>
 				</div>

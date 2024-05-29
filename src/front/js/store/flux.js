@@ -111,6 +111,48 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				})
 			},
+			deleteCoach: (coachID) => {
+				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, { method: 'DELETE' })
+				.then( () => getActions().getCoaches())
+			},
+			updateCoachAPI: (username, email, password, firstName, lastName, educationID, experienceID, coachID) => {
+				const requestBody = {
+					"username": username,
+					"email": email,
+					"password": password,
+				};
+			
+				if (firstName) {
+					requestBody["first_name"] = firstName;
+				}
+				if (lastName) {
+					requestBody["last_name"] = lastName;
+				}
+				if (educationID !== 0) {
+					requestBody["education_id"] = educationID;
+				}
+				if (experienceID !== 0) {
+					requestBody["experience_id"] = experienceID;
+				}
+			
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(requestBody)
+				};
+				fetch(process.env.BACKEND_URL + `/api/coach/update/${coachID}`, requestOptions)
+				.then(response => {
+					if(response.status == 200) {
+						setStore({ errorCoach: undefined })
+					}
+					return response.json()
+				})
+				.then(data => {
+					if(data.error) {
+						setStore({ errorCoach: data.error })
+					}
+				})
+			},
       		// AVAILABILITY
       		getAvailability: () => {
 				fetch(process.env.BACKEND_URL + "/api/availability")

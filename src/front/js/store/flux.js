@@ -15,7 +15,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			],
 			coaches: [],
-			singleCoach: {},
+			singleCoach: {firstName:""},
 			errorCoach: undefined,
 			availability: [],
 			singleAvailability: {}, 
@@ -140,7 +140,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify(requestBody)
 				};
-				fetch(process.env.BACKEND_URL + `/api/coach/update/${coachID}`, requestOptions)
+				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, requestOptions)
 				.then(response => {
 					if(response.status == 200) {
 						setStore({ errorCoach: undefined })

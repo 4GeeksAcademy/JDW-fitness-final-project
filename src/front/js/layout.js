@@ -31,6 +31,7 @@ import { SingleActivity } from "./pages/singleActivity";
 import { Coach } from "./pages/coach";
 import { SingleCoach } from "./pages/singleCoach";
 import { AddCoach } from "./pages/addCoach";
+import { UpdateCoach } from "./pages/updateCoach";
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -84,7 +85,7 @@ const Layout = () => {
                         {/* COACH PATH */}
                         <Route element={<Coach />} path="/coach" />
                         <Route element={<AddCoach />} path="/coach/signup" />
-                        {/*<Route element={<UpdateCoach />} path="/coach/update/:coachID" /> */}
+                        <Route element={<UpdateCoach />} path="/coach/update/:coachID" />
                         <Route element={<SingleCoach />} path="/coach/:coachID" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>

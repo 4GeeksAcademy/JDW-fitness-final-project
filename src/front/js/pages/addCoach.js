@@ -11,9 +11,7 @@ export const AddCoach = () => {
     const [password, setPassword] = useState("")
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
-    const [selectedEducation, setSelectedEducation] = useState("Education");
     const [educationID, setEducationID] = useState(0)
-    const [selectedExperience, setSelectedExperience] = useState("Experience");
     const [experienceID, setExperienceID] = useState(0)
     const [showPassword, setShowPassword] = useState(false)
     
@@ -22,42 +20,11 @@ export const AddCoach = () => {
         actions.getExperience()
     },[])
 
-    useEffect(() => {
-        const educationsSelected = store.education.find((element) => element.rank === selectedEducation)
-        if (educationsSelected) {
-            setEducationID(educationsSelected.id);
-        } else {
-            setEducationID(0); 
-        }
-    },[selectedEducation])
-
-    useEffect(() => {
-        const experienceselected = store.experience.find((element) => element.time === selectedExperience)
-        if (experienceselected) {
-            setExperienceID(experienceselected.id);
-        } else {
-            setExperienceID(0); 
-        }
-    },[selectedExperience])
-    
-    const handleSelectEducation = (rank) => {
-        setSelectedEducation(rank);
-    };
-
-    const handleSelectExperience = (time) => {
-        setSelectedExperience(time);
-    };
-
 
     function addCoach(e) {
         e.preventDefault()
 		actions.coachSignUp(username, email, password, firstName, lastName, educationID, experienceID)
         if(username !== "" && email !== "" && password !== "") {
-            setUsername("")
-            setEmail("")
-            setPassword("")
-            setFirstName("")
-            setLastName("")
             navigate("/coach")
         }
     }
@@ -118,34 +85,22 @@ export const AddCoach = () => {
                     placeholder="Last Name"
                     />
                 </div>
-                <div className="dropdown col-3 offset-3">
-                    <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {selectedEducation}
-                    </button>
-                    <ul className="dropdown-menu">
-                        {store.education.map((element, index) => (
-                            <li key={index}>
-                                <a className="dropdown-item" href="#" onClick={() => handleSelectEducation(element.rank)}>
+                <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onChange={(e) => setEducationID(e.target.value)}>
+                    <option defaultValue>Select your education</option>
+                    {store.education.map((element, index) => (
+                            <option key={index} value={element.id}>
                                     {element.rank}
-                                </a>
-                            </li>          
-                        ))}
-                    </ul>
-                </div>
-                <div className="dropdown col-3">
-                    <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {selectedExperience}
-                    </button>
-                    <ul className="dropdown-menu">
-                        {store.experience.map((element, index) => (
-                            <li key={index}>
-                                <a className="dropdown-item" href="#" onClick={() => handleSelectExperience(element.time)}>
+                            </option>          
+                    ))}
+                </select>
+                <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onChange={(e) => setExperienceID(e.target.value)}>
+                    <option defaultValue>Select your experience</option>
+                    {store.experience.map((element, index) => (
+                            <option key={index} value={element.id}>
                                     {element.time}
-                                </a>
-                            </li>          
-                        ))}
-                    </ul>
-                </div>
+                            </option>          
+                    ))}
+                </select>
                 {store.errorCoach &&                 
                 <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
                     {store.errorCoach}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
@@ -19,55 +19,25 @@ export const UpdateCoach = () => {
     const { coachID } = useParams();
 
     useEffect(() => {
-        if (store.singleCoach && !username && !email && !password) {
-            setUsername(store.singleCoach.username || "");
-            setEmail(store.singleCoach.email || "");
-            setEmail(store.singleCoach.email || "");
-        }
-    }, [store.singleAvailability]);
-
-    useEffect(() => {
         actions.getEducation()
         actions.getExperience()
         actions.getSingleCoach(coachID);
     },[])
 
     useEffect(() => {
-        const educationsSelected = store.education.find((element) => element.rank === selectedEducation)
-        if (educationsSelected) {
-            setEducationID(educationsSelected.id);
-        } else {
-            setEducationID(0); 
+        if (store.singleCoach && !username && !email && !password && !firstName && !lastName) {
+            setUsername(store.singleCoach.username || "");
+            setEmail(store.singleCoach.email || "");
+            setPassword(store.singleCoach.password || "");
+            setFirstName(store.singleCoach.first_name || "");
+            setLastName(store.singleCoach.last_name || "");
         }
-    },[selectedEducation])
-
-    useEffect(() => {
-        const experienceselected = store.experience.find((element) => element.time === selectedExperience)
-        if (experienceselected) {
-            setExperienceID(experienceselected.id);
-        } else {
-            setExperienceID(0); 
-        }
-    },[selectedExperience])
-    
-    const handleSelectEducation = (rank) => {
-        setSelectedEducation(rank);
-    };
-
-    const handleSelectExperience = (time) => {
-        setSelectedExperience(time);
-    };
-
+    }, [store.singleCoach]);
 
     function updateCoach(e) {
         e.preventDefault()
-		actions.coachSignUp(username, email, password, firstName, lastName, educationID, experienceID)
+		actions.updateCoachAPI(username, email, password, firstName, lastName, educationID, experienceID, coachID)
         if(username !== "" && email !== "" && password !== "") {
-            setUsername("")
-            setEmail("")
-            setPassword("")
-            setFirstName("")
-            setLastName("")
             navigate("/coach")
         }
     }
@@ -128,34 +98,20 @@ export const UpdateCoach = () => {
                     placeholder="Last Name"
                     />
                 </div>
-                <div className="dropdown col-3 offset-3">
-                    <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {selectedEducation}
-                    </button>
-                    <ul className="dropdown-menu">
-                        {store.education.map((element, index) => (
-                            <li key={index}>
-                                <a className="dropdown-item" href="#" onClick={() => handleSelectEducation(element.rank)}>
+                <select value={educationID !== 0 ? educationID : "Select your education"} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onChange={(e) => setEducationID(e.target.value)}>
+                    {store.education.map((element, index) => (
+                            <option key={index} value={element.id}>
                                     {element.rank}
-                                </a>
-                            </li>          
-                        ))}
-                    </ul>
-                </div>
-                <div className="dropdown col-3">
-                    <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        {selectedExperience}
-                    </button>
-                    <ul className="dropdown-menu">
-                        {store.experience.map((element, index) => (
-                            <li key={index}>
-                                <a className="dropdown-item" href="#" onClick={() => handleSelectExperience(element.time)}>
+                            </option>          
+                    ))}
+                </select>
+                <select value={experienceID} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onChange={(e) => setExperienceID(e.target.value)}>
+                    {store.experience.map((element, index) => (
+                            <option key={index} value={element.id}>
                                     {element.time}
-                                </a>
-                            </li>          
-                        ))}
-                    </ul>
-                </div>
+                            </option>          
+                    ))}
+                </select>
                 {store.errorCoach &&                 
                 <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
                     {store.errorCoach}

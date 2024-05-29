@@ -144,6 +144,23 @@ def get_availability_client():
     return jsonify(results), 200 
 
 # Availability_client GET_ID ENDPOINTS
+@api.route('/availability_client/<int:availability_client_id>', methods=['GET'])
+def get_client_availabilities(availability_client_id):
+    # Obtener todas las entradas de Availability_client asociadas con el client_id
+    availability_clients = Availability_client.query.filter_by(client_id=availability_client_id).all()
+    
+    if not availability_clients:
+        return jsonify({'message': 'No availabilities found for the given client_id'}), 404
+    
+    # Serializar cada entrada de Availability_client
+    results = [availability_client.serialize() for availability_client in availability_clients]
+    
+    return jsonify(results), 200
+
+
+
+
+# Availability_client POST ENDPOINTS
 
 @api.route('/availability_client', methods=['POST'])
 def add_availability_client():
@@ -193,4 +210,11 @@ def get_availability_coach():
     all_availablity_coach=Availability_coach.query.all()
     results = list(map(lambda availability_coach: availability_coach.serialize(), all_availablity_coach))
     return jsonify(results), 200
+
+@api.route('/availability_coach/<int:availability_coach_id>', methods=['GET'])
+def get_availability_coach_id(availability_coach_id):
+    availability_coach = Availability_coach.query.filter_by(id=availability_coach_id).first()
+    if availability_coach is None:
+        return jsonify({'message': 'Availability coach_id not found'}), 404
+    return jsonify(availability_coach.serialize()), 200
 

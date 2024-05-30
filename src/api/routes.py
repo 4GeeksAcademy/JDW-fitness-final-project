@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Availability, Goals, Diseases, Experience, Education, Activity_Frequency
+from api.models import db, User, Availability, Goals, Diseases, Experience, Education, Activity_Frequency, Coach
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -342,3 +342,77 @@ def deleteActivityFrequency(activity_id):
     db.session.commit()
 
     return jsonify({"Deleted": f"The activity was deleted"}), 200
+
+# COACH ENDPOINTS
+@api.route('/coach', methods=['GET'])
+def get_coaches():
+    coaches = Coach.query.all()
+    coaches_list = list(map(lambda coach: coach.serialize(),coaches))
+
+    return jsonify(coaches_list), 200
+
+@api.route('/coach/<int:coach_id>', methods=['GET'])
+def get_coach(coach_id):
+    coach = Coach.query.filter_by(id=coach_id).first()
+    return jsonify(coach.serialize()), 200
+
+@api.route('/coach/signup', methods=['POST'])
+def add_coach():
+    coach_data = request.json
+    required_properties = ["username", "email", "password"]
+
+    for prop in required_properties:
+        if prop not in coach_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
+    
+    for key in required_properties:
+        if coach_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+
+    existing_username = Coach.query.filter_by(username=coach_data["username"]).first()
+    existing_email = Coach.query.filter_by(email=coach_data["email"]).first()
+
+    if existing_username:
+        serialized_existing_username = existing_username.serialize()
+        return jsonify({"error": f"The username '{serialized_existing_username['username']}' already exists in the database"}), 400
+
+    if existing_email:
+        serialized_existing_email = existing_email.serialize()
+        return jsonify({"error": f"The email '{serialized_existing_email['email']}' already exists in the database"}), 400
+
+
+    coach_to_add = Coach(**coach_data)
+    db.session.add(coach_to_add)
+    db.session.commit()
+
+    return jsonify(coach_to_add.serialize()), 200
+
+@api.route('/coach/<int:coach_id>', methods=['PUT'])
+def update_coach(coach_id):
+    coach_data = request.json
+    required_properties = ["username", "email", "password"]
+
+    for prop in required_properties:
+        if prop not in coach_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
+    
+    for key in required_properties:
+        if coach_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+
+    coach = Coach.query.get(coach_id)
+
+    if coach is None:
+        return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 400
+
+    for prop in coach_data:
+        setattr(coach, prop, coach_data[prop])
+
+    db.session.commit()
+
+    return jsonify(coach.serialize()), 200
+
+@api.route('/coach/<int:coach_id>', methods=['DELETE'])
+def del_coach(coach_id):
+    coach = Coach.query.get(coach_id)
+    if not coach: return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 400
+    db.session.delete(coach)
+    db.session.commit()
+    
+    return jsonify({"deleted": f"Coach '{coach.username}' with email '{coach.email}' was deleted successfully"}), 200

@@ -14,6 +14,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
+			coaches: [],
+			singleCoach: {firstName:""},
+			errorCoach: undefined,
 			availability: [],
 			singleAvailability: {}, 
       		goals: [],
@@ -59,13 +62,103 @@ const getState = ({ getStore, getActions, setStore }) => {
 				//reset the global store
 				setStore({ demo: demo });
 			},
-      
-      // AVAILABILITY
-      getAvailability: () => {
+            // COACH
+			getCoaches: () => {
+				fetch(process.env.BACKEND_URL + "/api/coach")
+				.then( (response) => response.json())
+				.then( data => setStore({ coaches: data }))	
+      		},
+			getSingleCoach: (coachID) => {
+				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`)
+				.then( (response) => response.json())
+				.then( data => setStore({ singleCoach: data }))	
+			},
+			coachSignUp: (username, email, password, firstName, lastName, educationID, experienceID) => {
+				const requestBody = {
+					"username": username,
+					"email": email,
+					"password": password,
+				};
+			
+				if (firstName) {
+					requestBody["first_name"] = firstName;
+				}
+				if (lastName) {
+					requestBody["last_name"] = lastName;
+				}
+				if (educationID !== 0) {
+					requestBody["education_id"] = educationID;
+				}
+				if (experienceID !== 0) {
+					requestBody["experience_id"] = experienceID;
+				}
+			
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(requestBody)
+				};
+				fetch(process.env.BACKEND_URL + "/api/coach/signup", requestOptions)
+				.then(response => {
+					if(response.status == 200) {
+						setStore({ errorCoach: undefined })
+					}
+					return response.json()
+				})
+				.then(data => {
+					if(data.error) {
+						setStore({ errorCoach: data.error })
+					}
+				})
+			},
+			deleteCoach: (coachID) => {
+				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, { method: 'DELETE' })
+				.then( () => getActions().getCoaches())
+			},
+			updateCoachAPI: (username, email, password, firstName, lastName, educationID, experienceID, coachID) => {
+				const requestBody = {
+					"username": username,
+					"email": email,
+					"password": password,
+				};
+			
+				if (firstName) {
+					requestBody["first_name"] = firstName;
+				}
+				if (lastName) {
+					requestBody["last_name"] = lastName;
+				}
+				if (educationID !== 0) {
+					requestBody["education_id"] = educationID;
+				}
+				if (experienceID !== 0) {
+					requestBody["experience_id"] = experienceID;
+				}
+			
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(requestBody)
+				};
+				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, requestOptions)
+				.then(response => {
+					if(response.status == 200) {
+						setStore({ errorCoach: undefined })
+					}
+					return response.json()
+				})
+				.then(data => {
+					if(data.error) {
+						setStore({ errorCoach: data.error })
+					}
+				})
+			},
+      		// AVAILABILITY
+      		getAvailability: () => {
 				fetch(process.env.BACKEND_URL + "/api/availability")
 				.then( (response) => response.json())
 				.then( data => setStore({ availability: data }))	
-      },
+      		},
 			getSingleAvailability: (availabilityID) => {
 				fetch(process.env.BACKEND_URL + `/api/availability/${availabilityID}`)
 				.then( (response) => response.json())
@@ -301,12 +394,12 @@ const getState = ({ getStore, getActions, setStore }) => {
      
 			// ACTIVITY FREQUENCY
 			getActivityFrequency: () => {
-				fetch(process.env.BACKEND_URL+"api/activities")
+				fetch(process.env.BACKEND_URL+"/api/activities")
 				.then( (response) => response.json())
 				.then( data => setStore({ activities: data }))	
 			},
 			getSingleActivityFrequency: (activityFrequencyID) => {
-				fetch(process.env.BACKEND_URL + `api/activities/${activityFrequencyID}`)
+				fetch(process.env.BACKEND_URL + `/api/activities/${activityFrequencyID}`)
 				.then( (response) => response.json())
 				.then( data => setStore({ singleActivityFrequency: data }))	
 			},
@@ -321,7 +414,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"mode": mode,
 					})
 				};
-				fetch(process.env.BACKEND_URL + "api/activities", requestOptions)
+				fetch(process.env.BACKEND_URL + "/api/activities", requestOptions)
 				.then(response => response.json())
 				.then(()=>getActions().getActivityFrequency())
 			},

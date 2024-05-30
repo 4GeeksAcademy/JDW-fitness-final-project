@@ -384,17 +384,18 @@ def update_client(client_id):
     
     for key in required_properties:
         if client_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+    
+    client = Client.query.get(client_id)
 
-    existing_username = Client.query.filter_by(username=client_data["username"]).first()
-    existing_email = Client.query.filter_by(email=client_data["email"]).first()
+    if client is None:
+        return jsonify({"error": f"The ID '{client_id}' was not found in Clientes"}), 400
 
-    if existing_username:
-        serialized_existing_username = existing_username.serialize()
-        return jsonify({"error": f"The username '{serialized_existing_username['username']}' already exists in the database"}), 400
+    for prop in client_data:
+        setattr(client, prop, client_data[prop])
 
-    if existing_email:
-        serialized_existing_email = existing_email.serialize()
-        return jsonify({"error": f"The email '{serialized_existing_email['email']}' already exists in the database"}), 400
+    db.session.commit()
+
+    return jsonify(client.serialize()), 200
 
 @api.route('/client/<int:client_id>', methods=['DELETE'])
 def del_client(client_id):

@@ -1,68 +1,28 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			],
 			clients: [],
 			singleClient: {},
 			errorClient: undefined,
+			coaches: [],
+			singleCoach: {},
+			errorCoach: undefined,
 			availability: [],
 			singleAvailability: {}, 
-      		goals: [],
+      goals: [],
 			singleGoal:{},
-      		diseases: [],
+      diseases: [],
 			singleDiseases: {},
-      		experience: [],
+      experience: [],
 			singleExperience: {},
-      		education: [],
+      education: [],
 			singleEducation: {},   
-	    	activities: [],
-		  	singleActivityFrequency:{},
+	    activities: [],
+		  singleActivityFrequency:{},
 		},
 
 		actions: {
 			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-			getMessage: async () => {
-				try{
-					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
-					const data = await resp.json()
-					setStore({ message: data.message })
-					// don't forget to return something, that is how the async resolves
-					return data;
-				}catch(error){
-					console.log("Error loading message from backend", error)
-				}
-
-			},
-		changeColor: (index, color) => {
-			//get the store
-			const store = getStore();
-
-			//we have to loop the entire demo array to look for the respective index
-			//and change its color
-			const demo = store.demo.map((elm, i) => {
-				if (i === index) elm.background = color;
-				return elm;
-			});
-				//reset the global store
-				setStore({ demo: demo });
-			},
-
 	// CLIENT
 	getClients: () => {
 		fetch(process.env.BACKEND_URL + "/api/client")
@@ -182,12 +142,105 @@ const getState = ({ getStore, getActions, setStore }) => {
 			}
 		})
 	},
-      // AVAILABILITY
+      
+      // COACH
+			getCoaches: () => {
+				fetch(process.env.BACKEND_URL + "/api/coach")
+				.then( (response) => response.json())
+				.then( data => setStore({ coaches: data }))	
+      		},
+			getSingleCoach: (coachID) => {
+				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`)
+				.then( (response) => response.json())
+				.then( data => setStore({ singleCoach: data }))	
+			},
+			coachSignUp: (username, email, password, firstName, lastName, educationID, experienceID) => {
+				const requestBody = {
+					"username": username,
+					"email": email,
+					"password": password,
+				};
+			
+				if (firstName) {
+					requestBody["first_name"] = firstName;
+				}
+				if (lastName) {
+					requestBody["last_name"] = lastName;
+				}
+				if (educationID !== 0) {
+					requestBody["education_id"] = educationID;
+				}
+				if (experienceID !== 0) {
+					requestBody["experience_id"] = experienceID;
+				}
+			
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(requestBody)
+				};
+				fetch(process.env.BACKEND_URL + "/api/coach/signup", requestOptions)
+				.then(response => {
+					if(response.status == 200) {
+						setStore({ errorCoach: undefined })
+					}
+					return response.json()
+				})
+				.then(data => {
+					if(data.error) {
+						setStore({ errorCoach: data.error })
+					}
+				})
+			},
+			deleteCoach: (coachID) => {
+				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, { method: 'DELETE' })
+				.then( () => getActions().getCoaches())
+			},
+			updateCoachAPI: (username, email, password, firstName, lastName, educationID, experienceID, coachID) => {
+				const requestBody = {
+					"username": username,
+					"email": email,
+					"password": password,
+				};
+			
+				if (firstName) {
+					requestBody["first_name"] = firstName;
+				}
+				if (lastName) {
+					requestBody["last_name"] = lastName;
+				}
+				if (educationID !== 0) {
+					requestBody["education_id"] = educationID;
+				}
+				if (experienceID !== 0) {
+					requestBody["experience_id"] = experienceID;
+				}
+			
+				const requestOptions = {
+					method: 'PUT',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(requestBody)
+				};
+				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, requestOptions)
+				.then(response => {
+					if(response.status == 200) {
+						setStore({ errorCoach: undefined })
+					}
+					return response.json()
+				})
+				.then(data => {
+					if(data.error) {
+						setStore({ errorCoach: data.error })
+					}
+				})
+			},
+        
+      		// AVAILABILITY
       getAvailability: () => {
 				fetch(process.env.BACKEND_URL + "/api/availability")
 				.then( (response) => response.json())
 				.then( data => setStore({ availability: data }))	
-      },
+      		},
 			getSingleAvailability: (availabilityID) => {
 				fetch(process.env.BACKEND_URL + `/api/availability/${availabilityID}`)
 				.then( (response) => response.json())
@@ -423,7 +476,7 @@ const getState = ({ getStore, getActions, setStore }) => {
      
 			// ACTIVITY FREQUENCY
 			getActivityFrequency: () => {
-				fetch(process.env.BACKEND_URL+"api/activities")
+				fetch(process.env.BACKEND_URL+"/api/activities")
 				.then( (response) => response.json())
 				.then( data => setStore({ activities: data }))	
 			},
@@ -435,10 +488,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.error("Error fetching activity frequency:", error);
 				}
-			},
-			deleteSingleActivityFrequency: () => {
-				setStore({ singleActivityFrequency: {} })
-			},
 			createActivityFrequency: (mode) => {
 				const requestOptions = {
 					method: 'POST',
@@ -447,21 +496,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"mode": mode,
 					})
 				};
-				fetch(process.env.BACKEND_URL + "api/activities", requestOptions)
+				fetch(process.env.BACKEND_URL + "/api/activities", requestOptions)
 				.then(response => response.json())
 				.then(()=>getActions().getActivityFrequency())
 			},
-			
 			deleteActivityFrequency: (idToDelete) => {
 				fetch(`${process.env.BACKEND_URL}/api/activities/${idToDelete}`, { method: 'DELETE' })
 				.then(()=>getActions().getActivityFrequency())
 			},
-			
 			updateActivityFrequency: (iDSelected) => {
 				const activityFrequencySelected = getStore().activities.find(activityFrequency => activityFrequency.id === iDSelected)
 				setStore({ singleActivityFrequency: activityFrequencySelected })
 			},
-			
 			updateActivityFrequencyAPI: (mode, idToEdit) => {
 				const requestOptions = {
 					method: 'PUT',
@@ -475,7 +521,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then( setStore({ singleActivityFrequency: {} }))
 				.then(() => getActions().getActivityFrequency())
 			},
-
       loadBeginning: () => {
 
 		  },    

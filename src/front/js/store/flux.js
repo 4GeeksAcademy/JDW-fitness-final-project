@@ -195,7 +195,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				})
 			},
-			coachLogin: (email, password) => {
+			coachLogin: async (email, password) => {
 				const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
@@ -204,25 +204,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"password": password 
 					})
 				};
-				fetch(process.env.BACKEND_URL + "/api/coach/login", requestOptions)
-					.then(response => {
-						if(response.status == 200) {
-							setStore({ authCoach: true })
-							setStore({ errorCoach: undefined })
-							getActions().getCoaches()
-							const loggedCoach = getStore().coaches.find((coach) => coach.email == email)
-							localStorage.setItem("loggedCoach", loggedCoach.username)
+			
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/coach/login", requestOptions);
+					const data = await response.json();
+			
+					if (response.status === 200) {
+						setStore({ authCoach: true });
+						setStore({ errorCoach: undefined });
+						await getActions().getCoaches();
+			
+						const loggedCoach = getStore().coaches.find(coach => coach.email === email);
+						// localStorage.setItem("loggedCoach", loggedCoach.username);
+			
+						if (data.access_coach_token) {
+							localStorage.setItem("token_coach", data.access_coach_token);
 						}
-						return response.json()
-					})
-					.then(data => {
-						if(data.error) {
-							setStore({ errorCoach: data.error })
-						}
-						if(data.access_coach_token) {
-							localStorage.setItem("token_coach", data.access_coach_token)
-						}
-					});
+					} else {
+						setStore({ errorCoach: data.error });
+					}
+				} catch (error) {
+					setStore({ errorCoach: "An error occurred during login. Please try again." });
+					console.error("Error during coach login:", error);
+				}
 			},
 			logoutCoach: () => {
 				localStorage.removeItem("token_coach");
@@ -531,6 +535,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.error("Error fetching activity frequency:", error);
 				}
+			},
 			createActivityFrequency: (mode) => {
 				const requestOptions = {
 					method: 'POST',

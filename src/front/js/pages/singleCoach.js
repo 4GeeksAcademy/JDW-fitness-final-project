@@ -54,6 +54,11 @@ export const SingleCoach = () => {
                     {experience}
                 </li>
             </ul>
+            {store.errorCoach &&                 
+                <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
+                    {store.errorCoach}
+                </div>
+                }
             <Link to={`/coach/update/${coachID}`} className="ms-auto my-1">
 					<button className="btn btn-secondary py-0 px-1 ms-auto" >Update</button>					
 			</Link>

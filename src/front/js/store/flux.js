@@ -17,6 +17,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			coaches: [],
 			singleCoach: {firstName:""},
 			errorCoach: undefined,
+			authCoach: false,
 			availability: [],
 			singleAvailability: {}, 
       		goals: [],
@@ -110,6 +111,40 @@ const getState = ({ getStore, getActions, setStore }) => {
 						setStore({ errorCoach: data.error })
 					}
 				})
+			},
+			coachLogin: (email, password) => {
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"email": email,
+						"password": password 
+					})
+				};
+				fetch(process.env.BACKEND_URL + "/api/coach/login", requestOptions)
+					.then(response => {
+						if(response.status == 200) {
+							setStore({ authCoach: true })
+							setStore({ errorCoach: undefined })
+							getActions().getCoaches()
+							const loggedCoach = getStore().coaches.find((coach) => coach.email == email)
+							localStorage.setItem("loggedCoach", loggedCoach.username)
+						}
+						return response.json()
+					})
+					.then(data => {
+						if(data.error) {
+							setStore({ errorCoach: data.error })
+						}
+						if(data.access_coach_token) {
+							localStorage.setItem("token_coach", data.access_coach_token)
+						}
+					});
+			},
+			logoutCoach: () => {
+				localStorage.removeItem("token_coach");
+				localStorage.removeItem("username");
+				setStore({ authCoach: false })
 			},
 			deleteCoach: (coachID) => {
 				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, { method: 'DELETE' })

@@ -386,6 +386,7 @@ def add_coach():
     return jsonify(coach_to_add.serialize()), 200
 
 @api.route('/coach/<int:coach_id>', methods=['PUT'])
+# @jwt_required()
 def update_coach(coach_id):
     coach_data = request.json
     required_properties = ["username", "email", "password"]
@@ -396,10 +397,23 @@ def update_coach(coach_id):
     for key in required_properties:
         if coach_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
 
-    coach = Coach.query.get(coach_id)
+    existing_username = Coach.query.filter(Coach.username == coach_data["username"], Coach.id != coach_id).first()
+    if existing_username:
+        return jsonify({"error": f"The username '{coach_data['username']}' already exists in the database"}), 400
 
-    if coach is None:
-        return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 400
+
+    existing_email = Coach.query.filter(Coach.email == coach_data["email"], Coach.id != coach_id).first()
+    if existing_email:
+        return jsonify({"error": f"The email '{coach_data['email']}' already exists in the database"}), 400
+
+    coach = Coach.query.get(coach_id)
+    # current_coach = get_jwt_identity()
+
+    # if coach.email != current_coach:
+    #     return jsonify({"unauthorized": "You are not authorized to access here"}), 401
+
+    # if coach is None:
+    #     return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 400
 
     for prop in coach_data:
         setattr(coach, prop, coach_data[prop])
@@ -416,3 +430,18 @@ def del_coach(coach_id):
     db.session.commit()
     
     return jsonify({"deleted": f"Coach '{coach.username}' with email '{coach.email}' was deleted successfully"}), 200
+
+@api.route("/coach/login", methods=["POST"])
+def coach_login():
+    coach_data = request.json
+    required_properties = ["email", "password"]
+
+    for prop in required_properties:
+        if prop not in coach_data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
+
+    coach = Coach.query.filter_by(email=coach_data["email"]).first()
+    if coach is None or coach.email != coach_data["email"] or coach.password != coach_data["password"]:
+        return jsonify({"error": "Bad username or password"}), 401
+
+    access_coach_token = create_access_token(identity=coach.email)
+    return jsonify(access_coach_token=access_coach_token)

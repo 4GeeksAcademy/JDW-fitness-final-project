@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
@@ -16,6 +16,7 @@ export const UpdateCoach = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [handleButton, setHandleButton] = useState(false)
     const { coachID } = useParams();
+    const location = useLocation()
 
     useEffect(() => {
         actions.getEducation()
@@ -33,11 +34,11 @@ export const UpdateCoach = () => {
             setEducationID(store.singleCoach.education_id || 0);
             setExperienceID(store.singleCoach.experience_id || 0);
         }
-    }, [store.singleCoach]); // No actualiza si se vuelve a la vista individual y luego a actualizar de nuevo
+    }, [store.singleCoach, location.pathname, actions]); // No actualiza si se vuelve a la vista individual y luego a actualizar de nuevo
 
     useEffect(() => {
-        if (!store.errorCoach && handleButton) {
-            navigate(`/coach/${coachID}`);
+        if (!store.errorCoach && handleButton && username != "" && email != "" && password != "") {
+            navigate(`/coach`);
         }
     },[store.errorCoach, handleButton])
 

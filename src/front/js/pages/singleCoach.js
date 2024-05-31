@@ -22,7 +22,7 @@ export const SingleCoach = () => {
             if (store.singleCoach.experience_id) actions.getSingleExperience(store.singleCoach.experience_id);
             else  setExperience("");
         }
-    }, [store.singleCoach]);
+    }, [store.singleCoach, actions]);
 
     useEffect(() => {
         if (store.singleCoach.education_id) setEducation(store.singleEducation.rank);

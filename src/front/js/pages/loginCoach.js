@@ -9,6 +9,11 @@ export const LoginCoach = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [showPassword, setShowPassword] = useState(false)
+    const tokenCoach = localStorage.getItem("token_coach")
+
+    useEffect(() => { 
+        if(tokenCoach && email != "" && password != "") navigate("/client");
+    },[tokenCoach])
 
     function login(e) {
         e.preventDefault()
@@ -50,6 +55,7 @@ export const LoginCoach = () => {
                 }
                 <div className="d-flex justify-content-center">
                 <button type="submit" className="btn btn-warning fw-bold" onClick={login}>Login</button>
+                {/* Tengo que pulsar el botón de Login dos veces para que se haga correctamente y obtener el token. Pendiente de arreglar este error. */}
                 <Link to="/">
 				    <button className="btn btn-primary ms-3 fw-bold" >Back Home</button>
 			    </Link>

@@ -19,7 +19,7 @@ export const Navbar = () => {
 				<Link to="/">
 					<span className="navbar-brand mb-0 h1">Home</span>
 				</Link>
-				<div className="ms-auto">
+				<div className="mx-auto">
 					<Link to="/coach">
 						<button className="btn btn-primary">Coaches</button>
           			</Link>
@@ -27,7 +27,7 @@ export const Navbar = () => {
 				{store.authCoach && 				
 				<div className="ms-auto">
 					<span className="fw-bold me-4">{username}'s session</span>
-					<Link to="/login">
+					<Link to="/">
 						<button onClick={actions.logoutCoach} className="btn btn-primary">Log out</button>
 					</Link>
 				</div>		

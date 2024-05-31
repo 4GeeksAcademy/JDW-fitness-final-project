@@ -401,19 +401,18 @@ def update_coach(coach_id):
     if existing_username:
         return jsonify({"error": f"The username '{coach_data['username']}' already exists in the database"}), 400
 
-
     existing_email = Coach.query.filter(Coach.email == coach_data["email"], Coach.id != coach_id).first()
     if existing_email:
         return jsonify({"error": f"The email '{coach_data['email']}' already exists in the database"}), 400
 
     coach = Coach.query.get(coach_id)
+    if coach is None:
+        return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 400
+    
     # current_coach = get_jwt_identity()
 
     # if coach.email != current_coach:
     #     return jsonify({"unauthorized": "You are not authorized to access here"}), 401
-
-    # if coach is None:
-    #     return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 400
 
     for prop in coach_data:
         setattr(coach, prop, coach_data[prop])

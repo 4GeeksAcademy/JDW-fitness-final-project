@@ -69,10 +69,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then( (response) => response.json())
 				.then( data => setStore({ coaches: data }))	
       		},
-			getSingleCoach: (coachID) => {
-				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`)
+			getSingleCoach: async (coachID) => {
+				await fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`)
 				.then( (response) => response.json())
-				.then( data => setStore({ singleCoach: data }))	
+				.then( data => {
+					setStore({ singleCoach: data })
+				})
 			},
 			coachSignUp: (username, email, password, firstName, lastName, educationID, experienceID) => {
 				const requestBody = {
@@ -143,9 +145,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			logoutCoach: () => {
 				localStorage.removeItem("token_coach");
-				localStorage.removeItem("username");
+				localStorage.removeItem("loggedCoach");
 				setStore({ authCoach: false })
 			},
+			checkAuth: () => {
+                const tokenCoach = localStorage.getItem("token_coach");
+                if (tokenCoach) {
+                    setStore({ authCoach: true });
+                }
+            },
 			deleteCoach: (coachID) => {
 				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, { method: 'DELETE' })
 				.then( () => getActions().getCoaches())
@@ -479,7 +487,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
       loadBeginning: () => {
-
+			getActions().checkAuth()
 		  },    
 	  }
   };

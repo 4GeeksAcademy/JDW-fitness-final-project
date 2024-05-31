@@ -4,34 +4,47 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Home } from "./pages/home";
+
 import { Availability } from "./pages/availability";
 import { AddAvailability } from "./pages/addAvailability";
 import { UpdateAvailability } from "./pages/updateAvailability";
 import { SingleAvailability } from "./pages/singleAvailability";
+
 import { Goals } from "./pages/goals";
 import { AddGoal } from "./pages/addGoal";
 import { UpdateGoal } from "./pages/updateGoal";
 import { SingleGoal } from "./pages/singleGoal";
+
 import { Diseases } from "./pages/diseases";
 import { AddDiseases } from "./pages/addDiseases";
 import { UpdateDisease } from "./pages/updateDiseases";
 import { SingleDiseases } from "./pages/singleDiseases";
+
 import { Experience } from "./pages/experience";
 import { AddExperience } from "./pages/addExperience";
 import { UpdateExperience } from "./pages/updateExperience";
 import { SingleExperience } from "./pages/singleExperience";
+
 import { Education } from "./pages/education";
 import { AddEducation } from "./pages/addEducation";
 import { UpdateEducation } from "./pages/updateEducation";
 import { SingleEducation } from "./pages/singleEducation";
+
 import { ActivityFrequency } from "./pages/activityFrequency";
 import { AddActivity } from "./pages/addActivity";
 import { UpdateActivity } from "./pages/updateActivity";
 import { SingleActivity } from "./pages/singleActivity";
+
+import { Client } from "./pages/client";
+import { SingleClient } from "./pages/singleClient";
+import { AddClient } from "./pages/addClient";
+import { UpdateClient } from "./pages/updateClient";
+
 import { Coach } from "./pages/coach";
 import { SingleCoach } from "./pages/singleCoach";
 import { AddCoach } from "./pages/addCoach";
 import { UpdateCoach } from "./pages/updateCoach";
+
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -87,6 +100,12 @@ const Layout = () => {
                         <Route element={<AddCoach />} path="/coach/signup" />
                         <Route element={<UpdateCoach />} path="/coach/update/:coachID" />
                         <Route element={<SingleCoach />} path="/coach/:coachID" />
+                        {/* CLIENT PATH */}
+                        <Route element={<Client />} path="/client" />
+                        <Route element={<SingleClient />} path="/client/:clientID" />
+                        <Route element={<AddClient />} path="/client/signup" />
+                        <Route element={<UpdateClient />} path="/client/update/:clientID" />
+                        {/* NOT FOUND */}
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />

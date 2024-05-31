@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
@@ -14,7 +14,9 @@ export const UpdateCoach = () => {
     const [educationID, setEducationID] = useState(0)
     const [experienceID, setExperienceID] = useState(0)
     const [showPassword, setShowPassword] = useState(false)
+    const [handleButton, setHandleButton] = useState(false)
     const { coachID } = useParams();
+    const location = useLocation()
 
     useEffect(() => {
         actions.getEducation()
@@ -32,15 +34,19 @@ export const UpdateCoach = () => {
             setEducationID(store.singleCoach.education_id || 0);
             setExperienceID(store.singleCoach.experience_id || 0);
         }
-    }, [store.singleCoach]);
+    }, [store.singleCoach, location.pathname, actions]); // No actualiza si se vuelve a la vista individual y luego a actualizar de nuevo
+
+    useEffect(() => {
+        if (!store.errorCoach && handleButton && username != "" && email != "" && password != "") {
+            navigate(`/coach`);
+        }
+    },[store.errorCoach, handleButton])
 
     function updateCoach(e) {
-        e.preventDefault()
-		actions.updateCoachAPI(username, email, password, firstName, lastName, educationID, experienceID, coachID)
-        if(username !== "" && email !== "" && password !== "") {
-            navigate("/coach")
-        }
-    }
+        e.preventDefault();
+        actions.updateCoachAPI(username, email, password, firstName, lastName, educationID, experienceID, coachID)
+        setHandleButton(true)
+    };
 
 	return (
 		<div className="container mt-3">
@@ -98,7 +104,7 @@ export const UpdateCoach = () => {
                     placeholder="Last Name"
                     />
                 </div>
-                <select value={educationID} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onChange={(e) => setEducationID(e.target.value)}>
+                <select value={educationID} className="form-select form-select-lg mb-3 w-50 offset-3" aria-label=".form-select-lg example" onChange={(e) => setEducationID(e.target.value)}>
                     {educationID == 0 && <option defaultValue>Select your education</option>}
                     {store.education.map((element, index) => (
                             <option key={index} value={element.id}>
@@ -106,7 +112,7 @@ export const UpdateCoach = () => {
                             </option>          
                     ))}
                 </select>
-                <select value={experienceID} className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onChange={(e) => setExperienceID(e.target.value)}>
+                <select value={experienceID} className="form-select form-select-lg mb-3 w-50 offset-3" aria-label=".form-select-lg example" onChange={(e) => setExperienceID(e.target.value)}>
                     {experienceID == 0 && <option defaultValue>Select your experience</option>}  
                     {store.experience.map((element, index) => (
                             <option key={index} value={element.id}>
@@ -122,8 +128,8 @@ export const UpdateCoach = () => {
                 </div>
                 <div className="d-flex justify-content-center">
                     <button type="submit" className="btn btn-warning fw-bold mt-2" onClick={updateCoach}>Save changes</button>
-                    <Link to="/coach">
-                        <button className="btn btn-primary ms-3 fw-bold mt-2" >Back to Coach list</button>
+                    <Link to={`/coach/${coachID}`}>
+                        <button className="btn btn-primary ms-3 fw-bold mt-2" >Back to {username} Coach information</button>
                     </Link>
                 </div>
             </form>

@@ -37,7 +37,7 @@ MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
 
 # Setup the Flask-JWT-Extended extension
-app.config["JWT_SECRET_KEY"] = "sssdtsdgtsdgffdgfdgdf898gdfgfduo2345668okllxfhkjchyf12312gdskjfgshjdfgsdkjhfs12312312d"  # Change this!
+app.config["JWT_SECRET_KEY"] = "sssdtsdgtsdgffdgfdgdf898gdfgfduo2345668okllxfhkjchyf12312gdskjfgshjdfgsdkjhfs12312312dds56g4sfd56g4fd5s6g4fd564gd56fg46d5f"  # Change this!
 jwt = JWTManager(app)
 
 # add the admin

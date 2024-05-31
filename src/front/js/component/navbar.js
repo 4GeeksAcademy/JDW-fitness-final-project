@@ -1,23 +1,37 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Context } from "../store/appContext";
 
 export const Navbar = () => {
+	const { store, actions } = useContext(Context);
+	const [username, setUsername] = useState("");
+
+	useEffect(() => {
+		const storedUsername = localStorage.getItem("loggedCoach");
+		if (storedUsername) {
+			setUsername(storedUsername);
+		}
+	}, [actions]);
+
 	return (
 		<nav className="navbar navbar-light bg-light">
 			<div className="container">
 				<Link to="/">
-					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
+					<span className="navbar-brand mb-0 h1">Home</span>
 				</Link>
-				<div className="ms-auto">
+				<div className="mx-auto">
 					<Link to="/coach">
-						<button className="btn btn-primary">Check the Coaches</button>
+						<button className="btn btn-primary">Coaches</button>
           			</Link>
         		</div>
-        		<div className="ms-auto">
-					<Link to="/availability">
-						<button className="btn btn-success">Check the Availability</button>
-         			</Link>
-        		</div>				
+				{store.authCoach && 				
+				<div className="ms-auto">
+					<span className="fw-bold me-4">{username}'s session</span>
+					<Link to="/">
+						<button onClick={actions.logoutCoach} className="btn btn-primary">Log out</button>
+					</Link>
+				</div>		
+				}
 			</div>
 		</nav>
 	);

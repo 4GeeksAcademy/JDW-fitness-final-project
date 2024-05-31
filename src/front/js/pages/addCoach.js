@@ -14,20 +14,24 @@ export const AddCoach = () => {
     const [educationID, setEducationID] = useState(0)
     const [experienceID, setExperienceID] = useState(0)
     const [showPassword, setShowPassword] = useState(false)
+    const [handleButton, setHandleButton] = useState(false)
     
     useEffect(() => {
         actions.getEducation()
         actions.getExperience()
     },[])
 
+    useEffect(() => {
+        if (!store.errorCoach && handleButton) {
+            navigate("/coach");
+        }
+    },[store.errorCoach])
 
     function addCoach(e) {
-        e.preventDefault()
-		actions.coachSignUp(username, email, password, firstName, lastName, educationID, experienceID)
-        if(username !== "" && email !== "" && password !== "") {
-            navigate("/coach")
-        }
-    }
+        e.preventDefault();
+        actions.coachSignUp(username, email, password, firstName, lastName, educationID, experienceID);
+        setHandleButton(true)
+    };
 
 	return (
 		<div className="container mt-3">
@@ -85,7 +89,7 @@ export const AddCoach = () => {
                     placeholder="Last Name"
                     />
                 </div>
-                <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onChange={(e) => setEducationID(e.target.value)}>
+                <select className="form-select form-select-lg mb-3 w-50 offset-3" aria-label=".form-select-lg example" onChange={(e) => setEducationID(e.target.value)}>
                     <option defaultValue>Select your education</option>
                     {store.education.map((element, index) => (
                             <option key={index} value={element.id}>
@@ -93,7 +97,7 @@ export const AddCoach = () => {
                             </option>          
                     ))}
                 </select>
-                <select className="form-select form-select-lg mb-3" aria-label=".form-select-lg example" onChange={(e) => setExperienceID(e.target.value)}>
+                <select className="form-select form-select-lg mb-3 w-50 offset-3" aria-label=".form-select-lg example" onChange={(e) => setExperienceID(e.target.value)}>
                     <option defaultValue>Select your experience</option>
                     {store.experience.map((element, index) => (
                             <option key={index} value={element.id}>

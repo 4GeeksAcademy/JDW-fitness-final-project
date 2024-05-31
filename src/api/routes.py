@@ -502,3 +502,18 @@ def del_coach(coach_id):
     db.session.commit()
     
     return jsonify({"deleted": f"Coach '{coach.username}' with email '{coach.email}' was deleted successfully"}), 200
+
+@api.route("/coach/login", methods=["POST"])
+def coach_login():
+    coach_data = request.json
+    required_properties = ["email", "password"]
+
+    for prop in required_properties:
+        if prop not in coach_data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
+
+    coach = Coach.query.filter_by(email=coach_data["email"]).first()
+    if coach is None or coach.email != coach_data["email"] or coach.password != coach_data["password"]:
+        return jsonify({"error": "Bad username or password"}), 401
+
+    access_coach_token = create_access_token(identity=coach.email)
+    return jsonify(access_coach_token=access_coach_token)

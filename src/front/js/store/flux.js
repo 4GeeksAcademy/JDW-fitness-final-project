@@ -7,6 +7,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			coaches: [],
 			singleCoach: {},
 			errorCoach: undefined,
+			authCoach: false,
 			availability: [],
 			singleAvailability: {}, 
       goals: [],
@@ -149,10 +150,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then( (response) => response.json())
 				.then( data => setStore({ coaches: data }))	
       		},
-			getSingleCoach: (coachID) => {
-				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`)
+			getSingleCoach: async (coachID) => {
+				await fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`)
 				.then( (response) => response.json())
-				.then( data => setStore({ singleCoach: data }))	
+				.then( data => {
+					setStore({ singleCoach: data })
+				})
 			},
 			coachSignUp: (username, email, password, firstName, lastName, educationID, experienceID) => {
 				const requestBody = {
@@ -192,6 +195,46 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				})
 			},
+			coachLogin: (email, password) => {
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ 
+						"email": email,
+						"password": password 
+					})
+				};
+				fetch(process.env.BACKEND_URL + "/api/coach/login", requestOptions)
+					.then(response => {
+						if(response.status == 200) {
+							setStore({ authCoach: true })
+							setStore({ errorCoach: undefined })
+							getActions().getCoaches()
+							const loggedCoach = getStore().coaches.find((coach) => coach.email == email)
+							localStorage.setItem("loggedCoach", loggedCoach.username)
+						}
+						return response.json()
+					})
+					.then(data => {
+						if(data.error) {
+							setStore({ errorCoach: data.error })
+						}
+						if(data.access_coach_token) {
+							localStorage.setItem("token_coach", data.access_coach_token)
+						}
+					});
+			},
+			logoutCoach: () => {
+				localStorage.removeItem("token_coach");
+				localStorage.removeItem("loggedCoach");
+				setStore({ authCoach: false })
+			},
+			checkAuth: () => {
+                const tokenCoach = localStorage.getItem("token_coach");
+                if (tokenCoach) {
+                    setStore({ authCoach: true });
+                }
+            },
 			deleteCoach: (coachID) => {
 				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, { method: 'DELETE' })
 				.then( () => getActions().getCoaches())
@@ -522,7 +565,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then(() => getActions().getActivityFrequency())
 			},
       loadBeginning: () => {
-
+			getActions().checkAuth()
 		  },    
 	  }
   };

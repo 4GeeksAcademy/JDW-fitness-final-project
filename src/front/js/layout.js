@@ -43,11 +43,14 @@ import { UpdateClient } from "./pages/updateClient";
 import { Coach } from "./pages/coach";
 import { SingleCoach } from "./pages/singleCoach";
 import { AddCoach } from "./pages/addCoach";
+import { UpdateCoachSignUp } from "./pages/updateCoachSignUp";
 import { UpdateCoach } from "./pages/updateCoach";
 import { LoginCoach } from "./pages/loginCoach";
 
 import { Match } from "./pages/match";
 import { AddMatch } from "./pages/addMatch";
+
+import { SignUp } from "./pages/signUp";
 
 import injectContext from "./store/appContext";
 
@@ -69,6 +72,7 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
+                        <Route element={<SignUp />} path="/signup" />
                         {/* AVAILABILITY ROUTES */}  
                         <Route element={<Availability />} path="/availability" />
                         <Route element={<SingleAvailability />} path="/availability/:availabilityID" />
@@ -102,6 +106,7 @@ const Layout = () => {
                         {/* COACH PATH */}
                         <Route element={<Coach />} path="/coach" />
                         <Route element={<AddCoach />} path="/coach/signup" />
+                        <Route element={<UpdateCoachSignUp />} path="/coach/signup/update/:coachID" />
                         <Route element={<UpdateCoach />} path="/coach/update/:coachID" />
                         <Route element={<SingleCoach />} path="/coach/:coachID" />
                         <Route element={<LoginCoach />} path="/coach/login" />

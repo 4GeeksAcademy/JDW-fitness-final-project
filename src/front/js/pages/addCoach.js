@@ -9,10 +9,6 @@ export const AddCoach = () => {
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [firstName, setFirstName] = useState("")
-    const [lastName, setLastName] = useState("")
-    const [educationID, setEducationID] = useState(0)
-    const [experienceID, setExperienceID] = useState(0)
     const [showPassword, setShowPassword] = useState(false)
     const [handleButton, setHandleButton] = useState(false)
     
@@ -23,13 +19,16 @@ export const AddCoach = () => {
 
     useEffect(() => {
         if (!store.errorCoach && handleButton) {
-            navigate("/coach");
+            const currentCoach = store.coaches.find ((coach) => coach.username === username)
+            // if(currentCoach) console.log(currentCoach);
+            
+            navigate(`/coach/signup/update/9`);
         }
-    },[store.errorCoach])
+    },[store.errorCoach, handleButton])
 
     function addCoach(e) {
         e.preventDefault();
-        actions.coachSignUp(username, email, password, firstName, lastName, educationID, experienceID);
+        actions.coachSignUp(username, email, password);
         setHandleButton(true)
     };
 
@@ -71,40 +70,6 @@ export const AddCoach = () => {
                     >
                     </button>
                 </div>
-                <div className="mb-3 col-3 offset-3">
-                    <input 
-                    type="text" 
-                    className="form-control" 
-                    value={firstName} 
-                    onChange={(e) => setFirstName(e.target.value)} 
-                    placeholder="First Name"
-                    />
-                </div>
-                <div className="mb-3 col-3">
-                    <input 
-                    type="text" 
-                    className="form-control" 
-                    value={lastName} 
-                    onChange={(e) => setLastName(e.target.value)} 
-                    placeholder="Last Name"
-                    />
-                </div>
-                <select className="form-select form-select-lg mb-3 w-50 offset-3" aria-label=".form-select-lg example" onChange={(e) => setEducationID(e.target.value)}>
-                    <option defaultValue>Select your education</option>
-                    {store.education.map((element, index) => (
-                            <option key={index} value={element.id}>
-                                    {element.rank}
-                            </option>          
-                    ))}
-                </select>
-                <select className="form-select form-select-lg mb-3 w-50 offset-3" aria-label=".form-select-lg example" onChange={(e) => setExperienceID(e.target.value)}>
-                    <option defaultValue>Select your experience</option>
-                    {store.experience.map((element, index) => (
-                            <option key={index} value={element.id}>
-                                    {element.time}
-                            </option>          
-                    ))}
-                </select>
                 {store.errorCoach &&                 
                 <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
                     {store.errorCoach}
@@ -113,8 +78,8 @@ export const AddCoach = () => {
                 </div>
                 <div className="d-flex justify-content-center">
                     <button type="submit" className="btn btn-warning fw-bold mt-2" onClick={addCoach}>Create Coach</button>
-                    <Link to="/coach">
-                        <button className="btn btn-primary ms-3 fw-bold mt-2" >Back to Coach list</button>
+                    <Link to="/signup">
+                        <button className="btn btn-primary ms-3 fw-bold mt-2" >Back to Signup</button>
                     </Link>
                 </div>
             </form>

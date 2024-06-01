@@ -542,9 +542,6 @@ def add_match():
         if prop not in match_data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
         if match_data[prop] == "" or match_data[prop] == 0: return jsonify({"error": f"The '{prop}' must not be empty or zero"}), 400
 
-    existing_match = Match.query.filter_by(coach_id=match_data["coach_id"], client_id=match_data["client_id"]).first()
-    if existing_match:
-        return jsonify({"error": f"This match already exists in the database"}), 400
 
     coach = Coach.query.get(match_data["coach_id"])
     if coach is None:
@@ -554,6 +551,10 @@ def add_match():
     if client is None:
         return jsonify({"error": f"The client with id '{match_data['client_id']}' does not exist"}), 404
 
+    existing_match = Match.query.filter_by(coach_id=match_data["coach_id"], client_id=match_data["client_id"]).first()
+    if existing_match:
+        return jsonify({"error": f"The match between coach '{coach.username}' and client '{client.username}' already exists in the database"}), 400
+    
     match_to_add = Match(**match_data)
     db.session.add(match_to_add)
     db.session.commit()
@@ -569,4 +570,4 @@ def del_match(match_id):
     db.session.delete(match)
     db.session.commit()
     
-    return jsonify({"deleted": f"The match between the coach '{coach.username}' and the client '{client.username}' was deleted successfully"}), 200
+    return jsonify({"deleted": f"The match between coach '{coach.username}' and client '{client.username}' was deleted successfully"}), 200

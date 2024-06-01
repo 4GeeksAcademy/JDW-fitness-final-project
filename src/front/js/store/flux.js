@@ -3,11 +3,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 			clients: [],
 			singleClient: {},
-			errorClient: undefined,
+			errorClient: null,
 			coaches: [],
 			singleCoach: {},
-			errorCoach: undefined,
+			errorCoach: null,
 			authCoach: false,
+			matches: [],
 			availability: [],
 			singleAvailability: {}, 
       goals: [],
@@ -20,6 +21,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			singleEducation: {},   
 	    activities: [],
 		  singleActivityFrequency:{},
+		  error: null
 		},
 
 		actions: {
@@ -79,7 +81,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		fetch(process.env.BACKEND_URL + "/api/client/signup", requestOptions)
 		.then(response => {
 			if(response.status == 200) {
-				setStore({ errorClient: undefined })
+				setStore({ errorClient: null })
 			}
 			return response.json()
 		})
@@ -133,7 +135,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		fetch(process.env.BACKEND_URL + `api/client/${clientID}`, requestOptions)
 		.then(response => {
 			if(response.status == 200) {
-				setStore({ errorClient: undefined })
+				setStore({ errorClient: null })
 			}
 			return response.json()
 		})
@@ -185,7 +187,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + "/api/coach/signup", requestOptions)
 				.then(response => {
 					if(response.status == 200) {
-						setStore({ errorCoach: undefined })
+						setStore({ errorCoach: null })
 					}
 					return response.json()
 				})
@@ -211,7 +213,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			
 					if (response.status === 200) {
 						setStore({ authCoach: true });
-						setStore({ errorCoach: undefined });
+						setStore({ errorCoach: null });
 						await getActions().getCoaches();
 			
 						const loggedCoach = getStore().coaches.find(coach => coach.email === email);
@@ -271,7 +273,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, requestOptions)
 				.then(response => {
 					if(response.status == 200) {
-						setStore({ errorCoach: undefined })
+						setStore({ errorCoach: null })
 					}
 					return response.json()
 				})
@@ -281,9 +283,40 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				})
 			},
-        
+            // MATCH
+      		getMatches: () => {
+				fetch(process.env.BACKEND_URL + "/api/match")
+				.then( (response) => response.json())
+				.then( data => setStore({ matches: data }))	
+	  		},
+			addMatchAPI: (coachID, clientID) => {
+				const requestOptions = {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						"coach_id": coachID,
+						"client_id": clientID
+					})
+				};
+				fetch(process.env.BACKEND_URL + "/api/match", requestOptions)
+				.then(response => {
+					if(response.status == 200) {
+						setStore({ error: null })
+					}
+					return response.json()
+				})
+				.then(data => {
+					if(data.error) {
+						setStore({ error: data.error })
+					}
+				})
+			},
+			deleteMatch: (matchID) => {
+				fetch(process.env.BACKEND_URL + `/api/match/${matchID}`, { method: 'DELETE' })
+				.then( () => getActions().getMatches())
+			},
       		// AVAILABILITY
-      getAvailability: () => {
+      		getAvailability: () => {
 				fetch(process.env.BACKEND_URL + "/api/availability")
 				.then( (response) => response.json())
 				.then( data => setStore({ availability: data }))	
@@ -447,7 +480,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ 
-            	"time": time,
+            		"time": time,
 					})
 				};
 				fetch(process.env.BACKEND_URL + "/api/experience", requestOptions)

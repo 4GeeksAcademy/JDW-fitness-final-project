@@ -34,7 +34,7 @@ export const UpdateCoach = () => {
             setEducationID(store.singleCoach.education_id || 0);
             setExperienceID(store.singleCoach.experience_id || 0);
         }
-    }, [store.singleCoach, location.pathname, actions]); // No actualiza si se vuelve a la vista individual y luego a actualizar de nuevo
+    }, [store.singleCoach]);
 
     useEffect(() => {
         if (!store.errorCoach && handleButton && username != "" && email != "" && password != "") {

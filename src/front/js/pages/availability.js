@@ -5,8 +5,8 @@ import { Context } from "../store/appContext";
 
 export const Availability = () => {
 	const { store, actions } = useContext(Context);
-	let availabilityID = 0
-	
+	const [ availabilityID, setAvailabilityID ] = useState(0)
+
 	useEffect(() => {
         actions.getAvailability()
     },[]);
@@ -36,7 +36,7 @@ export const Availability = () => {
 						<div className="d-flex">
 							<span className="fw-bold">Hour: </span>
 							{prop.hour}
-							<button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> availabilityID = prop.id}>delete</button>
+							<button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> setAvailabilityID(prop.id)}>delete</button>
 						</div>
 						</div>
 					</li>

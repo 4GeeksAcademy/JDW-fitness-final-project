@@ -60,6 +60,7 @@ class Client(db.Model):
           
     def serialize(self):
         return {
+            "Id": self.id,
             "email": self.email,            
             "password": self.password,
             
@@ -82,6 +83,7 @@ class Availability_client(db.Model):
             "client_email": self.client.email if self.client else None,
             "availability_day": self.availability.day if self.availability else None
         }
+
 
 
 

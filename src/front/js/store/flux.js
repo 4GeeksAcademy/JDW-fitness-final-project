@@ -1,6 +1,9 @@
+
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			availabilityClient: [],
 			clients: [],
 			singleClient: {},
 			errorClient: undefined,
@@ -433,6 +436,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then( (response) => response.json())
 				.then( data => setStore({ experience: data }))	
 			},
+
+			// ENDPOINT GETAVAILABILITYCLIENT
+
 			getSingleExperience: (experienceID) => {
 				fetch(process.env.BACKEND_URL + `/api/experience/${experienceID}`)
 				.then( (response) => response.json())
@@ -568,7 +574,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getActions().checkAuth()
 		  },    
 	  }
-  };
+  }
 };
 
 export default getState;

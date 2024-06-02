@@ -47,9 +47,14 @@ import { UpdateCoach } from "./pages/updateCoach";
 import { LoginCoach } from "./pages/loginCoach";
 
 import injectContext from "./store/appContext";
+import { AvailabilityClient } from "./pages/availabilityClient";
+
+
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
+
+
 
 //create your first component
 const Layout = () => {
@@ -76,6 +81,8 @@ const Layout = () => {
                         <Route element={<SingleGoal />} path="/goals/:goalID" />
                         <Route element={<AddGoal />} path="/goals/form" />
                         <Route element={<UpdateGoal />} path="/goals/update/:goalID" />
+                        {/* AVAILABILITY_CLIENT ROUTES */}
+                        <Route element={<AvailabilityClient />} path="/availability-client" />
                         {/* DISEASES ROUTES */}
                         <Route element={<Diseases />} path="/diseases" />
                         <Route element={<SingleDiseases />}  path="/diseases/:diseasesID" />

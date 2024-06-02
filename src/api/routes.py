@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Availability, Goals, Diseases, Experience, Education, ActivityFrequency, Coach, Client
+from api.models import db, User, Availability, Goals, Diseases, Experience, Education, ActivityFrequency, Coach, Client, Availability_client
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -514,6 +514,154 @@ def coach_login():
     coach = Coach.query.filter_by(email=coach_data["email"]).first()
     if coach is None or coach.email != coach_data["email"] or coach.password != coach_data["password"]:
         return jsonify({"error": "Bad username or password"}), 401
-
+      
     access_coach_token = create_access_token(identity=coach.email)
     return jsonify(access_coach_token=access_coach_token)
+
+    # CLIENT ENDPOINTS
+@api.route('/client', methods=['GET'])
+def get_clients():
+    clients = Client.query.all()
+    clients_list = list(map(lambda prop: prop.serialize(),clients))
+
+    return jsonify(clients_list), 200
+
+@api.route('/client/<int:client_id>', methods=['GET'])
+def get_client(client_id):
+    client = Client.query.filter_by(id=client_id).first()
+    return jsonify(client.serialize()), 200
+
+
+
+# Availability_client  GET ENDPOINTS
+@api.route('/availability_client', methods=['GET'])
+def get_availability_client():
+    all_availability_client = Availability_client.query.all()
+    results = list(map(lambda availability_client: availability_client.serialize(), all_availability_client))
+    return jsonify(results), 200 
+
+# Availability_client GET_ID ENDPOINTS
+@api.route('/availability_client/<int:availability_client_id>', methods=['GET'])
+def get_client_availabilities(availability_client_id):
+    # Obtener todas las entradas de Availability_client asociadas con el client_id
+    availability_clients = Availability_client.query.filter_by(client_id=availability_client_id).all()
+    
+    if not availability_clients:
+        return jsonify({'message': 'No availabilities found for the given client_id'}), 404
+    
+    # Serializar cada entrada de Availability_client
+    results = [availability_client.serialize() for availability_client in availability_clients]
+    
+    return jsonify(results), 200
+
+
+    # ENDPOINT PARA POST  
+
+@api.route('/availability_client', methods=['POST'])
+def create_availability_client():
+    data = request.json
+    if not data:
+        return jsonify({'message': 'No input data provided'}), 400
+
+    client_email = data.get('client_email')
+    availability_day = data.get('availability_day')
+    if not client_email or not availability_day:
+        return jsonify({'message': 'Client email and availability day must be provided'}), 400
+
+    try:
+        # Find the client by email
+        client = Client.query.filter_by(email=client_email).first()
+        if not client:
+            return jsonify({'message': 'Client not found'}), 404
+
+        # Find the availability by day
+        availability = Availability.query.filter_by(day=availability_day).first()
+        if not availability:
+            return jsonify({'message': 'The specified availability day does not exist'}), 404
+
+        # Check if the availability is already occupied by the client
+        existing_entry = Availability_client.query.filter_by(client_id=client.id, availability_id=availability.id).first()
+        if existing_entry:
+            return jsonify({'message': 'The availability is already occupied by the client'}), 400
+
+        # Create a new availability_client entry
+        new_availability_client = Availability_client(client_id=client.id, availability_id=availability.id)
+        db.session.add(new_availability_client)
+        db.session.commit()
+
+        return jsonify({'message': 'Availability client entry created successfully'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': 'Error while creating the availability client entry', 'error': str(e)}), 500
+
+
+
+
+# ENDPOINT TO DELETE A SINGLE AVAILABILITY_CLIENT ENTRY
+
+@api.route('/availability_client/<int:id>', methods=['DELETE'])
+def delete_availability_client(id):
+    availability_client = Availability_client.query.get(id)
+    
+    if availability_client is None:
+        return jsonify({'message': 'Availability client entry not found'}), 404
+    
+    db.session.delete(availability_client)
+    db.session.commit()
+    
+    return jsonify({'message': 'Availability client entry deleted successfully'}), 200
+
+# ENDPOINT TO DELETE ALL AVAILABILITY_CLIENT ENTRIES FOR A SPECIFIC CLIENT.
+@api.route('/availability_client/client/<int:client_id>', methods=['DELETE'])
+def delete_all_availability_client_for_client(client_id):
+    availability_clients = Availability_client.query.filter_by(client_id=client_id).all()
+    
+    if not availability_clients:
+        return jsonify({'message': 'No availabilities found for the given client_id'}), 404
+    
+    for availability_client in availability_clients:
+        db.session.delete(availability_client)
+    
+    db.session.commit()
+    
+    return jsonify({'message': 'All availability client entries for the client deleted successfully'}), 200
+
+
+
+
+# Availability_client PUT ENDPOINTS
+
+@api.route('/availability_client/<int:id>', methods=['PUT'])
+def update_availability_client_day(id):
+    availability_client = Availability_client.query.get(id)
+    if not availability_client:
+        return jsonify({'message': 'Availability client entry not found'}), 404
+
+    data = request.json
+    if not data:
+        return jsonify({'message': 'No input data provided'}), 400
+
+    new_day = data.get('availability_day')
+    if not new_day:
+        return jsonify({'message': 'New availability day not provided'}), 400
+
+    try:
+        # Find the new availability_id by the provided day
+        new_availability = Availability.query.filter_by(day=new_day).first()
+        if not new_availability:
+            return jsonify({'message': 'The specified availability day does not exist'}), 404
+
+        # Check if the new availability_id is already occupied by the client
+        existing_entry = Availability_client.query.filter_by(client_id=availability_client.client_id, availability_id=new_availability.id).first()
+        if existing_entry:
+            return jsonify({'message': 'The new availability is already occupied by the client'}), 400
+
+        availability_client.availability_id = new_availability.id
+
+        db.session.commit()
+        return jsonify({'message': 'Availability client entry updated successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': 'Error while updating the availability client entry', 'error': str(e)}), 500
+
+

@@ -23,7 +23,7 @@ class Availability(db.Model):
     hour = db.Column(db.String(80), unique=False, nullable=False)
 
     def __repr__(self):
-        return f'<Availability {self.id}>'          
+        return f'<Availability {self.day}>'          
     def serialize(self):
         return {
             "id": self.id,            
@@ -71,6 +71,60 @@ class Experience(db.Model):
             "time": self.time,
         }  
 
+
+#MODELO DE CLIENT PARA PRUEBAS(MODIFICAR LUEGO DANI) 
+class Client(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    username = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(80), unique=False, nullable=False)
+    first_name = db.Column(db.String(120), unique=False, nullable=True)
+    last_name = db.Column(db.String(120), unique=False, nullable=True)
+    age = db.Column(db.Integer, unique=False, nullable=True)
+    height = db.Column(db.Integer, unique=False, nullable=True)
+    weight = db.Column(db.Integer, unique=False, nullable=True)
+    gender = db.Column(db.String(120), unique=False, nullable=True)
+    # Cambiar a valor unique = True de momento dejarlo así
+    physical_habits = db.Column(db.String(120), unique=False, nullable=True)
+    # Cambiar a valor unique true como el anterior
+    activity_frequency_id = db.Column(db.Integer, db.ForeignKey('activity_frequency.id'))
+    activity_frequency = db.relationship('ActivityFrequency', backref='clients') 
+    
+    def __repr__(self):
+        return f'<Client {self.email}>'  
+    def serialize(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "username": self.username,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "age": self.age,
+            "height": self.height,
+            "weight": self.weight,
+            "gender": self.gender,
+            "physical_habits": self.physical_habits,
+            "activity_frequency_id": self.activity_frequency_id,
+          }
+
+class Availability_client(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    availability_id = db.Column(db.Integer, db.ForeignKey('availability.id'), nullable=False)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
+
+    availability = db.relationship('Availability', backref=db.backref('availability_clients', lazy=True))
+    client = db.relationship('Client', backref=db.backref('availability_clients', lazy=True))
+
+    def repr(self):
+        return f'<AvailabilityClient {self.id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "client_email": self.client.email if self.client else None,
+            "availability_day": self.availability.day if self.availability else None
+        }
+
 class Education(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     rank = db.Column(db.String(120), unique=False, nullable=False)
@@ -93,40 +147,6 @@ class ActivityFrequency(db.Model):
         return {
             "id": self.id,
             "mode": self.mode,
-          }
-
-class Client(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    username = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
-    first_name = db.Column(db.String(120), unique=False, nullable=True)
-    last_name = db.Column(db.String(120), unique=False, nullable=True)
-    age = db.Column(db.Integer, unique=False, nullable=True)
-    height = db.Column(db.Integer, unique=False, nullable=True)
-    weight = db.Column(db.Integer, unique=False, nullable=True)
-    gender = db.Column(db.String(120), unique=False, nullable=True)
-    # Cambiar a valor unique = True de momento dejarlo así
-    physical_habits = db.Column(db.String(120), unique=False, nullable=True)
-    # Cambiar a valor unique true como el anterior
-    activity_frequency_id = db.Column(db.Integer, db.ForeignKey('activity_frequency.id'))
-    activity_frequency = db.relationship('ActivityFrequency', backref='clients') 
-    
-    def __repr__(self):
-        return f'<Client {self.id}>'  
-    def serialize(self):
-        return {
-            "id": self.id,
-            "email": self.email,
-            "username": self.username,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "age": self.age,
-            "height": self.height,
-            "weight": self.weight,
-            "gender": self.gender,
-            "physical_habits": self.physical_habits,
-            "activity_frequency_id": self.activity_frequency_id,
           }
     
 class Coach(db.Model):

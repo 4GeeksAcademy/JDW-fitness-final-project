@@ -84,38 +84,6 @@ class Availability_client(db.Model):
         }
 
 
-class Coach(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=False, nullable=False)
-    password = db.Column(db.String(180), unique=False, nullable=True)
-   
-   
-    def __repr__(self):
-        return f'<Coach {self.email}>'
-          
-    def serialize(self):
-        return {
-            "email": self.email,            
-            "password": self.password,
-            
-        }
-    
-class Availability_coach(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    availability_id = db.Column(db.Integer, db.ForeignKey('availability.id'), nullable=False)
-    coach_id = db.Column(db.Integer, db.ForeignKey('coach.id'), nullable=False)
 
-    availability = db.relationship('Availability', backref=db.backref('availability_coachs', lazy=True))
-    coach = db.relationship('Coach', backref=db.backref('availability_coachs', lazy=True))
-
-    def repr(self):
-        return f'<AvailabilityCoach {self.id}>'
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "client_coach": self.coach.email if self.coach else None,
-            "availability_day": self.availability.day if self.availability else None
-        }
 
        

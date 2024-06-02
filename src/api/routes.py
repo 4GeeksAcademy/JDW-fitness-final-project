@@ -134,6 +134,19 @@ def delete_goal(goal_id):
 
     return jsonify({"Deleted": f"The goal was deleted"}), 200
 
+    # CLIENT ENDPOINTS
+@api.route('/client', methods=['GET'])
+def get_clients():
+    clients = Client.query.all()
+    clients_list = list(map(lambda prop: prop.serialize(),clients))
+
+    return jsonify(clients_list), 200
+
+@api.route('/client/<int:client_id>', methods=['GET'])
+def get_client(client_id):
+    client = Client.query.filter_by(id=client_id).first()
+    return jsonify(client.serialize()), 200
+
 
 
 # Availability_client  GET ENDPOINTS

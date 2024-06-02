@@ -9,7 +9,7 @@ export const Coach = () => {
 
 	useEffect(() => {
         actions.getCoaches()
-    },[store.coaches]);
+    },[]);
 
 
 	return (

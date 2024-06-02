@@ -32,14 +32,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 		.then( data => setStore({ clients: data }))	
 	  },
 	  getSingleClient: async (clientID) => {
-		try {
-			const response = await fetch(process.env.BACKEND_URL + `api/client/${clientID}`);
-			const data = await response.json();
-			setStore({ singleClient: data });
-		} catch (error) {
-			console.error("Error fetching single client:", error);
-		}
-	},
+        try {
+            const response = await fetch(process.env.BACKEND_URL + `/api/client/${clientID}`);
+            const data = await response.json();
+            setStore({ singleClient: data });
+        } catch (error) {
+            console.error("Error fetching single client:", error);
+        }
+    },
 	clientSignUp: (username, email, password) => {
 		const requestOptions = {
 			method: 'POST',
@@ -104,7 +104,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(requestBody)
 		};
-		fetch(process.env.BACKEND_URL + `api/client/${clientID}`, requestOptions)
+		fetch(process.env.BACKEND_URL + `/api/client/${clientID}`, requestOptions)
 		.then(response => {
 			if(response.status == 200) {
 				setStore({ errorForm: null })
@@ -117,7 +117,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			}
 		})
 	},
-      
       // COACH
 			getCoaches: () => {
 				fetch(process.env.BACKEND_URL + "/api/coach")

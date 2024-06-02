@@ -392,10 +392,10 @@ def update_client(client_id):
     for key in required_properties:
         if client_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
     
-    existing_username = Client.query.filter(Client.unsername == client_data["username"], Client.id != client_id).first()
+    existing_username = Client.query.filter(Client.username == client_data["username"], Client.id != client_id).first()
     if existing_username:
         return jsonify({"error": f"The username '{client_data['username']}' already exists in the database"}), 400
-      
+
     existing_email = Client.query.filter(Client.email == client_data["email"], Client.id != client_id).first()
     if existing_email:
         return jsonify({"error": f"The email '{client_data['email']}' already exists in the database"}), 400

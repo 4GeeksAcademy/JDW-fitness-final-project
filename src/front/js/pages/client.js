@@ -11,7 +11,7 @@ export const Client = () => {
 
 	useEffect(() => {
         actions.getClients()
-    },[store.clients]);
+    },[]);
 
 	// if(!tokenCoach) {
 	// 	navigate("/coach/login")

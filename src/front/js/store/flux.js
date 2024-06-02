@@ -1,6 +1,9 @@
+import { AvailabilityClient } from "../pages/availabilityClient";
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			
 			message: null,
 			demo: [
 				{
@@ -14,6 +17,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
+			availabilityClient: [],
 			availability: [],
 			singleAvailability: {}, 
       goals: [],
@@ -100,7 +104,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			loadBeginning: () => {
         getActions().getGoals()
-			}
+			},
       
       // GOALS
       getGoals: () => {
@@ -155,6 +159,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then( setStore({ goalToUpdate: {} }))
 					.then(() => getActions().getGoals())
 			},
+
+
+			// ENDPOINT GETAVAILABILITYCLIENT
+			
 		}
 	};
 };

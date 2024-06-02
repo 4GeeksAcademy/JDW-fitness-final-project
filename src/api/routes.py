@@ -193,49 +193,38 @@ def delete_all_availability_client_for_client(client_id):
 
 # Availability_client POST ENDPOINTS
 
-@api.route('/availability_client', methods=['POST'])
-def add_availability_client():
+@api.route('/availability_client/<int:id>', methods=['PUT'])
+def update_availability_client_day(id):
+    availability_client = Availability_client.query.get(id)
+    if not availability_client:
+        return jsonify({'message': 'Availability client entry not found'}), 404
+
     data = request.json
-    
-    # Verify required fields
-    required_fields = ['email', 'availability_day']
-    for field in required_fields:
-        if field not in data or not data[field]:
-            return jsonify({'error': f'{field.capitalize()} is required and cannot be empty'}), 400
-    
-    # Customer search
-    client = Client.query.filter_by(email=data['email']).first()
-    if not client:
-        return jsonify({'error': 'Client not found'}), 404
-    
-    # Search availability
-    availability = Availability.query.filter_by(day=data['availability_day']).first()
-    if not availability:
-        return jsonify({'error': 'Availability not found'}), 404
-    
-    # Check if the relationship already exists
-    if Availability_client.query.filter_by(client_id=client.id, availability_id=availability.id).first():
-        return jsonify({'error': 'This availability is already assigned to the client'}), 400
-    
-    # Create and save new entry
-    new_availability_client = Availability_client(
-        client_id=client.id,
-        availability_id=availability.id
-    )
-    db.session.add(new_availability_client)
-    db.session.commit()
-    
-    # Successful response
-    response_body = {
-        "msg": "Availability created successfully",
-        "availability_client": new_availability_client.serialize()
-    }
-    
-    return jsonify(response_body), 201
+    if not data:
+        return jsonify({'message': 'No input data provided'}), 400
 
+    new_day = data.get('availability_day')
+    if not new_day:
+        return jsonify({'message': 'New availability day not provided'}), 400
 
+    try:
+        # Find the new availability_id by the provided day
+        new_availability = Availability.query.filter_by(day=new_day).first()
+        if not new_availability:
+            return jsonify({'message': 'The specified availability day does not exist'}), 404
 
+        # Check if the new availability_id is already occupied by the client
+        existing_entry = Availability_client.query.filter_by(client_id=availability_client.client_id, availability_id=new_availability.id).first()
+        if existing_entry:
+            return jsonify({'message': 'The new availability is already occupied by the client'}), 400
 
+        availability_client.availability_id = new_availability.id
+
+        db.session.commit()
+        return jsonify({'message': 'Availability client entry updated successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': 'Error while updating the availability client entry', 'error': str(e)}), 500
 
 
 

@@ -239,20 +239,4 @@ def add_availability_client():
 
 
 
-    # ENDPOINT GET AVAILABLE_COACH  
-
-@api.route('/availability_coach', methods=['GET'])
-def get_availability_coach():
-    all_availablity_coach=Availability_coach.query.all()
-    results = list(map(lambda availability_coach: availability_coach.serialize(), all_availablity_coach))
-    return jsonify(results), 200
-
-@api.route('/availability_coach/<int:availability_coach_id>', methods=['GET'])
-def get_availability_coach_id(availability_coach_id):
-    availability_coach = Availability_coach.query.filter_by(id=availability_coach_id).first()
-    if availability_coach is None:
-        return jsonify({'message': 'Availability coach_id not found'}), 404
-    return jsonify(availability_coach.serialize()), 200
-
-
 

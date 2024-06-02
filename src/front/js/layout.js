@@ -15,9 +15,14 @@ import { AddGoal } from "./pages/addGoal";
 import { UpdateGoal } from "./pages/updateGoal";
 import { SingleGoal } from "./pages/singleGoal";
 import injectContext from "./store/appContext";
+import { AvailabilityClient } from "./pages/availabilityClient";
+
+
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
+
+
 
 //create your first component
 const Layout = () => {
@@ -44,6 +49,8 @@ const Layout = () => {
                         <Route element={<AddGoal />} path="/goals/form" />
                         <Route element={<UpdateGoal />} path="/goals/update/:goalID" />
                         <Route element={<SingleGoal />} path="/goals/:goalID" />
+                      
+                        <Route element={<AvailabilityClient />} path="/availability-client" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />

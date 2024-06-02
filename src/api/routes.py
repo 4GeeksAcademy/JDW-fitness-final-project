@@ -158,6 +158,47 @@ def get_client_availabilities(availability_client_id):
     return jsonify(results), 200
 
 
+    # ENDPOINT PARA POST  
+
+@api.route('/availability_client', methods=['POST'])
+def create_availability_client():
+    data = request.json
+    if not data:
+        return jsonify({'message': 'No input data provided'}), 400
+
+    client_email = data.get('client_email')
+    availability_day = data.get('availability_day')
+    if not client_email or not availability_day:
+        return jsonify({'message': 'Client email and availability day must be provided'}), 400
+
+    try:
+        # Find the client by email
+        client = Client.query.filter_by(email=client_email).first()
+        if not client:
+            return jsonify({'message': 'Client not found'}), 404
+
+        # Find the availability by day
+        availability = Availability.query.filter_by(day=availability_day).first()
+        if not availability:
+            return jsonify({'message': 'The specified availability day does not exist'}), 404
+
+        # Check if the availability is already occupied by the client
+        existing_entry = Availability_client.query.filter_by(client_id=client.id, availability_id=availability.id).first()
+        if existing_entry:
+            return jsonify({'message': 'The availability is already occupied by the client'}), 400
+
+        # Create a new availability_client entry
+        new_availability_client = Availability_client(client_id=client.id, availability_id=availability.id)
+        db.session.add(new_availability_client)
+        db.session.commit()
+
+        return jsonify({'message': 'Availability client entry created successfully'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': 'Error while creating the availability client entry', 'error': str(e)}), 500
+
+
+
 
 # ENDPOINT TO DELETE A SINGLE AVAILABILITY_CLIENT ENTRY
 
@@ -191,7 +232,7 @@ def delete_all_availability_client_for_client(client_id):
 
 
 
-# Availability_client POST ENDPOINTS
+# Availability_client PUT ENDPOINTS
 
 @api.route('/availability_client/<int:id>', methods=['PUT'])
 def update_availability_client_day(id):

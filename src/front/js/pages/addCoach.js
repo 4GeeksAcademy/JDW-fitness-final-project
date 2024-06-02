@@ -10,32 +10,42 @@ export const AddCoach = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [showPassword, setShowPassword] = useState(false)
-    const [handleButton, setHandleButton] = useState(false)
-    
-    useEffect(() => {
-        actions.getEducation()
-        actions.getExperience()
-    },[])
 
-    useEffect(() => {
-        if (!store.errorCoach && handleButton) {
-            const currentCoach = store.coaches.find ((coach) => coach.username === username)
-            // if(currentCoach) console.log(currentCoach);
+    // useEffect(() => {
+    //     if (!store.errorCoach) {
+    //         const currentCoach = store.coaches.find ((coach) => coach.username === username)
+    //         // if(currentCoach) console.log(currentCoach);
             
-            navigate(`/coach/signup/update/9`);
-        }
-    },[store.errorCoach, handleButton])
+    //         navigate(`/coach/signup/update/${currentCoach.id}`);
+    //     }
+    // },[store.errorCoach, store.coaches])
 
-    function addCoach(e) {
-        e.preventDefault();
-        actions.coachSignUp(username, email, password);
-        setHandleButton(true)
-    };
+    // function addCoach(e) {
+    //     e.preventDefault();
+    //     actions.coachSignUp(username, email, password);
+    //     setHandleButton(true)
+    // };
+
+    const addCoach = async (e) => {
+        e.preventDefault()
+        if(!tokenCoach || email === "" || password === "") {
+            console.log("error despues de login");
+        }
+        try {
+            await actions.coachSignUp(username, email, password);
+            const currentCoach = store.coaches.find ((coach) => coach.username === username)
+            navigate(`/coach/signup/update/${currentCoach.id}`);
+            navigate("/client")
+        }
+        catch (error) {
+            console.log("error fatal", error);
+        }
+    }
 
 	return (
 		<div className="container mt-3">
             <h3 className="text-center mb-2">Coach Sign up</h3>
-            <form>
+            <form onSubmit={addCoach}>
                 <div className="row">
                 <div className="mb-3 col-6 offset-3">
                     <input 
@@ -77,7 +87,7 @@ export const AddCoach = () => {
                 }
                 </div>
                 <div className="d-flex justify-content-center">
-                    <button type="submit" className="btn btn-warning fw-bold mt-2" onClick={addCoach}>Create Coach</button>
+                    <button type="submit" className="btn btn-warning fw-bold mt-2" >Create Coach</button>
                     <Link to="/signup">
                         <button className="btn btn-primary ms-3 fw-bold mt-2" >Back to Signup</button>
                     </Link>

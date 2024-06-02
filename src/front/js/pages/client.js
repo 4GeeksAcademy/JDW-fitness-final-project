@@ -1,16 +1,21 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
 export const Client = () => {
 	const { store, actions } = useContext(Context);
 	const [ clientID, setClientID ] = useState(0) 
+	const tokenCoach = localStorage.getItem("token_coach")
+	const navigate = useNavigate();
 
 	useEffect(() => {
         actions.getClients()
     },[store.clients]);
 
+	// if(!tokenCoach) {
+	// 	navigate("/coach/login")
+	// }
 
 	return (
 		<div className="container">

@@ -16,7 +16,6 @@ export const UpdateCoach = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [handleButton, setHandleButton] = useState(false)
     const { coachID } = useParams();
-    const location = useLocation()
 
     useEffect(() => {
         actions.getEducation()
@@ -37,10 +36,10 @@ export const UpdateCoach = () => {
     }, [store.singleCoach]);
 
     useEffect(() => {
-        if (!store.errorCoach && handleButton && username != "" && email != "" && password != "") {
-            navigate(`/coach`);
+        if (!store.errorForm && handleButton && username != "" && email != "" && password != "") {
+            navigate("/coach");
         }
-    },[store.errorCoach, handleButton])
+    },[store.errorForm, handleButton])
 
     function updateCoach(e) {
         e.preventDefault();
@@ -120,9 +119,9 @@ export const UpdateCoach = () => {
                             </option>          
                     ))}
                 </select>
-                {store.errorCoach &&                 
+                {store.errorForm &&                 
                 <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
-                    {store.errorCoach}
+                    {store.errorForm}
                 </div>
                 }
                 </div>

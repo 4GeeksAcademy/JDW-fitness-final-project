@@ -9,19 +9,21 @@ export const LoginCoach = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [showPassword, setShowPassword] = useState(false)
+    const [error, setError] = useState(null)
     const tokenCoach = localStorage.getItem("token_coach")
 
-    useEffect(() => { 
+    // useEffect(() => { 
          
-    },[tokenCoach])
+    // },[tokenCoach])
 
     const login = async (e) => {
         e.preventDefault()
-        if(!tokenCoach || email === "" || password === "") {
-            console.log("error despues de login");
+        if(email === "" || password === "") {
+            console.log("faltan completar");
+            return;
         }
         try {
-            await actions.coachLogin(email.trim(), password.trim())
+            await actions.coachLogin(email, password)
             navigate("/client")
         }
         catch (error) {
@@ -57,9 +59,9 @@ export const LoginCoach = () => {
                     >
                     </button>
                 </div>
-                {store.errorCoach &&                 
+                {store.errorForm &&                 
                 <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
-                    {store.errorCoach}
+                    {error}
                 </div>
                 }
                 <div className="d-flex justify-content-center">

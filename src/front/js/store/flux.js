@@ -3,10 +3,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 			clients: [],
 			singleClient: {},
-			errorClient: null,
 			coaches: [],
 			singleCoach: {},
-			errorCoach: null,
+			errorForm: null,
 			authCoach: false,
 			matches: [],
 			availability: [],
@@ -41,53 +40,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 			console.error("Error fetching single client:", error);
 		}
 	},
-	clientSignUp: (username, email, password, firstName,lastName,age,height,weight,gender,physicalHabits,activityFrequencyID) => {
-		const requestBody = {
-			"username": username,
-			"email": email,
-			"password": password,
-		};
-	
-		if (firstName) {
-			requestBody["first_name"] = firstName;
-		}
-		if (lastName) {
-			requestBody["last_name"] = lastName;
-		}
-		if (age) {
-			requestBody["age"] = age;
-		}
-		if (height) {
-			requestBody["height"] = height;
-		}
-		if (weight) {
-			requestBody["weight"] = weight;
-		}
-		if (gender) {
-			requestBody["gender"] = gender;
-		}
-		if (physicalHabits) {
-			requestBody["physical_habits"] = physicalHabits;
-		}
-		if (activityFrequencyID !== 0) {
-			requestBody["activity_frequency_id"] = activityFrequencyID;
-		}
-	
+	clientSignUp: (username, email, password) => {
 		const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(requestBody)
+			body: JSON.stringify({
+				"username": username,
+				"email": email,
+				"password": password,
+			})
 		};
 		fetch(process.env.BACKEND_URL + "/api/client/signup", requestOptions)
 		.then(response => {
 			if(response.status == 200) {
-				setStore({ errorClient: null })
+				setStore({ errorForm: null })
 			}
 			return response.json()
 		})
 		.then(data => {
 			if(data.error) {
-				setStore({ errorClient: data.error })
+				setStore({ errorForm: data.error })
 			}
 		})
 	},
@@ -135,13 +107,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 		fetch(process.env.BACKEND_URL + `api/client/${clientID}`, requestOptions)
 		.then(response => {
 			if(response.status == 200) {
-				setStore({ errorClient: null })
+				setStore({ errorForm: null })
 			}
 			return response.json()
 		})
 		.then(data => {
 			if(data.error) {
-				setStore({ errorClient: data.error })
+				setStore({ errorForm: data.error })
 			}
 		})
 	},
@@ -159,41 +131,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ singleCoach: data })
 				})
 			},
-			coachSignUp: (username, email, password, firstName, lastName, educationID, experienceID) => {
-				const requestBody = {
-					"username": username,
-					"email": email,
-					"password": password,
-				};
-			
-				if (firstName) {
-					requestBody["first_name"] = firstName;
-				}
-				if (lastName) {
-					requestBody["last_name"] = lastName;
-				}
-				if (educationID !== 0) {
-					requestBody["education_id"] = educationID;
-				}
-				if (experienceID !== 0) {
-					requestBody["experience_id"] = experienceID;
-				}
-			
+			coachSignUp: (username, email, password) => {
 				const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(requestBody)
+					body: JSON.stringify({
+						"username": username,
+						"email": email,
+						"password": password,
+					})
 				};
 				fetch(process.env.BACKEND_URL + "/api/coach/signup", requestOptions)
 				.then(response => {
 					if(response.status == 200) {
-						setStore({ errorCoach: null })
+						setStore({ errorForm: null })
+						getActions().getCoaches()
 					}
 					return response.json()
 				})
 				.then(data => {
 					if(data.error) {
-						setStore({ errorCoach: data.error })
+						setStore({ errorForm: data.error })
 					}
 				})
 			},
@@ -209,24 +167,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 			
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/coach/login", requestOptions);
+					
+					if (!response.ok) {
+						setStore({ errorForm: data.error });
+					}
 					const data = await response.json();
+					setStore({ authCoach: true });
+					setStore({ errorForm: null });
+					localStorage.setItem("token_coach", data.access_coach_token);
+					return data
+						// await getActions().getCoaches();
 			
-					if (response.status === 200) {
-						setStore({ authCoach: true });
-						setStore({ errorCoach: null });
-						await getActions().getCoaches();
-			
-						const loggedCoach = getStore().coaches.find(coach => coach.email === email);
+						// const loggedCoach = getStore().coaches.find(coach => coach.email === email);
 						// localStorage.setItem("loggedCoach", loggedCoach.username);
 			
-						if (data.access_coach_token) {
-							localStorage.setItem("token_coach", data.access_coach_token);
-						}
-					} else {
-						setStore({ errorCoach: data.error });
-					}
-				} catch (error) {
-					setStore({ errorCoach: "An error occurred during login. Please try again." });
+					// 	if (data.access_coach_token) {
+					// 	}
+					//  else {
+						
+					// }
+				} 
+				
+				catch (error) {
+					setStore({ errorForm: "An error occurred during login. Please try again." });
 					console.error("Error during coach login:", error);
 				}
 			},
@@ -273,13 +236,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, requestOptions)
 				.then(response => {
 					if(response.status == 200) {
-						setStore({ errorCoach: null })
+						setStore({ errorForm: null })
 					}
 					return response.json()
 				})
 				.then(data => {
 					if(data.error) {
-						setStore({ errorCoach: data.error })
+						setStore({ errorForm: data.error })
 					}
 				})
 			},

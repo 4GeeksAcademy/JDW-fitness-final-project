@@ -18,6 +18,7 @@ export const UpdateClient = () => {
     const [physicalHabits, setPhysicalHabits] = useState("");
     const [activityFrequencyID, setActivityFrequencyID] = useState(0)
     const [showPassword, setShowPassword] = useState(false)
+    const [handleButton, setHandleButton] = useState(false)
     const {clientID} = useParams();
     
     useEffect(() => {
@@ -41,13 +42,17 @@ export const UpdateClient = () => {
         }
     }, [store.singleClient]);
 
-    function updateClient(e) {
-        e.preventDefault()
-		actions.updateClientAPI(username, email, password, firstName,lastName,age,height,weight,gender,physicalHabits,activityFrequencyID,clientID)
-        if(username !== "" && email !== "" && password !== "") {
-            navigate("/client")
+    useEffect(() => {
+        if (!store.errorForm && handleButton && username != "" && email != "" && password != "") {
+            navigate("/client");
         }
-    }
+    },[store.errorForm, handleButton])
+
+    function updateClient(e) {
+        e.preventDefault();
+        actions.updateClientAPI(username, email, password, firstName, lastName, age, height, weight, gender, physicalHabits, activityFrequencyID, clientID)
+        setHandleButton(true)
+    };
 
     return (
 		<div className="container mt-3">

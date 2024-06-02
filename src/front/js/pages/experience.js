@@ -3,40 +3,38 @@ import { Link } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
-export const Availability = () => {
+export const Experience = () => {
 	const { store, actions } = useContext(Context);
-	let availabilityID = 0
-	
+	let experienceID = 0  
+
 	useEffect(() => {
-        actions.getAvailability()
+        actions.getExperience()
     },[]);
 
 	return (
 		<div className="container">
 			<div className="d-grid">
-				<h1 className="text-center mt-3">Availability</h1>
-				<Link to="/availability/add" className="ms-auto my-1">
+				<h1 className="text-center mt-3">Experience</h1>
+				<Link to="/experience/add" className="ms-auto my-1">
 					<button className="btn btn-warning fw-bold">Add a new one</button>
 				</Link>
 			</div>
 			<ul>
-				{store.availability.map((prop, index) => 
+				{store.experience.map((prop, index) => 
 					<li key={index} className="list-group-item my-2 border-3">
 						<div className="d-flex flex-column justify-content-center">
 						<div className="d-flex">
-							<span className="fw-bold">Day: </span>
-							{prop.day}
-							<Link to={`/availability/${prop.id}`} className="ms-auto my-1">
-								<button className="btn btn-info py-0 px-1 ms-auto">show more</button>					
-							</Link>
-							<Link to={`/availability/update/${prop.id}`} className="ms-auto my-1">
-								<button className="btn btn-secondary py-0 px-1 ms-auto" onClick={() => actions.updateAvailability(prop.id)}>update</button>					
+							<span className="fw-bold">Time: </span>
+							{prop.time}
+							<Link to={`/experience/update/${prop.id}`} className="ms-auto my-1">
+								<button className="btn btn-secondary py-0 px-1 ms-auto" onClick={() => actions.updateExperience(prop.id)}>update</button>					
 							</Link>
 						</div>
 						<div className="d-flex">
-							<span className="fw-bold">Hour: </span>
-							{prop.hour}
-							<button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> availabilityID = prop.id}>delete</button>
+							<Link to={`/experience/${prop.id}`} className="mb-1">
+								<button className="btn btn-info py-0 px-1 ms-auto">show more</button>					
+							</Link>
+							<button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> experienceID = prop.id}>delete</button>
 						</div>
 						</div>
 					</li>
@@ -51,7 +49,7 @@ export const Availability = () => {
 					</div>
 					<div className="modal-footer">
 						<button type="button" className="btn btn-dark" data-bs-dismiss="modal">Noooo!</button>
-						<button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={()=>actions.deleteAvailability(availabilityID)}>Yes, of course!</button>
+						<button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={()=>actions.deleteExperience(experienceID)}>Yes, of course!</button>
 					</div>
 					</div>
 				</div>

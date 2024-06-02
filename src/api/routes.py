@@ -2,9 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-
-from api.models import db, User, Availability, Goals, Availability_client, Client
-
+from api.models import db, User, Availability, Goals, Diseases, Experience, Education, ActivityFrequency, Coach, Client, Availability_client
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -16,16 +14,6 @@ api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api)
-
-
-@api.route('/hello', methods=['POST', 'GET'])
-def handle_hello():
-
-    response_body = {
-        "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
-    }
-
-    return jsonify(response_body), 200
 
 # AVAILABILITY ENDPOINTS
 @api.route('/availability', methods=['GET'])
@@ -86,10 +74,10 @@ def del_availability(availability_id):
     if not availability: return jsonify({"error": f"The ID '{availability_id}' was not found in Availability"}), 400
     db.session.delete(availability)
     db.session.commit()
-
-    return jsonify({"deleted": f"Availability '{availability.day}' and '{availability.hour}' was deleted successfully"}), 200 
+    
+    return jsonify({"deleted": f"Availability '{availability.day}' and '{availability.hour}' was deleted successfully"}), 200
   
-#GOALS ENDPOINTS  
+# GOALS ENDPOINTS  
 @api.route('/goals', methods=['GET'])
 def get_goals():
     all_goals = Goals.query.all()
@@ -133,6 +121,402 @@ def delete_goal(goal_id):
     db.session.commit()
 
     return jsonify({"Deleted": f"The goal was deleted"}), 200
+  
+# DISEASES ENDPOINTS
+@api.route('/diseases', methods=['GET'])
+def get_diseases():
+    all_diseases=Diseases.query.all()
+    results = list(map(lambda diseases: diseases.serialize(), all_diseases))
+    return jsonify(results), 200
+  
+@api.route('/diseases/<int:diseases_id>', methods=['GET'])
+def get_diseaseid(diseases_id):
+    disease = Diseases.query.filter_by(id=diseases_id).first()
+    if disease is None:
+        return jsonify({'message': 'Disease not found'}), 404
+    return jsonify(disease.serialize()), 200
+  
+@api.route('/diseases', methods=['POST'])
+def create_diseases():
+    data = request.json
+    if not 'kind' in data:
+        return jsonify('error :missing fields'), 400
+    
+    if data['kind'] == "":
+     return jsonify({'error': 'Kind cannot be empty', 'hint': 'Please enter a valid kind'}), 400
+
+    diseases = Diseases(kind = data['kind'], sintoms = data['sintoms'])
+    db.session.add(diseases)
+    db.session.commit()
+    response_body = {
+        "msg": "Diseases created successfully"
+    }
+    return jsonify(response_body), 201
+  
+@api.route('/diseases/<int:diseases_id>', methods=['PUT'])
+def update_diseases(diseases_id):
+    diseases = Diseases.query.get(diseases_id)
+    if not diseases:
+        return jsonify({'message': 'The disease does not exist'}), 404
+
+    data = request.json
+    if not data:
+        return jsonify({'message': 'No input data provided'}), 400
+
+    try:
+        if 'kind' in data:
+            diseases.kind = data['kind']
+        if 'sintoms' in data:
+            diseases.sintoms = data['sintoms']
+        
+        db.session.commit()
+        return jsonify({'message': 'The Diseases was successfully updated.'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': 'Error while updating the diseases', 'error': str(e)}), 500
+      
+@api.route('/diseases/<int:diseases_id>', methods=['DELETE'])
+def delete_diseases(diseases_id):
+     diseases = Diseases.query.get(diseases_id)
+     if not diseases:
+      return jsonify({'message': 'La enfermedad no existe'}), 404
+     
+     try:
+        db.session.delete(diseases)
+        db.session.commit()
+        return jsonify({'message': 'The Diseases was successfully eliminated.'}), 200
+     except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': 'Error while deleting the diseases', 'error': str(e)}), 500
+      
+# EXPERIENCE ENDPOINTS
+@api.route('/experience', methods=['GET'])
+def get_experiences():
+    experiences = Experience.query.all()
+    experiences_list = list(map(lambda prop: prop.serialize(),experiences))
+
+    return jsonify(experiences_list), 200
+
+@api.route('/experience/<int:experience_id>', methods=['GET'])
+def get_experience(experience_id):
+    experience = Experience.query.filter_by(id=experience_id).first()
+    return jsonify(experience.serialize()), 200
+
+@api.route('/experience', methods=['POST'])
+def add_experience():
+    experience_data = request.json
+
+    if "time" not in experience_data: return jsonify({"error": f"The property 'time' was not properly written"}), 400 
+    
+    if experience_data["time"] == "": return jsonify({"error": f"The 'time' must not be empty"}), 400 
+
+    experience_to_add = Experience(**experience_data)
+    db.session.add(experience_to_add)
+    db.session.commit()
+
+    return jsonify(experience_to_add.serialize()), 200
+
+@api.route('/experience/<int:experience_id>', methods=['PUT'])
+def update_experience(experience_id):
+    experience_data = request.json
+    new_time = experience_data.get('time')
+
+    if "time" not in experience_data: return jsonify({"error": f"The property 'time' was not properly written"}), 400 
+    
+    if experience_data["time"] == "": return jsonify({"error": f"The 'time' must not be empty"}), 400 
+
+    experience = Experience.query.get(experience_id)
+
+    if experience is None:
+        return jsonify({"error": f"The ID '{experience_id}' was not found in experience"}), 400
+
+    experience.time = new_time
+    db.session.commit()
+
+    return jsonify(experience.serialize()), 200
+
+@api.route('/experience/<int:experience_id>', methods=['DELETE'])
+def del_experience(experience_id):
+    experience = Experience.query.get(experience_id)
+    if not experience: return jsonify({"error": f"The ID '{experience_id}' was not found in experience"}), 400
+    db.session.delete(experience)
+    db.session.commit()
+
+    return jsonify({"deleted": f"Experience '{experience.time}' was deleted successfully"}), 200  
+
+# EDUCATION ENDPOINTS
+@api.route('/education', methods=['GET'])
+def get_educations():
+    educations = Education.query.all()
+    educations_list = list(map(lambda prop: prop.serialize(),educations))
+
+    return jsonify(educations_list), 200
+
+@api.route('/education/<int:education_id>', methods=['GET'])
+def get_education(education_id):
+    education = Education.query.filter_by(id=education_id).first()
+    return jsonify(education.serialize()), 200
+
+@api.route('/education', methods=['POST'])
+def add_education():
+    education_data = request.json
+
+    if "rank" not in education_data: return jsonify({"error": f"The property 'rank' was not properly written"}), 400 
+    
+    if education_data["rank"] == "": return jsonify({"error": f"The 'rank' must not be empty"}), 400 
+
+    education_to_add = Education(**education_data)
+    db.session.add(education_to_add)
+    db.session.commit()
+
+    return jsonify(education_to_add.serialize()), 200
+
+@api.route('/education/<int:education_id>', methods=['PUT'])
+def update_education(education_id):
+    education_data = request.json
+    new_rank = education_data.get('rank')
+
+    if "rank" not in education_data: return jsonify({"error": f"The property 'rank' was not properly written"}), 400 
+    
+    if education_data["rank"] == "": return jsonify({"error": f"The 'rank' must not be empty"}), 400 
+
+    education = Education.query.get(education_id)
+
+    if education is None:
+        return jsonify({"error": f"The ID '{education_id}' was not found in education"}), 400
+
+    education.rank = new_rank
+    db.session.commit()
+
+    return jsonify(education.serialize()), 200
+
+@api.route('/education/<int:education_id>', methods=['DELETE'])
+def del_education(education_id):
+    education = Education.query.get(education_id)
+    if not education: return jsonify({"error": f"The ID '{education_id}' was not found in education"}), 400
+    db.session.delete(education)
+    db.session.commit()
+
+    return jsonify({"deleted": f"Education '{education.rank}' was deleted successfully"}), 200 
+  
+# ACTIVITY FREQUENCY ENDPOINTS  
+@api.route('/activities', methods=['GET'])
+def get_activity_frequency():
+    all_activities = ActivityFrequency.query.all()
+    results = map(lambda activities: activities.serialize(),all_activities)
+
+    return jsonify (list(results)), 200
+
+@api.route('/activities/<int:activity_id>', methods=['GET'])
+def get_singleActivity_frequency(activity_id):
+    activity = ActivityFrequency.query.filter_by(id=activity_id).first()
+    return jsonify(activity.serialize()), 200
+
+@api.route('/activities', methods=['POST'])
+def create_activity_frequency():
+    activities_data = request.json
+    activity_to_create = ActivityFrequency(**activities_data)
+
+    db.session.add(activity_to_create)
+    db.session.commit()
+
+    return jsonify(activity_to_create.serialize()), 200
+  
+@api.route('/activities/<int:activity_id>', methods=['PUT'])
+def updateActivityFrequency(activity_id):
+    activity_data = request.json
+    activity = ActivityFrequency.query.get(activity_id)
+    if not activity:
+        return jsonify({"Error": f"The activity id was not found"}), 400
+    
+    activity.mode = activity_data["mode"]
+    db.session.commit()
+
+    return jsonify(activity.serialize()), 200
+
+@api.route('/activities/<int:activity_id>', methods=['DELETE'])
+def deleteActivityFrequency(activity_id):
+    activity = ActivityFrequency.query.filter_by(id=activity_id).first()
+
+    db.session.delete(activity)
+    db.session.commit()
+
+    return jsonify({"Deleted": f"The activity was deleted"}), 200
+
+# CLIENT ENDPOINTS
+@api.route('/client', methods=['GET'])
+def get_clients():
+    clients = Client.query.all()
+    clients_list = list(map(lambda prop: prop.serialize(),clients))
+
+    return jsonify(clients_list), 200
+
+@api.route('/client/<int:client_id>', methods=['GET'])
+def get_client(client_id):
+    client = Client.query.filter_by(id=client_id).first()
+    return jsonify(client.serialize()), 200
+  
+@api.route('/client/signup', methods=['POST'])
+def signup_client():
+    client_data = request.json
+    required_properties = ["username", "email", "password"]
+
+    for prop in required_properties:
+        if prop not in client_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
+    
+    for key in required_properties:
+        if client_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+
+    existing_username = Client.query.filter_by(username=client_data["username"]).first()
+    if existing_username:
+        return jsonify({"error": f"The username '{client_data['username']}' already exists in the database"}), 400
+      
+    existing_email = Client.query.filter_by(email=client_data["email"]).first()
+    if existing_email:
+        return jsonify({"error": f"The email '{client_data['email']}' already exists in the database"}), 400
+      
+    client_to_add = Client(**client_data)
+    db.session.add(client_to_add)
+    db.session.commit()
+
+    return jsonify(client_to_add.serialize()), 200
+
+@api.route('/client/<int:client_id>', methods=['PUT'])
+def update_client(client_id):
+    client_data = request.json
+    required_properties = ["username", "email", "password"]
+
+    for prop in required_properties:
+        if prop not in client_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
+    
+    for key in required_properties:
+        if client_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+    
+    existing_username = Client.query.filter_by(username=client_data["username"]).first()
+    if existing_username:
+        return jsonify({"error": f"The username '{client_data['username']}' already exists in the database"}), 400
+      
+    existing_email = Client.query.filter_by(email=client_data["email"]).first()
+    if existing_email:
+        return jsonify({"error": f"The email '{client_data['email']}' already exists in the database"}), 400
+      
+    client = Client.query.get(client_id)
+    if client is None:
+        return jsonify({"error": f"The ID '{client_id}' was not found in Clientes"}), 400
+
+    for prop in client_data:
+        setattr(client, prop, client_data[prop])
+
+    db.session.commit()
+
+    return jsonify(client.serialize()), 200
+  
+@api.route('/client/<int:client_id>', methods=['DELETE'])
+def del_client(client_id):
+    client = Client.query.get(client_id)
+    if not client: return jsonify({"error": f"The ID '{client_id}' was not found in client"}), 400
+    db.session.delete(client)
+    db.session.commit()
+
+    return jsonify({"deleted": f"Client '{client.username}' was deleted successfully"}), 200
+
+# COACH ENDPOINTS
+@api.route('/coach', methods=['GET'])
+def get_coaches():
+    coaches = Coach.query.all()
+    coaches_list = list(map(lambda coach: coach.serialize(),coaches))
+
+    return jsonify(coaches_list), 200
+
+@api.route('/coach/<int:coach_id>', methods=['GET'])
+def get_coach(coach_id):
+    coach = Coach.query.filter_by(id=coach_id).first()
+    return jsonify(coach.serialize()), 200
+
+@api.route('/coach/signup', methods=['POST'])
+def add_coach():
+    coach_data = request.json
+    required_properties = ["username", "email", "password"]
+
+    for prop in required_properties:
+        if prop not in coach_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
+    
+    for key in required_properties:
+        if coach_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+
+    existing_username = Coach.query.filter(Coach.username == coach_data["username"], Coach.id != coach_id).first()
+    if existing_username:
+        return jsonify({"error": f"The username '{coach_data['username']}' already exists in the database"}), 400
+
+    existing_email = Coach.query.filter(Coach.email == coach_data["email"], Coach.id != coach_id).first()
+    if existing_email:
+        return jsonify({"error": f"The email '{coach_data['email']}' already exists in the database"}), 400
+
+    coach_to_add = Coach(**coach_data)
+    db.session.add(coach_to_add)
+    db.session.commit()
+
+    return jsonify(coach_to_add.serialize()), 200
+
+@api.route('/coach/<int:coach_id>', methods=['PUT'])
+# @jwt_required()
+def update_coach(coach_id):
+    coach_data = request.json
+    required_properties = ["username", "email", "password"]
+
+    for prop in required_properties:
+        if prop not in coach_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
+    
+    for key in required_properties:
+        if coach_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+
+    existing_username = Coach.query.filter(Coach.username == coach_data["username"], Coach.id != coach_id).first()
+    if existing_username:
+        return jsonify({"error": f"The username '{coach_data['username']}' already exists in the database"}), 400
+
+    existing_email = Coach.query.filter(Coach.email == coach_data["email"], Coach.id != coach_id).first()
+    if existing_email:
+        return jsonify({"error": f"The email '{coach_data['email']}' already exists in the database"}), 400
+
+    coach = Coach.query.get(coach_id)
+    if coach is None:
+        return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 400
+    
+    # current_coach = get_jwt_identity()
+
+    # if coach.email != current_coach:
+    #     return jsonify({"unauthorized": "You are not authorized to access here"}), 401
+
+    for prop in coach_data:
+        setattr(coach, prop, coach_data[prop])
+
+    db.session.commit()
+
+    return jsonify(coach.serialize()), 200
+  
+@api.route('/coach/<int:coach_id>', methods=['DELETE'])
+def del_coach(coach_id):
+    coach = Coach.query.get(coach_id)
+    if not coach: return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 400
+    db.session.delete(coach)
+    db.session.commit()
+    
+    return jsonify({"deleted": f"Coach '{coach.username}' with email '{coach.email}' was deleted successfully"}), 200
+
+@api.route("/coach/login", methods=["POST"])
+def coach_login():
+    coach_data = request.json
+    required_properties = ["email", "password"]
+
+    for prop in required_properties:
+        if prop not in coach_data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
+
+    coach = Coach.query.filter_by(email=coach_data["email"]).first()
+    if coach is None or coach.email != coach_data["email"] or coach.password != coach_data["password"]:
+        return jsonify({"error": "Bad username or password"}), 401
+      
+    access_coach_token = create_access_token(identity=coach.email)
+    return jsonify(access_coach_token=access_coach_token)
 
     # CLIENT ENDPOINTS
 @api.route('/client', methods=['GET'])
@@ -279,7 +663,5 @@ def update_availability_client_day(id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Error while updating the availability client entry', 'error': str(e)}), 500
-
-
 
 

@@ -1,18 +1,31 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const UpdateGoal = () => {
 	const { store, actions } = useContext(Context);
     const navigate = useNavigate()
-    const [kind, setKind] = useState(store.goalToUpdate?.kind||"");
-    const [description, setDescription] = useState(store.goalToUpdate?.description||"");
-// Consultar que hace el ? segun jorge lo que hace es esperar que carge
+    const [kind, setKind] = useState("");
+    const [description, setDescription] = useState("");
+    const { goalID } = useParams();
+
+    useEffect(() => {
+        actions.getSingleGoal(goalID);
+    }, []);
+
+    useEffect(() => {
+        if (store.singleGoal && !kind && !description) {
+            setKind(store.singleGoal.kind || "");
+            setDescription(store.singleGoal.description || "");
+        }
+    }, [store.singleGoal]);
 
     const updateGoal = (e) => {
         e.preventDefault() 
         if (kind.trim() !== "" && description.trim() !== "") {
-          actions.updateGoalAPI(kind, description,store.goalToUpdate.id)
+          actions.updateGoalAPI(kind, description,store.singleGoal.id)
+          setKind("")
+          setDescription("")
           navigate("/goals");
         }
       }

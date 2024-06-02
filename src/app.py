@@ -5,11 +5,13 @@ import os
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
+from flask_cors import CORS
 from api.utils import APIException, generate_sitemap
 from api.models import db
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
+from flask_cors import CORS
 
 from flask_jwt_extended import JWTManager
 
@@ -19,6 +21,7 @@ ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
+CORS(app)
 app.url_map.strict_slashes = False
 
 # database condiguration
@@ -34,7 +37,7 @@ MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
 
 # Setup the Flask-JWT-Extended extension
-app.config["JWT_SECRET_KEY"] = "sssdtsdgtsdgffdgfdgdf898gdfgfduo2345668okllxfhkjchyf12312gdskjfgshjdfgsdkjhfs12312312d"  # Change this!
+app.config["JWT_SECRET_KEY"] = "sssdtsdgtsdgffdgfdgdf898gdfgfduo2345668okllxfhkjchyf12312gdskjfgshjdfgsdkjhfs12312312dds56g4sfd56g4fd5s6g4fd564gd56fg46d5f"  # Change this!
 jwt = JWTManager(app)
 
 # add the admin

@@ -32,9 +32,17 @@ def generate_sitemap(app):
 
     links_html = "".join(["<li><a href='" + y + "'>" + y + "</a></li>" for y in links])
     return """
+        <style>
+        .rounded-circle {
+            border-radius: 50%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            }
+        </style>
         <div style="text-align: center;">
-        <img style="max-height: 80px" src='https://storage.googleapis.com/breathecode/boilerplates/rigo-baby.jpeg' />
-        <h1>Rigo welcomes you to your API!!</h1>
+        <img style="max-height: 300px" src='https://raw.githubusercontent.com/JorgeAJT/authentication-system/main/src/front/img/obiwan.png' class="rounded-circle"/>
+        <h1>HELLO THERE!</h1>
         <p>API HOST: <script>document.write('<input style="padding: 5px; width: 300px" type="text" value="'+window.location.href+'" />');</script></p>
         <p>Start working on your project by following the <a href="https://start.4geeksacademy.com/starters/full-stack" target="_blank">Quick Start</a></p>
         <p>Remember to specify a real endpoint path like: </p>

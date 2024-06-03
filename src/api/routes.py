@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Availability, Goals, Diseases, Experience, Education, ActivityFrequency, Coach, Client, Availability_client, Match
+from api.models import db, User, Availability, Goals, Diseases, Experience, Education, ActivityFrequency, Coach, Client, Availability_client, Likes, Match
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -523,6 +523,58 @@ def login():
         return jsonify(access_client_token=access_client_token), 201
 
     return jsonify({"error": "Bad username or password"}), 401
+  
+# LIKES ENDPOINTS
+@api.route('/likes', methods=['GET'])
+def get_likes():
+    likes = Likes.query.all()
+    likes_list = list(map(lambda likes: likes.serialize(),likes))
+
+    return jsonify(likes_list), 200
+
+@api.route('/likes/<int:like_id>', methods=['GET'])
+def get_like(like_id):
+    like = Likes.query.filter_by(id=like_id).first()
+    if not like: return jsonify({"error": f"The ID '{like_id}' was not found in Clients"}), 404
+    return jsonify(like.serialize()), 200
+
+@api.route('/likes/signup', methods=['POST'])
+def add_like():
+    like_data = request.json
+    required_properties = ["client_id", "coach_id"]
+
+    for prop in required_properties:
+        if prop not in like_data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
+        if like_data[prop] == "" or like_data[prop] == 0: return jsonify({"error": f"The '{prop}' must not be empty or zero"}), 400
+
+    client = Client.query.get(like_data["client_id"])
+    if client is None:
+        return jsonify({"error": f"The client with id '{like_data['client_id']}' does not exist"}), 404
+
+    coach = Coach.query.get(like_data["coach_id"])
+    if coach is None:
+        return jsonify({"error": f"The coach with id '{like_data['coach_id']}' does not exist"}), 404
+
+    existing_like = like.query.filter_by(coach_id=like_data["coach_id"], client_id=like_data["client_id"]).first()
+    if existing_like:
+        return jsonify({"error": f"The like between coach '{coach.username}' and client '{client.username}' already exists in the database"}), 400
+    
+    like_to_add = Likes(**like_data)
+    db.session.add(like_to_add)
+    db.session.commit()
+
+    return jsonify(like_to_add.serialize()), 201
+
+@api.route('/likes/<int:like_id>', methods=['DELETE'])
+def del_like(like_id):
+    like = Likes.query.get(like_id)
+    if not like: return jsonify({"error": f"The ID '{like_id}' was not found in Likes"}), 404
+    coach = Coach.query.get(like.coach_id)
+    client = Client.query.get(like.client_id)
+    db.session.delete(like)
+    db.session.commit()
+    
+    return jsonify({"deleted": f"The like between coach '{coach.username}' and client '{client.username}' was deleted successfully"}), 200  
 
 # MATCH ENDPOINTS
 @api.route('/match', methods=['GET'])
@@ -575,7 +627,6 @@ def del_match(match_id):
     db.session.commit()
     
     return jsonify({"deleted": f"The match between coach '{coach.username}' and client '{client.username}' was deleted successfully"}), 200  
-  
   
   
   

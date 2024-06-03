@@ -174,6 +174,24 @@ class Coach(db.Model):
             "experience_id": self.experience_id
             # do not serialize the password, its a security breach
         }
+      
+class Likes(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    source = db.Column(db.String(120), unique=False, nullable=True)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+    coach_id = db.Column(db.Integer, db.ForeignKey('coach.id'))
+    client = db.relationship(Client)
+    coach = db.relationship(Coach)
+    
+    def __repr__(self):
+        return f"<Likes {self.id}>"
+    def serialize(self):
+        return {
+            "id": self.id,
+            "source": self.source,
+            "client_id": self.client_id,
+            "coach_id": self.coach_id
+        }
     
 class Match(db.Model):
     id = db.Column(db.Integer, primary_key=True)

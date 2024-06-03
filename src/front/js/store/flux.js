@@ -14,6 +14,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			matches: [],
 			availability: [],
 			singleAvailability: {}, 
+			likes: [],
       goals: [],
 			singleGoal:{},
       diseases: [],
@@ -121,6 +122,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			}
 		})
 	},
+
       // COACH
 			getCoaches: () => {
 				fetch(process.env.BACKEND_URL + "/api/coach")
@@ -226,6 +228,40 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				})
 			},
+        
+       	// LIKES
+	getLikes: () => {
+		fetch(process.env.BACKEND_URL + "api/likes")
+		.then( (response) => response.json())
+		.then( data => setStore({ likes: data }))	
+	  },
+	addLikeAPI: (coachID, clientID) => {
+		const requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				"coach_id": coachID,
+				"client_id": clientID
+			})
+		};
+		fetch(process.env.BACKEND_URL + "api/likes", requestOptions)
+		.then(response => {
+			if(response.status == 200) {
+				setStore({ error: null })
+			}
+			return response.json()
+		})
+		.then(data => {
+			if(data.error) {
+				setStore({ error: data.error })
+			}
+		})
+	},
+	deleteLike: (likeID) => {
+		fetch(process.env.BACKEND_URL + `api/like/${likeID}`, { method: 'DELETE' })
+		.then( () => getActions().getLikes())
+	}, 
+        
             // MATCH
       		getMatches: () => {
 				fetch(process.env.BACKEND_URL + "/api/match")
@@ -523,18 +559,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"mode": mode,
 					})
 				};
-				fetch(process.env.BACKEND_URL + "/api/activities", requestOptions)
+				fetch(process.env.BACKEND_URL + "api/activities", requestOptions)
 				.then(response => response.json())
 				.then(()=>getActions().getActivityFrequency())
 			},
+			
 			deleteActivityFrequency: (idToDelete) => {
 				fetch(`${process.env.BACKEND_URL}/api/activities/${idToDelete}`, { method: 'DELETE' })
 				.then(()=>getActions().getActivityFrequency())
 			},
+			
 			updateActivityFrequency: (iDSelected) => {
 				const activityFrequencySelected = getStore().activities.find(activityFrequency => activityFrequency.id === iDSelected)
 				setStore({ singleActivityFrequency: activityFrequencySelected })
 			},
+			
 			updateActivityFrequencyAPI: (mode, idToEdit) => {
 				const requestOptions = {
 					method: 'PUT',

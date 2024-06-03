@@ -48,13 +48,14 @@ import { AddCoach } from "./pages/addCoach";
 import { UpdateCoachSignUp } from "./pages/updateCoachSignUp";
 import { UpdateCoach } from "./pages/updateCoach";
 
+import { Likes } from "./pages/likes";
+import { AddLike } from "./pages/addLikes";
+
 import { Match } from "./pages/match";
 import { AddMatch } from "./pages/addMatch";
 
 import injectContext from "./store/appContext";
 import { AvailabilityClient } from "./pages/availabilityClient";
-
-
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -121,6 +122,9 @@ const Layout = () => {
                         <Route element={<SingleClient />} path="/client/:clientID" />
                         <Route element={<AddClient />} path="/client/signup" />
                         <Route element={<UpdateClient />} path="/client/update/:clientID" />
+                        {/* LIKES PATH */}
+                        <Route element={<Likes />} path="/likes" />
+                        <Route element={<AddLike />} path="/likes/add" />    
                         {/* MATCH PATH */}
                         <Route element={<Match />} path="/match" />
                         <Route element={<AddMatch />} path="/match/add" />

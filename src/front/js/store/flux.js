@@ -537,6 +537,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.error("Error fetching activity frequency:", error);
 				}
+			},
 			createActivityFrequency: (mode) => {
 				const requestOptions = {
 					method: 'POST',
@@ -545,18 +546,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"mode": mode,
 					})
 				};
-				fetch(process.env.BACKEND_URL + "/api/activities", requestOptions)
+				fetch(process.env.BACKEND_URL + "api/activities", requestOptions)
 				.then(response => response.json())
 				.then(()=>getActions().getActivityFrequency())
 			},
+			
 			deleteActivityFrequency: (idToDelete) => {
 				fetch(`${process.env.BACKEND_URL}/api/activities/${idToDelete}`, { method: 'DELETE' })
 				.then(()=>getActions().getActivityFrequency())
 			},
+			
 			updateActivityFrequency: (iDSelected) => {
 				const activityFrequencySelected = getStore().activities.find(activityFrequency => activityFrequency.id === iDSelected)
 				setStore({ singleActivityFrequency: activityFrequencySelected })
 			},
+			
 			updateActivityFrequencyAPI: (mode, idToEdit) => {
 				const requestOptions = {
 					method: 'PUT',

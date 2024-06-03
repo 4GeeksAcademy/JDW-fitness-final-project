@@ -176,6 +176,7 @@ class Coach(db.Model):
         }
 class Likes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    source = db.Column(db.String(120), unique=False, nullable=True)
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
     coach_id = db.Column(db.Integer, db.ForeignKey('coach.id'))
     client = db.relationship(Client)
@@ -186,6 +187,7 @@ class Likes(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "source": self.source,
             "client_id": self.client_id,
             "coach_id": self.coach_id
         }

@@ -13,6 +13,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			authCoach: false,
 			availability: [],
 			singleAvailability: {}, 
+			likes: [],
       goals: [],
 			singleGoal:{},
       diseases: [],
@@ -146,7 +147,38 @@ const getState = ({ getStore, getActions, setStore }) => {
 			}
 		})
 	},
-      
+	//Likes
+	getLikes: () => {
+		fetch(process.env.BACKEND_URL + "api/likes")
+		.then( (response) => response.json())
+		.then( data => setStore({ likes: data }))	
+	  },
+	addLikeAPI: (coachID, clientID) => {
+		const requestOptions = {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				"coach_id": coachID,
+				"client_id": clientID
+			})
+		};
+		fetch(process.env.BACKEND_URL + "api/likes", requestOptions)
+		.then(response => {
+			if(response.status == 200) {
+				setStore({ error: null })
+			}
+			return response.json()
+		})
+		.then(data => {
+			if(data.error) {
+				setStore({ error: data.error })
+			}
+		})
+	},
+	deleteLikes: (likeID) => {
+		fetch(process.env.BACKEND_URL + `api/like/${likeID}`, { method: 'DELETE' })
+		.then( () => getActions().getLikes())
+	},
       // COACH
 			getCoaches: () => {
 				fetch(process.env.BACKEND_URL + "/api/coach")

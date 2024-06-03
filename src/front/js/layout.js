@@ -49,7 +49,8 @@ import { LoginCoach } from "./pages/loginCoach";
 import injectContext from "./store/appContext";
 import { AvailabilityClient } from "./pages/availabilityClient";
 
-
+import { AddLike } from "./pages/addLikes";
+import { Likes } from "./pages/likes";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -114,6 +115,9 @@ const Layout = () => {
                         <Route element={<SingleClient />} path="/client/:clientID" />
                         <Route element={<AddClient />} path="/client/signup" />
                         <Route element={<UpdateClient />} path="/client/update/:clientID" />
+                        {/* LIKES PATH */}
+                        <Route element={<AddLike />} path="/likes/signup" />
+                        <Route element={<Likes />} path="/likes" />
                         {/* NOT FOUND */}
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>

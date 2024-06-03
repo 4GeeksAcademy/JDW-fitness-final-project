@@ -663,7 +663,7 @@ def get_like(like_id):
     if not like: return jsonify({"error": f"The ID '{like_id}' was not found in Clients"}), 404
     return jsonify(like.serialize()), 200
 
-@api.route('/likes', methods=['POST'])
+@api.route('/likes/signup', methods=['POST'])
 def add_like():
     like_data = request.json
     required_properties = ["client_id", "coach_id"]

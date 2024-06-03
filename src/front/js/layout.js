@@ -4,6 +4,8 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Home } from "./pages/home";
+import { SignUp } from "./pages/signUp";
+import { Login } from "./pages/login";
 
 import { Availability } from "./pages/availability";
 import { AddAvailability } from "./pages/addAvailability";
@@ -43,14 +45,17 @@ import { UpdateClient } from "./pages/updateClient";
 import { Coach } from "./pages/coach";
 import { SingleCoach } from "./pages/singleCoach";
 import { AddCoach } from "./pages/addCoach";
+import { UpdateCoachSignUp } from "./pages/updateCoachSignUp";
 import { UpdateCoach } from "./pages/updateCoach";
-import { LoginCoach } from "./pages/loginCoach";
+
+import { Likes } from "./pages/likes";
+import { AddLike } from "./pages/addLikes";
+
+import { Match } from "./pages/match";
+import { AddMatch } from "./pages/addMatch";
 
 import injectContext from "./store/appContext";
 import { AvailabilityClient } from "./pages/availabilityClient";
-
-import { AddLike } from "./pages/addLikes";
-import { Likes } from "./pages/likes";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -72,6 +77,8 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
+                        <Route element={<SignUp />} path="/signup" />
+                        <Route element={<Login />} path="/login" />
                         {/* AVAILABILITY ROUTES */}  
                         <Route element={<Availability />} path="/availability" />
                         <Route element={<SingleAvailability />} path="/availability/:availabilityID" />
@@ -107,17 +114,20 @@ const Layout = () => {
                         {/* COACH PATH */}
                         <Route element={<Coach />} path="/coach" />
                         <Route element={<AddCoach />} path="/coach/signup" />
+                        <Route element={<UpdateCoachSignUp />} path="/coach/signup/update/:coachID" />
                         <Route element={<UpdateCoach />} path="/coach/update/:coachID" />
                         <Route element={<SingleCoach />} path="/coach/:coachID" />
-                        <Route element={<LoginCoach />} path="/coach/login" />
                         {/* CLIENT PATH */}
                         <Route element={<Client />} path="/client" />
                         <Route element={<SingleClient />} path="/client/:clientID" />
                         <Route element={<AddClient />} path="/client/signup" />
                         <Route element={<UpdateClient />} path="/client/update/:clientID" />
                         {/* LIKES PATH */}
-                        <Route element={<AddLike />} path="/likes/signup" />
                         <Route element={<Likes />} path="/likes" />
+                        <Route element={<AddLike />} path="/likes/add" />    
+                        {/* MATCH PATH */}
+                        <Route element={<Match />} path="/match" />
+                        <Route element={<AddMatch />} path="/match/add" />
                         {/* NOT FOUND */}
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>

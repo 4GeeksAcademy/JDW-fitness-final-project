@@ -3,38 +3,35 @@ import { Link } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
-export const Coach = () => {
+export const Match = () => {
 	const { store, actions } = useContext(Context);
-	const [ coachID, setCoachID ] = useState(0)
+	const [ matchID, setMatchID ] = useState(0)
 
 	useEffect(() => {
-        actions.getCoaches()
-    },[]);
-
+        actions.getMatches()
+    },[store.matches]);
 
 	return (
 		<div className="container">
 			<div className="d-grid">
-				<h1 className="text-center mt-3">Coach List</h1>
-				<Link to="/coach/signup" className="ms-auto my-1">
-					<button className="btn btn-warning fw-bold">Sign up</button>
+				<h1 className="text-center mt-3">Match</h1>
+				<Link to="/match/add" className="ms-auto my-1">
+					<button className="btn btn-warning fw-bold">Add a new match</button>
 				</Link>
 			</div>
 			<ul>
-				{store.coaches.map((coach, index) => 
+				{store.matches.map((prop, index) => 
 					<li key={index} className="list-group-item my-2 border-3">
 						<div className="d-flex flex-column justify-content-center">
-							<div className="d-flex">
-								<span className="fw-bold">Username: </span>
-								{coach.username}
-							</div>
-							<div className="d-flex">
-								<Link to={`/coach/${coach.id}`} className="mb-1">
-									<button className="btn btn-info py-0 px-1 ms-auto">show more information</button>					
-								</Link>
-								<button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> setCoachID(coach.id)}>delete</button>
-							</div>
-							<button className="btn btn-secondary py-0 px-1 ms-auto">Like</button>	
+						<div className="d-flex">
+							<span className="fw-bold">Coach ID: </span>
+							{prop.coach_id}
+						</div>
+						<div className="d-flex">
+							<span className="fw-bold">Client ID: </span>
+							{prop.client_id}
+							<button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> setMatchID(prop.id)}>delete</button>
+						</div>
 						</div>
 					</li>
 				)}
@@ -48,7 +45,7 @@ export const Coach = () => {
 					</div>
 					<div className="modal-footer">
 						<button type="button" className="btn btn-dark" data-bs-dismiss="modal">Noooo!</button>
-						<button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={()=>actions.deleteCoach(coachID)}>Yes, of course!</button>
+						<button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={()=>actions.deleteMatch(matchID)}>Yes, of course!</button>
 					</div>
 					</div>
 				</div>

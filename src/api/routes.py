@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Availability, Goals, Diseases, Experience, Education, ActivityFrequency, Coach, Client, Availability_client, Likes
+from api.models import db, User, Availability, Goals, Diseases, Experience, Education, ActivityFrequency, Coach, Client, Availability_client, Likes, Match
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -43,7 +43,7 @@ def add_availability():
     db.session.add(availability_to_add)
     db.session.commit()
 
-    return jsonify(availability_to_add.serialize()), 200
+    return jsonify(availability_to_add.serialize()), 201
 
 @api.route('/availability/<int:availability_id>', methods=['PUT'])
 def update_availability(availability_id):
@@ -59,7 +59,7 @@ def update_availability(availability_id):
     availability = Availability.query.get(availability_id)
 
     if availability is None:
-        return jsonify({"error": f"The ID '{availability_id}' was not found in Availability"}), 400
+        return jsonify({"error": f"The ID '{availability_id}' was not found in Availability"}), 404
 
     for prop in data:
         setattr(availability, prop, data[prop])
@@ -71,7 +71,7 @@ def update_availability(availability_id):
 @api.route('/availability/<int:availability_id>', methods=['DELETE'])
 def del_availability(availability_id):
     availability = Availability.query.get(availability_id)
-    if not availability: return jsonify({"error": f"The ID '{availability_id}' was not found in Availability"}), 400
+    if not availability: return jsonify({"error": f"The ID '{availability_id}' was not found in Availability"}), 404
     db.session.delete(availability)
     db.session.commit()
     
@@ -105,7 +105,7 @@ def update_goal(goal_id):
     goal_data = request.json
     goal = Goals.query.get(goal_id)
     if not goal:
-        return jsonify({"Error": f"The goal id was not found"}), 400
+        return jsonify({"Error": f"The goal id was not found"}), 404
     
     goal.kind = goal_data["kind"]
     goal.description = goal_data["description"]
@@ -214,7 +214,7 @@ def add_experience():
     db.session.add(experience_to_add)
     db.session.commit()
 
-    return jsonify(experience_to_add.serialize()), 200
+    return jsonify(experience_to_add.serialize()), 201
 
 @api.route('/experience/<int:experience_id>', methods=['PUT'])
 def update_experience(experience_id):
@@ -228,7 +228,7 @@ def update_experience(experience_id):
     experience = Experience.query.get(experience_id)
 
     if experience is None:
-        return jsonify({"error": f"The ID '{experience_id}' was not found in experience"}), 400
+        return jsonify({"error": f"The ID '{experience_id}' was not found in experience"}), 404
 
     experience.time = new_time
     db.session.commit()
@@ -238,7 +238,7 @@ def update_experience(experience_id):
 @api.route('/experience/<int:experience_id>', methods=['DELETE'])
 def del_experience(experience_id):
     experience = Experience.query.get(experience_id)
-    if not experience: return jsonify({"error": f"The ID '{experience_id}' was not found in experience"}), 400
+    if not experience: return jsonify({"error": f"The ID '{experience_id}' was not found in experience"}), 404
     db.session.delete(experience)
     db.session.commit()
 
@@ -269,7 +269,7 @@ def add_education():
     db.session.add(education_to_add)
     db.session.commit()
 
-    return jsonify(education_to_add.serialize()), 200
+    return jsonify(education_to_add.serialize()), 201
 
 @api.route('/education/<int:education_id>', methods=['PUT'])
 def update_education(education_id):
@@ -283,7 +283,7 @@ def update_education(education_id):
     education = Education.query.get(education_id)
 
     if education is None:
-        return jsonify({"error": f"The ID '{education_id}' was not found in education"}), 400
+        return jsonify({"error": f"The ID '{education_id}' was not found in education"}), 404
 
     education.rank = new_rank
     db.session.commit()
@@ -293,7 +293,7 @@ def update_education(education_id):
 @api.route('/education/<int:education_id>', methods=['DELETE'])
 def del_education(education_id):
     education = Education.query.get(education_id)
-    if not education: return jsonify({"error": f"The ID '{education_id}' was not found in education"}), 400
+    if not education: return jsonify({"error": f"The ID '{education_id}' was not found in education"}), 404
     db.session.delete(education)
     db.session.commit()
 
@@ -327,7 +327,7 @@ def updateActivityFrequency(activity_id):
     activity_data = request.json
     activity = ActivityFrequency.query.get(activity_id)
     if not activity:
-        return jsonify({"Error": f"The activity id was not found"}), 400
+        return jsonify({"Error": f"The activity id was not found"}), 404
     
     activity.mode = activity_data["mode"]
     db.session.commit()
@@ -379,7 +379,7 @@ def signup_client():
     db.session.add(client_to_add)
     db.session.commit()
 
-    return jsonify(client_to_add.serialize()), 200
+    return jsonify(client_to_add.serialize()), 201
 
 @api.route('/client/<int:client_id>', methods=['PUT'])
 def update_client(client_id):
@@ -392,17 +392,17 @@ def update_client(client_id):
     for key in required_properties:
         if client_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
     
-    existing_username = Client.query.filter_by(username=client_data["username"]).first()
+    existing_username = Client.query.filter(Client.username == client_data["username"], Client.id != client_id).first()
     if existing_username:
         return jsonify({"error": f"The username '{client_data['username']}' already exists in the database"}), 400
-      
-    existing_email = Client.query.filter_by(email=client_data["email"]).first()
+
+    existing_email = Client.query.filter(Client.email == client_data["email"], Client.id != client_id).first()
     if existing_email:
         return jsonify({"error": f"The email '{client_data['email']}' already exists in the database"}), 400
       
     client = Client.query.get(client_id)
     if client is None:
-        return jsonify({"error": f"The ID '{client_id}' was not found in Clientes"}), 400
+        return jsonify({"error": f"The ID '{client_id}' was not found in Clients"}), 404
 
     for prop in client_data:
         setattr(client, prop, client_data[prop])
@@ -414,7 +414,7 @@ def update_client(client_id):
 @api.route('/client/<int:client_id>', methods=['DELETE'])
 def del_client(client_id):
     client = Client.query.get(client_id)
-    if not client: return jsonify({"error": f"The ID '{client_id}' was not found in client"}), 400
+    if not client: return jsonify({"error": f"The ID '{client_id}' was not found in Clients"}), 404
     db.session.delete(client)
     db.session.commit()
 
@@ -431,6 +431,7 @@ def get_coaches():
 @api.route('/coach/<int:coach_id>', methods=['GET'])
 def get_coach(coach_id):
     coach = Coach.query.filter_by(id=coach_id).first()
+    if not coach: return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 404
     return jsonify(coach.serialize()), 200
 
 @api.route('/coach/signup', methods=['POST'])
@@ -444,11 +445,11 @@ def add_coach():
     for key in required_properties:
         if coach_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
 
-    existing_username = Coach.query.filter(Coach.username == coach_data["username"], Coach.id != coach_id).first()
+    existing_username = Coach.query.filter_by(username=coach_data["username"]).first()
     if existing_username:
         return jsonify({"error": f"The username '{coach_data['username']}' already exists in the database"}), 400
 
-    existing_email = Coach.query.filter(Coach.email == coach_data["email"], Coach.id != coach_id).first()
+    existing_email = Coach.query.filter_by(email=coach_data["email"]).first()
     if existing_email:
         return jsonify({"error": f"The email '{coach_data['email']}' already exists in the database"}), 400
 
@@ -456,7 +457,7 @@ def add_coach():
     db.session.add(coach_to_add)
     db.session.commit()
 
-    return jsonify(coach_to_add.serialize()), 200
+    return jsonify(coach_to_add.serialize()), 201
 
 @api.route('/coach/<int:coach_id>', methods=['PUT'])
 # @jwt_required()
@@ -480,7 +481,7 @@ def update_coach(coach_id):
 
     coach = Coach.query.get(coach_id)
     if coach is None:
-        return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 400
+        return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 404
     
     # current_coach = get_jwt_identity()
 
@@ -497,27 +498,140 @@ def update_coach(coach_id):
 @api.route('/coach/<int:coach_id>', methods=['DELETE'])
 def del_coach(coach_id):
     coach = Coach.query.get(coach_id)
-    if not coach: return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 400
+    if not coach: return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 404
     db.session.delete(coach)
     db.session.commit()
     
     return jsonify({"deleted": f"Coach '{coach.username}' with email '{coach.email}' was deleted successfully"}), 200
 
-@api.route("/coach/login", methods=["POST"])
-def coach_login():
-    coach_data = request.json
+@api.route("/login", methods=["POST"])
+def login():
+    data = request.json
     required_properties = ["email", "password"]
 
     for prop in required_properties:
-        if prop not in coach_data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
+        if prop not in data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
 
-    coach = Coach.query.filter_by(email=coach_data["email"]).first()
-    if coach is None or coach.email != coach_data["email"] or coach.password != coach_data["password"]:
-        return jsonify({"error": "Bad username or password"}), 401
-      
-    access_coach_token = create_access_token(identity=coach.email)
-    return jsonify(access_coach_token=access_coach_token)
+    coach = Coach.query.filter_by(email=data["email"]).first()
+    if coach and coach.password == data["password"]:
+        access_coach_token = create_access_token(identity={"email": coach.email, "role": "coach"})
+        return jsonify(access_coach_token=access_coach_token), 201
 
+    client = Client.query.filter_by(email=data["email"]).first()
+    if client and client.password == data["password"]:
+        access_client_token = create_access_token(identity={"email": client.email, "role": "client"})
+        return jsonify(access_client_token=access_client_token), 201
+
+    return jsonify({"error": "Bad username or password"}), 401
+  
+# LIKES ENDPOINTS
+@api.route('/likes', methods=['GET'])
+def get_likes():
+    likes = Likes.query.all()
+    likes_list = list(map(lambda likes: likes.serialize(),likes))
+
+    return jsonify(likes_list), 200
+
+@api.route('/likes/<int:like_id>', methods=['GET'])
+def get_like(like_id):
+    like = Likes.query.filter_by(id=like_id).first()
+    if not like: return jsonify({"error": f"The ID '{like_id}' was not found in Clients"}), 404
+    return jsonify(like.serialize()), 200
+
+@api.route('/likes/signup', methods=['POST'])
+def add_like():
+    like_data = request.json
+    required_properties = ["client_id", "coach_id"]
+
+    for prop in required_properties:
+        if prop not in like_data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
+        if like_data[prop] == "" or like_data[prop] == 0: return jsonify({"error": f"The '{prop}' must not be empty or zero"}), 400
+
+    client = Client.query.get(like_data["client_id"])
+    if client is None:
+        return jsonify({"error": f"The client with id '{like_data['client_id']}' does not exist"}), 404
+
+    coach = Coach.query.get(like_data["coach_id"])
+    if coach is None:
+        return jsonify({"error": f"The coach with id '{like_data['coach_id']}' does not exist"}), 404
+
+    existing_like = like.query.filter_by(coach_id=like_data["coach_id"], client_id=like_data["client_id"]).first()
+    if existing_like:
+        return jsonify({"error": f"The like between coach '{coach.username}' and client '{client.username}' already exists in the database"}), 400
+    
+    like_to_add = Likes(**like_data)
+    db.session.add(like_to_add)
+    db.session.commit()
+
+    return jsonify(like_to_add.serialize()), 201
+
+@api.route('/likes/<int:like_id>', methods=['DELETE'])
+def del_like(like_id):
+    like = Likes.query.get(like_id)
+    if not like: return jsonify({"error": f"The ID '{like_id}' was not found in Likes"}), 404
+    coach = Coach.query.get(like.coach_id)
+    client = Client.query.get(like.client_id)
+    db.session.delete(like)
+    db.session.commit()
+    
+    return jsonify({"deleted": f"The like between coach '{coach.username}' and client '{client.username}' was deleted successfully"}), 200  
+
+# MATCH ENDPOINTS
+@api.route('/match', methods=['GET'])
+def get_matches():
+    matches = Match.query.all()
+    matches_list = list(map(lambda match: match.serialize(),matches))
+
+    return jsonify(matches_list), 200
+
+@api.route('/match/<int:match_id>', methods=['GET'])
+def get_match(match_id):
+    match = Match.query.filter_by(id=match_id).first()
+    if not match: return jsonify({"error": f"The ID '{match_id}' was not found in Coaches"}), 404
+    return jsonify(match.serialize()), 200
+  
+@api.route('/match', methods=['POST'])
+def add_match():
+    match_data = request.json
+    required_properties = ["coach_id", "client_id"]
+
+    for prop in required_properties:
+        if prop not in match_data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
+        if match_data[prop] == "" or match_data[prop] == 0: return jsonify({"error": f"The '{prop}' must not be empty or zero"}), 400
+
+    coach = Coach.query.get(match_data["coach_id"])
+    if coach is None:
+        return jsonify({"error": f"The coach with id '{match_data['coach_id']}' does not exist"}), 404
+
+    client = Client.query.get(match_data["client_id"])
+    if client is None:
+        return jsonify({"error": f"The client with id '{match_data['client_id']}' does not exist"}), 404
+
+    existing_match = Match.query.filter_by(coach_id=match_data["coach_id"], client_id=match_data["client_id"]).first()
+    if existing_match:
+        return jsonify({"error": f"The match between coach '{coach.username}' and client '{client.username}' already exists in the database"}), 400
+    
+    match_to_add = Match(**match_data)
+    db.session.add(match_to_add)
+    db.session.commit()
+
+    return jsonify(match_to_add.serialize()), 201  
+
+@api.route('/match/<int:match_id>', methods=['DELETE'])
+def del_match(match_id):
+    match = Match.query.get(match_id)
+    if not match: return jsonify({"error": f"The ID '{match_id}' was not found in Matches"}), 404
+    coach = Coach.query.get(match.coach_id)
+    client = Client.query.get(match.client_id)
+    db.session.delete(match)
+    db.session.commit()
+    
+    return jsonify({"deleted": f"The match between coach '{coach.username}' and client '{client.username}' was deleted successfully"}), 200  
+  
+  
+  
+  
+  
 # Availability_client  GET ENDPOINTS
 @api.route('/availability_client', methods=['GET'])
 def get_availability_client():
@@ -649,55 +763,4 @@ def update_availability_client_day(id):
         db.session.rollback()
         return jsonify({'message': 'Error while updating the availability client entry', 'error': str(e)}), 500
 
-# LIKES ENDPOINTS
-@api.route('/likes', methods=['GET'])
-def get_likes():
-    likes = Likes.query.all()
-    likes_list = list(map(lambda likes: likes.serialize(),likes))
 
-    return jsonify(likes_list), 200
-
-@api.route('/likes/<int:like_id>', methods=['GET'])
-def get_like(like_id):
-    like = Likes.query.filter_by(id=like_id).first()
-    if not like: return jsonify({"error": f"The ID '{like_id}' was not found in Clients"}), 404
-    return jsonify(like.serialize()), 200
-
-@api.route('/likes/signup', methods=['POST'])
-def add_like():
-    like_data = request.json
-    required_properties = ["client_id", "coach_id"]
-
-    for prop in required_properties:
-        if prop not in like_data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
-        if like_data[prop] == "" or like_data[prop] == 0: return jsonify({"error": f"The '{prop}' must not be empty or zero"}), 400
-
-    client = Client.query.get(like_data["client_id"])
-    if client is None:
-        return jsonify({"error": f"The client with id '{like_data['client_id']}' does not exist"}), 404
-
-    coach = Coach.query.get(like_data["coach_id"])
-    if coach is None:
-        return jsonify({"error": f"The coach with id '{like_data['coach_id']}' does not exist"}), 404
-
-
-    existing_like = like.query.filter_by(coach_id=like_data["coach_id"], client_id=like_data["client_id"]).first()
-    if existing_like:
-        return jsonify({"error": f"The like between coach '{coach.username}' and client '{client.username}' already exists in the database"}), 400
-    
-    like_to_add = Likes(**like_data)
-    db.session.add(like_to_add)
-    db.session.commit()
-
-    return jsonify(like_to_add.serialize()), 201
-
-@api.route('/likes/<int:like_id>', methods=['DELETE'])
-def del_like(like_id):
-    like = Likes.query.get(like_id)
-    if not like: return jsonify({"error": f"The ID '{like_id}' was not found in Likes"}), 404
-    coach = Coach.query.get(like.coach_id)
-    client = Client.query.get(like.client_id)
-    db.session.delete(like)
-    db.session.commit()
-    
-    return jsonify({"deleted": f"The like between coach '{coach.username}' and client '{client.username}' was deleted successfully"}), 200

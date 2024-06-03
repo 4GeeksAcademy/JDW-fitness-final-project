@@ -1,16 +1,21 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
 export const Client = () => {
 	const { store, actions } = useContext(Context);
 	const [ clientID, setClientID ] = useState(0) 
+	const tokenCoach = localStorage.getItem("token_coach")
+	const navigate = useNavigate();
 
 	useEffect(() => {
         actions.getClients()
-    },[store.clients]);
+    },[]);
 
+	// if(!tokenCoach) {
+	// 	navigate("/coach/login")
+	// }
 
 	return (
 		<div className="container">
@@ -24,16 +29,17 @@ export const Client = () => {
 				{store.clients.map((client, index) => 
 					<li key={index} className="list-group-item my-2 border-3">
 						<div className="d-flex flex-column justify-content-center">
-						<div className="d-flex">
-							<span className="fw-bold">Username: </span>
-							{client.username}
-						</div>
-						<div className="d-flex">
-							<Link to={`/client/${client.id}`} className="mb-1">
-								<button className="btn btn-info py-0 px-1 ms-auto">show more information</button>					
-							</Link>
-							<button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> setClientID(client.id)}>delete</button>
-						</div>
+							<div className="d-flex">
+								<span className="fw-bold">Username: </span>
+								{client.username}
+							</div>
+							<div className="d-flex">
+								<Link to={`/client/${client.id}`} className="mb-1">
+									<button className="btn btn-info py-0 px-1 ms-auto">show more information</button>					
+								</Link>
+								<button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> setClientID(client.id)}>delete</button>
+							</div>
+							<button className="btn btn-secondary py-0 px-1 ms-auto">Like</button>	
 						</div>
 					</li>
 				)}

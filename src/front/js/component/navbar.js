@@ -5,13 +5,19 @@ import { Context } from "../store/appContext";
 export const Navbar = () => {
 	const { store, actions } = useContext(Context);
 	const [username, setUsername] = useState("");
+	const storedCoach = localStorage.getItem("loggedCoach");
+	const storedClient = localStorage.getItem("loggedClient");
+
+    useEffect(() => {
+        actions.getCoaches()
+        actions.getClients()
+    },[]);
 
 	useEffect(() => {
-		const storedUsername = localStorage.getItem("loggedCoach");
-		if (storedUsername) {
-			setUsername(storedUsername);
-		}
+		if (storedCoach) setUsername(storedCoach);
+		else if (storedClient) setUsername(storedClient);
 	}, [actions]);
+
 
 	return (
 		<nav className="navbar navbar-light bg-light">
@@ -21,14 +27,14 @@ export const Navbar = () => {
 				</Link>
 				<div className="mx-auto">
 					<Link to="/coach">
-						<button className="btn btn-primary">Coaches</button>
+						<button className="btn btn-primary">Profile</button>
           			</Link>
         		</div>
-				{store.authCoach && 				
+				{ (store.authCoach || store.authClient) && 				
 				<div className="ms-auto">
 					<span className="fw-bold me-4">{username}'s session</span>
 					<Link to="/">
-						<button onClick={actions.logoutCoach} className="btn btn-primary">Log out</button>
+						<button onClick={actions.logout} className="btn btn-primary">Log out</button>
 					</Link>
 				</div>		
 				}

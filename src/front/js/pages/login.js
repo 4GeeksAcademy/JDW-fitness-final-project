@@ -3,37 +3,65 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
-export const LoginCoach = () => {
+export const Login = () => {
 	const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [showPassword, setShowPassword] = useState(false)
     const [error, setError] = useState(null)
-    const tokenCoach = localStorage.getItem("token_coach")
 
-    // useEffect(() => { 
-         
-    // },[tokenCoach])
+    useEffect(() => {
+        actions.getCoaches()
+        actions.getClients()
+    },[]);
 
     const login = async (e) => {
         e.preventDefault()
-        if(email === "" || password === "") {
-            console.log("faltan completar");
-            return;
-        }
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                "email": email,
+                "password": password 
+            })
+        };
+    
         try {
-            await actions.coachLogin(email, password)
-            navigate("/client")
-        }
+            const response = await fetch(process.env.BACKEND_URL + "/api/login", requestOptions);
+            const data = await response.json();
+            
+            if (!response.ok) {
+                console.log("Error from backend:", data.error);
+                setError(data.error);
+                return
+            }
+            setError(null);
+            if (data.access_coach_token) {
+                const loggedCoach = await store.coaches.find(coach => coach.email === email);
+                localStorage.setItem("loggedCoach", loggedCoach.username);
+                await actions.setAuth("coach", true)  
+                localStorage.setItem("token_coach", data.access_coach_token);
+                navigate("/client")  
+            }
+            if (data.access_client_token) {
+                const loggedClient = await store.clients.find(client => client.email === email);
+                localStorage.setItem("loggedClient", loggedClient.username); 
+                await actions.setAuth("client", true)  
+                localStorage.setItem("token_client", data.access_client_token); 
+                navigate("/coach")   
+            }
+            return data
+        }  
         catch (error) {
-            console.log("error fatal", error);
+            setError("An error occurred during login. Please try again.");
+            console.error("Error during coach login:", error);
         }
     }
 
 	return (
 		<div className="container mt-3">
-            <h3 className="text-center">Login Coach</h3>
+            <h3 className="text-center">Login</h3>
             <form onSubmit={login}>
                 <div className="mb-3 mt-3 col-6 offset-3">
                     <input 
@@ -59,7 +87,7 @@ export const LoginCoach = () => {
                     >
                     </button>
                 </div>
-                {store.errorForm &&                 
+                {error &&                 
                 <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
                     {error}
                 </div>

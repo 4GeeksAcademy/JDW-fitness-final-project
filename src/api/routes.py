@@ -504,20 +504,25 @@ def del_coach(coach_id):
     
     return jsonify({"deleted": f"Coach '{coach.username}' with email '{coach.email}' was deleted successfully"}), 200
 
-@api.route("/coach/login", methods=["POST"])
-def coach_login():
-    coach_data = request.json
+@api.route("/login", methods=["POST"])
+def login():
+    data = request.json
     required_properties = ["email", "password"]
 
     for prop in required_properties:
-        if prop not in coach_data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
+        if prop not in data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
 
-    coach = Coach.query.filter_by(email=coach_data["email"]).first()
-    if coach is None or coach.email != coach_data["email"] or coach.password != coach_data["password"]:
-        return jsonify({"error": "Bad username or password"}), 401
+    coach = Coach.query.filter_by(email=data["email"]).first()
+    if coach and coach.password == data["password"]:
+        access_coach_token = create_access_token(identity={"email": coach.email, "role": "coach"})
+        return jsonify(access_coach_token=access_coach_token), 201
 
-    access_coach_token = create_access_token(identity=coach.email)
-    return jsonify(access_coach_token=access_coach_token), 201
+    client = Client.query.filter_by(email=data["email"]).first()
+    if client and client.password == data["password"]:
+        access_client_token = create_access_token(identity={"email": client.email, "role": "client"})
+        return jsonify(access_client_token=access_client_token), 201
+
+    return jsonify({"error": "Bad username or password"}), 401
 
 # MATCH ENDPOINTS
 @api.route('/match', methods=['GET'])

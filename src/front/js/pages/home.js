@@ -14,8 +14,8 @@ export const Home = () => {
 			<h2>Join to us and become a Jidower!</h2>
 			<p>Why should you create an account and be part of JDW Fitness? About Us</p>
 			<p>Are you already part of JDW Fitness? 				
-            <Link to="/coach/login">
-				<button className="btn btn-primary ms-3 mb-3 fw-bold" >Login Coach</button>
+            <Link to="/login">
+				<button className="btn btn-primary ms-3 mb-3 fw-bold" >Login</button>
 			</Link>
 				</p>
 			<p>Are you not part of JDW Fitness yet?				
@@ -23,15 +23,6 @@ export const Home = () => {
 				<button className="btn btn-primary ms-3 mb-3 fw-bold" >Sign Up</button>
 			</Link>
 				</p>
-			<div className="alert alert-info">
-				{store.message || "Componente  a editar para la vista de JDW"}
-			</div>
-			<p>
-				This boilerplate comes with lots of documentation:{" "}
-				<a href="https://start.4geeksacademy.com/starters/react-flask">
-					Read documentation
-				</a>
-			</p>
 		</div>
 	);
 };

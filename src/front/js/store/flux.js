@@ -7,6 +7,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			singleCoach: {},
 			errorForm: null,
 			authCoach: false,
+			authClient: false,
 			matches: [],
 			availability: [],
 			singleAvailability: {}, 
@@ -154,55 +155,32 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				})
 			},
-			coachLogin: async (email, password) => {
-				const requestOptions = {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ 
-						"email": email,
-						"password": password 
-					})
-				};
-			
-				try {
-					const response = await fetch(process.env.BACKEND_URL + "/api/coach/login", requestOptions);
-					
-					if (!response.ok) {
-						setStore({ errorForm: data.error });
-					}
-					const data = await response.json();
-					setStore({ authCoach: true });
-					setStore({ errorForm: null });
-					localStorage.setItem("token_coach", data.access_coach_token);
-					return data
-						// await getActions().getCoaches();
-			
-						// const loggedCoach = getStore().coaches.find(coach => coach.email === email);
-						// localStorage.setItem("loggedCoach", loggedCoach.username);
-			
-					// 	if (data.access_coach_token) {
-					// 	}
-					//  else {
-						
-					// }
-				} 
-				
-				catch (error) {
-					setStore({ errorForm: "An error occurred during login. Please try again." });
-					console.error("Error during coach login:", error);
+			logout: () => {
+				if (getStore().authCoach) {
+					localStorage.removeItem("token_coach");
+					localStorage.removeItem("loggedCoach");
+					setStore({ authCoach: false })
 				}
-			},
-			logoutCoach: () => {
-				localStorage.removeItem("token_coach");
-				localStorage.removeItem("loggedCoach");
-				setStore({ authCoach: false })
+				else if (getStore().authClient) {
+					localStorage.removeItem("token_client");
+					localStorage.removeItem("loggedClient");
+					setStore({ authClient: false })
+				}
 			},
 			checkAuth: () => {
                 const tokenCoach = localStorage.getItem("token_coach");
                 if (tokenCoach) {
                     setStore({ authCoach: true });
-                }
+                } else setStore({ authCoach: false });
+				const tokenClient = localStorage.getItem("token_client");
+                if (tokenClient) {
+                    setStore({ authClient: true });
+                } else setStore({ authClient: false });
             },
+			setAuth: (rol, bool) => {
+				if (rol === "coach") setStore({ authCoach: bool });
+				else if (rol === "client") setStore({ authClient: bool });
+			},
 			deleteCoach: (coachID) => {
 				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, { method: 'DELETE' })
 				.then( () => getActions().getCoaches())

@@ -4,6 +4,8 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Home } from "./pages/home";
+import { SignUp } from "./pages/signUp";
+import { Login } from "./pages/login";
 
 import { Availability } from "./pages/availability";
 import { AddAvailability } from "./pages/addAvailability";
@@ -45,12 +47,9 @@ import { SingleCoach } from "./pages/singleCoach";
 import { AddCoach } from "./pages/addCoach";
 import { UpdateCoachSignUp } from "./pages/updateCoachSignUp";
 import { UpdateCoach } from "./pages/updateCoach";
-import { LoginCoach } from "./pages/loginCoach";
 
 import { Match } from "./pages/match";
 import { AddMatch } from "./pages/addMatch";
-
-import { SignUp } from "./pages/signUp";
 
 import injectContext from "./store/appContext";
 
@@ -73,6 +72,7 @@ const Layout = () => {
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<SignUp />} path="/signup" />
+                        <Route element={<Login />} path="/login" />
                         {/* AVAILABILITY ROUTES */}  
                         <Route element={<Availability />} path="/availability" />
                         <Route element={<SingleAvailability />} path="/availability/:availabilityID" />
@@ -109,7 +109,6 @@ const Layout = () => {
                         <Route element={<UpdateCoachSignUp />} path="/coach/signup/update/:coachID" />
                         <Route element={<UpdateCoach />} path="/coach/update/:coachID" />
                         <Route element={<SingleCoach />} path="/coach/:coachID" />
-                        <Route element={<LoginCoach />} path="/coach/login" />
                         {/* CLIENT PATH */}
                         <Route element={<Client />} path="/client" />
                         <Route element={<SingleClient />} path="/client/:clientID" />

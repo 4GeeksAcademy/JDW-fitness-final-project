@@ -24,6 +24,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 	    activities: [],
 		  singleActivityFrequency:{},
 		},
+		availabilityClient:[],
+		  singleAvailabilityClient:{},
 
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -537,6 +539,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.error("Error fetching activity frequency:", error);
 				}
+			},
 			createActivityFrequency: (mode) => {
 				const requestOptions = {
 					method: 'POST',
@@ -569,6 +572,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then(response => response.json())
 				.then( setStore({ singleActivityFrequency: {} }))
 				.then(() => getActions().getActivityFrequency())
+			},
+
+			getAvailabilityClient: () => {
+				fetch(process.env.BACKEND_URL + "/api/availability_client")
+				  .then((response) => response.json())
+				  .then((data) => {
+					console.log("Availability Client Data:", data); 
+					setStore({ availabilityClient: data });
+				  })
+				  .catch((error) => console.error("Error fetching availability client:", error)); // Added error handling
+			  },
+			getSingleAvailabilityClient: async (availabilityClientID) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `api/availability_client/${availabilityClientID}`);
+					const data = await response.json();
+					setStore({ singleAvailabilityClient: data });
+				} catch (error) {
+					console.error("Error fetching activity frequency:", error);
+				}
 			},
       loadBeginning: () => {
 			getActions().checkAuth()

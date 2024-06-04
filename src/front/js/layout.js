@@ -55,7 +55,7 @@ import { Match } from "./pages/match";
 import { AddMatch } from "./pages/addMatch";
 
 import injectContext from "./store/appContext";
-import { AvailabilityClient } from "./pages/availabilityClient";
+// import { AvailabilityClient } from "./pages/availabilityClient";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -90,7 +90,7 @@ const Layout = () => {
                         <Route element={<AddGoal />} path="/goals/form" />
                         <Route element={<UpdateGoal />} path="/goals/update/:goalID" />
                         {/* AVAILABILITY_CLIENT ROUTES */}
-                        <Route element={<AvailabilityClient />} path="/availability-client" />
+                        {/* <Route element={<AvailabilityClient />} path="/availabilityclient" /> */}
                         {/* DISEASES ROUTES */}
                         <Route element={<Diseases />} path="/diseases" />
                         <Route element={<SingleDiseases />}  path="/diseases/:diseasesID" />

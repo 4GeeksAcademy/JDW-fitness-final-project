@@ -136,6 +136,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ singleCoach: data })
 				})
 			},
+			setSingleCoach: () => {
+				setStore({ singleCoach: currentCoach })
+			},
 			coachSignUp: (username, email, password) => {
 				const requestOptions = {
 					method: 'POST',
@@ -235,7 +238,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		.then( (response) => response.json())
 		.then( data => setStore({ likes: data }))	
 	  },
-	addLikeAPI: (coachID, clientID) => {
+	addLikeAPI: (coachID, clientID, source) => {
 		const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -449,9 +452,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then( (response) => response.json())
 				.then( data => setStore({ experience: data }))	
 			},
-
-			// ENDPOINT GETAVAILABILITYCLIENT
-
 			getSingleExperience: (experienceID) => {
 				fetch(process.env.BACKEND_URL + `/api/experience/${experienceID}`)
 				.then( (response) => response.json())
@@ -544,7 +544,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			getSingleActivityFrequency: async (activityFrequencyID) => {
 				try {
-					const response = await fetch(process.env.BACKEND_URL + `api/activities/${activityFrequencyID}`);
+					const response = await fetch(process.env.BACKEND_URL + `/api/activities/${activityFrequencyID}`);
 					const data = await response.json();
 					setStore({ singleActivityFrequency: data });
 				} catch (error) {

@@ -7,11 +7,16 @@ export const Client = () => {
 	const { store, actions } = useContext(Context);
 	const [ clientID, setClientID ] = useState(0) 
 	const tokenCoach = localStorage.getItem("token_coach")
+	const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
 	const navigate = useNavigate();
 
 	useEffect(() => {
         actions.getClients()
     },[]);
+
+	const handleLike = (clientLike) => {
+		
+	}
 
 	// if(!tokenCoach) {
 	// 	navigate("/coach/login")
@@ -39,7 +44,7 @@ export const Client = () => {
 								</Link>
 								<button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> setClientID(client.id)}>delete</button>
 							</div>
-							<button className="btn btn-secondary py-0 px-1 ms-auto">Like</button>	
+							<button className="btn btn-secondary py-0 px-1 ms-auto" onClick={()=> handleLike(client.id)}>Like</button>	
 						</div>
 					</li>
 				)}

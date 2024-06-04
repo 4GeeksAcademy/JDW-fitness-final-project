@@ -5,19 +5,18 @@ import { Context } from "../store/appContext";
 export const Navbar = () => {
 	const { store, actions } = useContext(Context);
 	const [username, setUsername] = useState("");
-	const storedCoach = localStorage.getItem("loggedCoach");
-	const storedClient = localStorage.getItem("loggedClient");
+	const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
+	const loggedClient = JSON.parse(localStorage.getItem("loggedClient"));
 
-    useEffect(() => {
-        actions.getCoaches()
-        actions.getClients()
-    },[]);
+    // useEffect(() => {
+    //     actions.getCoaches()
+    //     actions.getClients()
+    // },[]);
 
 	useEffect(() => {
-		if (storedCoach) setUsername(storedCoach);
-		else if (storedClient) setUsername(storedClient);
+		if (loggedCoach) setUsername(loggedCoach.username);
+		else if (loggedClient) setUsername(loggedClient.username);
 	}, [actions]);
-
 
 	return (
 		<nav className="navbar navbar-light bg-light">

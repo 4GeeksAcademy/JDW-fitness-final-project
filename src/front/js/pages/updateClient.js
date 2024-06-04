@@ -39,6 +39,7 @@ export const UpdateClient = () => {
             setWeight(store.singleClient.weight || "");
             setGender(store.singleClient.gender || "");
             setPhysicalHabits(store.singleClient.physical_habits || "");
+            setActivityFrequencyID(store.singleClient.physical_habits || 0);
         }
     }, [store.singleClient]);
 
@@ -164,9 +165,9 @@ export const UpdateClient = () => {
                             </option>          
                     ))}
                 </select>
-                {store.errorClient &&                 
+                {store.errorForm &&                 
                 <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
-                    {store.errorClient}
+                    {store.errorForm}
                 </div>
                 }
                 </div>

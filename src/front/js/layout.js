@@ -50,6 +50,9 @@ import { UpdateCoach } from "./pages/updateCoach";
 
 import { Likes } from "./pages/likes";
 import { AddLike } from "./pages/addLikes";
+import { GivenLikes } from "./pages/givenLikes";
+import { ReceivedLikes } from "./pages/receivedLikes";
+import { NoGivenLikes } from "./pages/noGivenLikes";
 
 import { Match } from "./pages/match";
 import { AddMatch } from "./pages/addMatch";
@@ -124,7 +127,10 @@ const Layout = () => {
                         <Route element={<UpdateClient />} path="/client/update/:clientID" />
                         {/* LIKES PATH */}
                         <Route element={<Likes />} path="/likes" />
-                        <Route element={<AddLike />} path="/likes/add" />    
+                        <Route element={<AddLike />} path="/likes/add" />
+                        <Route element={<GivenLikes />} path="/likes/given" /> 
+                        <Route element={<ReceivedLikes />} path="/likes/received" /> 
+                        <Route element={<NoGivenLikes />} path="/likes/nogiven" /> 
                         {/* MATCH PATH */}
                         <Route element={<Match />} path="/match" />
                         <Route element={<AddMatch />} path="/match/add" />

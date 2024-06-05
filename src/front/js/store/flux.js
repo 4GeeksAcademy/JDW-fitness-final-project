@@ -15,6 +15,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			availability: [],
 			singleAvailability: {}, 
 			likes: [],
+			givenLikes: [],
+			receivedLikes: [],
+			noGivenLikes: [],
       goals: [],
 			singleGoal:{},
       diseases: [],
@@ -31,11 +34,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 		actions: {
 			// Use getActions to call a function within a fuction
 	// CLIENT
-	getClients: () => {
-		fetch(process.env.BACKEND_URL + "/api/client")
-		.then( (response) => response.json())
-		.then( data => setStore({ clients: data }))	
-	  },
+	// getClients: () => {
+	// 	fetch(process.env.BACKEND_URL + "/api/client")
+	// 	.then( (response) => response.json())
+	// 	.then( data => setStore({ clients: data }))	
+	//   },
+	getClients: async () => {
+		try {
+			const resp = await fetch(process.env.BACKEND_URL + "/api/client");
+			const data = await resp.json();
+			setStore({ clients: data });
+		} catch (error) {
+			console.error("Error fetching clients:", error);
+		}
+	},
 	  getSingleClient: async (clientID) => {
         try {
             const response = await fetch(process.env.BACKEND_URL + `/api/client/${clientID}`);
@@ -233,21 +245,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
         
        	// LIKES
-	getLikes: () => {
-		fetch(process.env.BACKEND_URL + "api/likes")
-		.then( (response) => response.json())
-		.then( data => setStore({ likes: data }))	
-	  },
-	addLikeAPI: (coachID, clientID, source) => {
+	  getLikes: async () => {
+		try {
+			const resp = await fetch(process.env.BACKEND_URL + "/api/like");
+			const data = await resp.json();
+			setStore({ likes: data });
+		} catch (error) {
+			console.error("Error fetching likes:", error);
+		}
+	},
+	addLikeAPI: (source, clientID, coachID) => {
 		const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
-				"coach_id": coachID,
-				"client_id": clientID
+				"source": source,
+				"client_id": clientID,
+				"coach_id": coachID
 			})
 		};
-		fetch(process.env.BACKEND_URL + "api/likes", requestOptions)
+		fetch(process.env.BACKEND_URL + "/api/like", requestOptions)
 		.then(response => {
 			if(response.status == 200) {
 				setStore({ error: null })
@@ -261,10 +278,54 @@ const getState = ({ getStore, getActions, setStore }) => {
 		})
 	},
 	deleteLike: (likeID) => {
-		fetch(process.env.BACKEND_URL + `api/like/${likeID}`, { method: 'DELETE' })
+		fetch(process.env.BACKEND_URL + `/api/like/${likeID}`, { method: 'DELETE' })
 		.then( () => getActions().getLikes())
 	}, 
-        
+	getGivenLikes: async (source, coachID) => {
+		try{
+			await getActions().getLikes()
+			await getActions().getClients();
+
+			const allClients = getStore().clients;
+			const givenLikes = await getStore().likes.filter((like) => like.source === source && like.coach_id === coachID)
+			const givenLikesClientIDs = givenLikes.map(like => like.client_id);
+			const givenLikesUsers = allClients.filter(client => givenLikesClientIDs.includes(client.id));
+
+			setStore({ givenLikes: givenLikesUsers })
+		} catch (error) {
+			console.log("Error getting given likes", error);
+		}
+	},
+	getNoGivenLikes: async (source, coachID) => {
+		try{
+			await getActions().getLikes()
+			await getActions().getClients();
+
+			const allClients = getStore().clients;
+			const givenLikes = await getStore().likes.filter((like) => like.source === source && like.coach_id === coachID);
+			const givenLikesClientIDs = givenLikes.map(like => like.client_id);
+			const noGivenLikes = allClients.filter(client => !givenLikesClientIDs.includes(client.id));
+
+			setStore({ noGivenLikes: noGivenLikes })
+		} catch (error) {
+			console.log("Error getting no given likes", error);
+		}
+	},
+	getReceivedLikes: async (source, coachID) => {
+		try{
+			await getActions().getLikes()
+			await getActions().getClients();
+
+			const allClients = getStore().clients;
+			const receivedLikes = await getStore().likes.filter((like) => like.source === source && like.coach_id === coachID)
+			const receivedLikesClientIDs = receivedLikes.map(like => like.client_id);
+			const receivedLikesUsers = allClients.filter(client => receivedLikesClientIDs.includes(client.id));
+
+			setStore({ receivedLikes: receivedLikesUsers })
+		} catch (error) {
+			console.log("Error getting received likes", error);
+		}
+	},
             // MATCH
       		getMatches: () => {
 				fetch(process.env.BACKEND_URL + "/api/match")

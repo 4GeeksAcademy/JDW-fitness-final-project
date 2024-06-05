@@ -525,20 +525,20 @@ def login():
     return jsonify({"error": "Bad username or password"}), 401
   
 # LIKES ENDPOINTS
-@api.route('/likes', methods=['GET'])
+@api.route('/like', methods=['GET'])
 def get_likes():
     likes = Likes.query.all()
     likes_list = list(map(lambda likes: likes.serialize(),likes))
 
     return jsonify(likes_list), 200
 
-@api.route('/likes/<int:like_id>', methods=['GET'])
+@api.route('/like/<int:like_id>', methods=['GET'])
 def get_like(like_id):
     like = Likes.query.filter_by(id=like_id).first()
     if not like: return jsonify({"error": f"The ID '{like_id}' was not found in Clients"}), 404
     return jsonify(like.serialize()), 200
 
-@api.route('/likes', methods=['POST'])
+@api.route('/like', methods=['POST'])
 def add_like():
     like_data = request.json
     required_properties = ["client_id", "coach_id", "source"]
@@ -570,7 +570,7 @@ def add_like():
 
     return jsonify(like_to_add.serialize()), 201
 
-@api.route('/likes/<int:like_id>', methods=['DELETE'])
+@api.route('/like/<int:like_id>', methods=['DELETE'])
 def del_like(like_id):
     like = Likes.query.get(like_id)
     if not like: return jsonify({"error": f"The ID '{like_id}' was not found in the Likes database"}), 404

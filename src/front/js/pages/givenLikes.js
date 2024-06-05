@@ -35,7 +35,7 @@ export const GivenLikes = () => {
 					<li key={index} className="list-group-item my-2 border-3">
 						<div className="d-flex flex-column justify-content-center">
 						<div className="d-flex">
-							<span className="fw-bold">Client ID: </span>
+							<span className="fw-bold">Username: </span>
 							{like.username}
 							<button className="btn btn-danger py-0 px-1 ms-auto mt-1" onClick={() => deleteSingleLike(like.id)}>delete</button>
 						</div>

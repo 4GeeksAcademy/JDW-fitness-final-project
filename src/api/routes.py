@@ -567,6 +567,17 @@ def add_like():
     like_to_add = Likes(**like_data)
     db.session.add(like_to_add)
     db.session.commit()
+    
+    if (like_data["source"] == "client"): 
+       oposite_source =  "coach"
+    else: 
+        oposite_source =  "client"
+    
+    match_to_create = Likes.query.filter_by(coach_id=like_data["coach_id"], client_id=like_data["client_id"], source=oposite_source).first()
+    if match_to_create:
+        match_to_add = Match(coach_id=like_data["coach_id"], client_id=like_data["client_id"])
+        db.session.add(match_to_add)
+        db.session.commit()
 
     return jsonify(like_to_add.serialize()), 201
 
@@ -580,6 +591,11 @@ def del_like(like_id):
 
     db.session.delete(like)
     db.session.commit()
+    
+    match_to_delete = Match.query.filter_by(coach_id=like.coach_id, client_id=like.client_id).first()
+    if match_to_delete:
+        db.session.delete(match_to_delete)
+        db.session.commit()   
 
     if like.source == "client":
         source_entity = "client"
@@ -602,49 +618,50 @@ def get_matches():
 
     return jsonify(matches_list), 200
 
-@api.route('/match/<int:match_id>', methods=['GET'])
-def get_match(match_id):
-    match = Match.query.filter_by(id=match_id).first()
-    if not match: return jsonify({"error": f"The ID '{match_id}' was not found in Coaches"}), 404
-    return jsonify(match.serialize()), 200
-  
-@api.route('/match', methods=['POST'])
-def add_match():
-    match_data = request.json
-    required_properties = ["coach_id", "client_id"]
-
-    for prop in required_properties:
-        if prop not in match_data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
-        if match_data[prop] == "" or match_data[prop] == 0: return jsonify({"error": f"The '{prop}' must not be empty or zero"}), 400
-
-    coach = Coach.query.get(match_data["coach_id"])
-    if coach is None:
-        return jsonify({"error": f"The coach with id '{match_data['coach_id']}' does not exist"}), 404
-
-    client = Client.query.get(match_data["client_id"])
-    if client is None:
-        return jsonify({"error": f"The client with id '{match_data['client_id']}' does not exist"}), 404
-
-    existing_match = Match.query.filter_by(coach_id=match_data["coach_id"], client_id=match_data["client_id"]).first()
-    if existing_match:
-        return jsonify({"error": f"The match between coach '{coach.username}' and client '{client.username}' already exists in the database"}), 400
-    
-    match_to_add = Match(**match_data)
-    db.session.add(match_to_add)
-    db.session.commit()
-
-    return jsonify(match_to_add.serialize()), 201  
-
 @api.route('/match/<int:match_id>', methods=['DELETE'])
 def del_match(match_id):
     match = Match.query.get(match_id)
     if not match: return jsonify({"error": f"The ID '{match_id}' was not found in Matches"}), 404
+
     coach = Coach.query.get(match.coach_id)
     client = Client.query.get(match.client_id)
     db.session.delete(match)
     db.session.commit()
+
+    likes_to_delete = Likes.query.filter((Likes.coach_id == match.coach_id) | (Likes.client_id == match.client_id)).all()
+
+    for like in likes_to_delete:
+        db.session.delete(like)
+        db.session.commit()
     
-    return jsonify({"deleted": f"The match between coach '{coach.username}' and client '{client.username}' was deleted successfully"}), 200  
+    return jsonify({"deleted": f"The match  and likes between coach '{coach.username}' and client '{client.username}' were deleted successfully"}), 200  
+  
+# @api.route('/match', methods=['POST'])
+# def add_match():
+#     match_data = request.json
+#     required_properties = ["coach_id", "client_id"]
+
+#     for prop in required_properties:
+#         if prop not in match_data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
+#         if match_data[prop] == "" or match_data[prop] == 0: return jsonify({"error": f"The '{prop}' must not be empty or zero"}), 400
+
+#     coach = Coach.query.get(match_data["coach_id"])
+#     if coach is None:
+#         return jsonify({"error": f"The coach with id '{match_data['coach_id']}' does not exist"}), 404
+
+#     client = Client.query.get(match_data["client_id"])
+#     if client is None:
+#         return jsonify({"error": f"The client with id '{match_data['client_id']}' does not exist"}), 404
+
+#     existing_match = Match.query.filter_by(coach_id=match_data["coach_id"], client_id=match_data["client_id"]).first()
+#     if existing_match:
+#         return jsonify({"error": f"The match between coach '{coach.username}' and client '{client.username}' already exists in the database"}), 400
+    
+#     match_to_add = Match(**match_data)
+#     db.session.add(match_to_add)
+#     db.session.commit()
+
+#     return jsonify(match_to_add.serialize()), 201  
   
   
   

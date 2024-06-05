@@ -6,8 +6,6 @@ import { Context } from "../store/appContext";
 export const ReceivedLikes = () => {
 	const { store, actions } = useContext(Context);
     const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
-    const [filterList, setFilterList] = useState([])
-
 
     useEffect(() => {
         if(loggedCoach) {
@@ -24,14 +22,14 @@ export const ReceivedLikes = () => {
 
 	return (
 		<div className="container">
+			<h1 className="text-center mt-3">Received Like List</h1>
 			<ul>
 				{store.receivedLikes.map((like, index) => 
 					<li key={index} className="list-group-item my-2 border-3">
 						<div className="d-flex flex-column justify-content-center">
 						<div className="d-flex">
-							<span className="fw-bold">Client ID: </span>
-							{like.client_id}
-							<button className="btn btn-danger py-0 px-1 ms-auto mt-1" >delete</button>
+							<span className="fw-bold">Username: </span>
+							{like.username}
 						</div>
 						</div>
 					</li>

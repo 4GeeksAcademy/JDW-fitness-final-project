@@ -12,6 +12,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			authCoach: false,
 			authClient: false,
 			matches: [],
+			userMatches: [],
 			availability: [],
 			singleAvailability: {}, 
 			likes: [],
@@ -282,7 +283,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		.then( () => getActions().getLikes())
 	}, 
 	getGivenLikes: async (source, coachID) => {
-		try{
+		try {
 			await getActions().getLikes()
 			await getActions().getClients();
 
@@ -297,7 +298,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		}
 	},
 	getNoGivenLikes: async (source, coachID) => {
-		try{
+		try {
 			await getActions().getLikes()
 			await getActions().getClients();
 
@@ -312,7 +313,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		}
 	},
 	getReceivedLikes: async (source, coachID) => {
-		try{
+		try {
 			await getActions().getLikes()
 			await getActions().getClients();
 
@@ -327,36 +328,49 @@ const getState = ({ getStore, getActions, setStore }) => {
 		}
 	},
             // MATCH
-      		getMatches: () => {
-				fetch(process.env.BACKEND_URL + "/api/match")
-				.then( (response) => response.json())
-				.then( data => setStore({ matches: data }))	
+      		getMatches: async () => {
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + "/api/match");
+					const data = await resp.json();
+					setStore({ matches: data });
+				} catch (error) {
+					console.error("Error fetching likes:", error);
+				}
 	  		},
-			addMatchAPI: (coachID, clientID) => {
-				const requestOptions = {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						"coach_id": coachID,
-						"client_id": clientID
-					})
-				};
-				fetch(process.env.BACKEND_URL + "/api/match", requestOptions)
-				.then(response => {
-					if(response.status == 200) {
-						setStore({ error: null })
-					}
-					return response.json()
-				})
-				.then(data => {
-					if(data.error) {
-						setStore({ error: data.error })
-					}
-				})
+			getCoachMatches: async (coachID) => {
+				try {
+					await getActions().getMatches()
+					await getActions().getClients();
+
+					const allClients = getStore().clients;
+					const coachMatches = await getStore().matches.filter((match) => match.coach_id === coachID)
+					const coachMatchesClientIDs = coachMatches.map(like => like.client_id);
+					const usersMatched = allClients.filter(client => coachMatchesClientIDs.includes(client.id));
+		
+					setStore({ userMatches: usersMatched })
+				} catch (error) {
+					console.log("Error getting received likes", error);
+				}
 			},
-			deleteMatch: (matchID) => {
-				fetch(process.env.BACKEND_URL + `/api/match/${matchID}`, { method: 'DELETE' })
-				.then( () => getActions().getMatches())
+			deleteMatch: async (clientID, coachID) => {
+				try {
+					const { matches } = getStore();
+					const matchToDelete = matches.find(match => match.coach_id === coachID && match.client_id === clientID);
+			
+					if (matchToDelete) {
+						const resp = await fetch(process.env.BACKEND_URL + `/api/match/${matchToDelete.id}`, { method: 'DELETE' });
+						if (resp.ok) {
+							const updatedUserMatches = getStore().userMatches.filter(match => match.id !== matchToDelete.id);
+							setStore({ userMatches: updatedUserMatches });
+						} else {
+							console.error("Error deleting match:", resp.statusText);
+						}
+					} else {
+						console.error("Match not found for deletion");
+					}
+				} catch (error) {
+					console.error("Error deleting match:", error);
+				}
 			},
       		// AVAILABILITY
       		getAvailability: () => {

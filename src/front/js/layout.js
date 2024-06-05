@@ -4,7 +4,7 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Home } from "./pages/home";
-import { SignUp } from "./pages/signUp";
+import { SignUpCoach } from "./pages/signUpCoach";
 import { Login } from "./pages/login";
 
 import { Availability } from "./pages/availability";
@@ -80,7 +80,7 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
-                        <Route element={<SignUp />} path="/signup" />
+                        <Route element={<SignUpCoach />} path="/signup" />
                         <Route element={<Login />} path="/login" />
                         {/* AVAILABILITY ROUTES */}  
                         <Route element={<Availability />} path="/availability" />

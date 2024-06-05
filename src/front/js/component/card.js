@@ -33,7 +33,11 @@ export const Card = ({ username, userID }) => {
             actions.deleteLike(existingLike.id);
         } 
         else {
-            actions.addLikeAPI(source, userLike, loggedCoach.id);
+            if(loggedCoach){
+                actions.addLikeAPI(source, userLike, loggedCoach.id);
+            } else {
+                actions.addLikeAPI(source, loggedClient.id, userLike);
+            }
         }	
     }
 
@@ -46,7 +50,7 @@ export const Card = ({ username, userID }) => {
             setFavStar("fa-regular fa-star text-warning") 
         }
     },[store.likes])
-
+    
 	return (   
         <div className="card border-0">
             <img src={helloThere} atl="hello there" className="card-img-top"/>
@@ -66,20 +70,20 @@ export const Card = ({ username, userID }) => {
         </div>
 	);
 };
-					// <li key={index} className="list-group-item my-2 border-3">
-					// 	<div className="d-flex flex-column justify-content-center">
-					// 		<div className="d-flex">
-					// 			<span className="fw-bold">Username: </span>
-					// 			{client.username}
-					// 		</div>
-					// 		<div className="d-flex">
-					// 			<Link to={`/client/${client.id}`} className="mb-1">
-					// 				<button className="btn btn-info py-0 px-1 ms-auto"></button>					
-					// 			</Link>
-					// 			<button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> setClientID(client.id)}>delete</button>
-					// 		</div>
-					// 		<div>
-					// 		<button className="btn btn-warning py-0 px-1 ms-auto mt-1" onClick={()=> handleLike(client.id)}>{dislike}</button>
-					// 		</div>
-					// 	</div>
-					// </li>
+        // <li key={index} className="list-group-item my-2 border-3">
+        // 	<div className="d-flex flex-column justify-content-center">
+        // 		<div className="d-flex">
+        // 			<span className="fw-bold">Username: </span>
+        // 			{client.username}
+        // 		</div>
+        // 		<div className="d-flex">
+        // 			<Link to={`/client/${client.id}`} className="mb-1">
+        // 				<button className="btn btn-info py-0 px-1 ms-auto"></button>					
+        // 			</Link>
+        			
+        // 		</div>
+        // 		<div>
+        // 		<button className="btn btn-warning py-0 px-1 ms-auto mt-1" onClick={()=> handleLike(client.id)}>{dislike}</button>
+        // 		</div>
+        // 	</div>
+        // </li>

@@ -3,15 +3,18 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
-export const SignUp = () => {
+export const SignUpCoach = () => {
 	const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [showPassword, setShowPassword] = useState(false)
-	const [selectedRole, setSelectedRole] = useState("")
-	const [errorRole, setErrorRole] = useState("")
+
+    useEffect(() => {
+        actions.getEducation()
+        actions.getExperience()
+    },[])
 
     // useEffect(() => {
     //     if (!store.errorCoach) {
@@ -58,23 +61,10 @@ export const SignUp = () => {
     //     }
     // }, [store.errorForm, store.coaches,store.clients, selectedRole, username, actions]);
 
-	const signUp = async (e) => {
+	const signUp = (e) => {
         e.preventDefault();
-        if (!selectedRole) {
-            setErrorRole("Please select a role")
-            return;
-        } else setErrorRole("")
-        try {
-            if (selectedRole === "coach") {
-                await actions.coachSignUp(username, email, password);
-				const currentCoach = store.coaches.find((coach) => coach.username === username);
-				navigate(`/coach/login`);
-            } else if (selectedRole === "client") {
-                await actions.clientSignUp(username, email, password);
-            }
-        } catch (error) {
-            console.log("error fatal", error);
-        }
+        actions.coachSignUp(username, email, password, firstName, lastName, educationID, experienceID);
+		navigate(`/coach/login`);
     };
 
 	return (
@@ -145,11 +135,6 @@ export const SignUp = () => {
                 {store.errorForm &&                 
                 <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
                     {store.errorForm}
-                </div>
-                }
-				{errorRole &&                 
-                <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
-                    {errorRole}
                 </div>
                 }
                 </div>

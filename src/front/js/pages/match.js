@@ -1,47 +1,46 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
-
 import { Context } from "../store/appContext";
 
 export const Match = () => {
-	const { store, actions } = useContext(Context);
-	const [ matchID, setMatchID ] = useState(0)
-	const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
+    const { store, actions } = useContext(Context);
+    const [showEmails, setShowEmails] = useState({});
+    const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
 
-	useEffect(() => {
-        actions.getCoachMatches(loggedCoach.id)
-    },[]);
+    useEffect(() => {
+        actions.getUserMatches(loggedCoach.id);
+    }, []);
 
-	return (
-		<div className="container">
-			<h1 className="text-center mt-3">Match List</h1>
-			<ul>
-				{store.userMatches.map((user, index) => 
-					<li key={index} className="list-group-item my-2 border-3">
-						<div className="d-flex flex-column justify-content-center">
-						<div className="d-flex">
-							<span className="fw-bold">Username: </span>
-							{user.username}
-							<button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> setMatchID(user.id)}>delete match</button>
-						</div>
-						</div>
-					</li>
-				)}
-			</ul>
-			<div className="modal" id="deleteModal" tabIndex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-				<div className="modal-dialog">
-					<div className="modal-content">
-					<div className="modal-header">
-						<h1 className="modal-title fs-5" id="deteleModalLabel">Are you sure to delete this?</h1>
-						<button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div className="modal-footer">
-						<button type="button" className="btn btn-dark" data-bs-dismiss="modal">No, I'm gonna think it better...</button>
-						<button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={()=>actions.deleteMatch(matchID, loggedCoach.id)}>Yes, of course!</button>
-					</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+    const toggleShowEmail = (userId) => {
+        setShowEmails((prevShowEmails) => ({
+            ...prevShowEmails,
+            [userId]: !prevShowEmails[userId],
+        }));
+    };
+
+    return (
+        <div className="container">
+            <h1 className="text-center mt-3">Match List</h1>
+            <ul>
+                {store.matchesCoach.map((user, index) => (
+                    <li key={index} className="list-group-item my-2 border-3">
+                        <div className="d-flex flex-column justify-content-center">
+                            <div className="d-flex">
+                                <span className="fw-bold">Username: </span>
+                                {user.username}
+                                <button className="btn btn-success py-0 px-1 ms-auto mt-1" onClick={() => toggleShowEmail(user.id)}>
+                                    {showEmails[user.id] ? "hide email" : "show email"}
+                                </button>
+                                {showEmails[user.id] && (
+                                    <>
+                                        <span className="fw-bold ms-2">Email to contact: </span>
+                                        {user.email}
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
 };

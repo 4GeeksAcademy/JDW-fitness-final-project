@@ -91,11 +91,12 @@ class Client(db.Model):
     #activity_frequency_id = db.Column(db.Integer, db.ForeignKey('activity_frequency.id'))
     activity_frequency = db.relationship('ActivityFrequency', backref='clients') 
     availability_client = db.relationship('Availability_client', backref='clients')
-
+    
     
     def __repr__(self):
         return f'<Client {self.email}>'  
     def serialize(self):
+        activity_frequency = list(map(lambda prop: prop.serialize(),self.activity_frequency))
         return {
             "id": self.id,
             "email": self.email,
@@ -107,7 +108,7 @@ class Client(db.Model):
             "weight": self.weight,
             "gender": self.gender,
             "physical_habits": self.physical_habits,
-            "activity_frequency_id": self.activity_frequency_id,
+            "activity_frequency_id": activity_frequency
           }
 
 class Availability_client(db.Model):

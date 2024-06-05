@@ -50,6 +50,10 @@ import { UpdateCoach } from "./pages/updateCoach";
 
 import { Likes } from "./pages/likes";
 import { AddLike } from "./pages/addLikes";
+import { GivenLikesClient } from "./pages/givenLikesClient";
+import { ReceivedLikesClient } from "./pages/receivedLikesClient";
+import { NoGivenLikesClient } from "./pages/noGivenLikes";
+import { MatchClient } from "./pages/matchClient";
 
 import { Match } from "./pages/match";
 import { AddMatch } from "./pages/addMatch";
@@ -90,7 +94,7 @@ const Layout = () => {
                         <Route element={<AddGoal />} path="/goals/form" />
                         <Route element={<UpdateGoal />} path="/goals/update/:goalID" />
                         {/* AVAILABILITY_CLIENT ROUTES */}
-                        <Route element={<AvailabilityClient />} path="/availability-client" />
+                        {/* <Route element={<AvailabilityClient />} path="/availability-client" /> */}
                         {/* DISEASES ROUTES */}
                         <Route element={<Diseases />} path="/diseases" />
                         <Route element={<SingleDiseases />}  path="/diseases/:diseasesID" />
@@ -124,7 +128,11 @@ const Layout = () => {
                         <Route element={<UpdateClient />} path="/client/update/:clientID" />
                         {/* LIKES PATH */}
                         <Route element={<Likes />} path="/likes" />
-                        <Route element={<AddLike />} path="/likes/add" />    
+                        <Route element={<AddLike />} path="/likes/add" />   
+                        <Route element={<GivenLikesClient />} path="/likes/given" />  
+                        <Route element={<ReceivedLikesClient />} path="/likes/received" />
+                        <Route element={<NoGivenLikesClient />} path="/likes/nogiven" />
+                        <Route element={<MatchClient />} path="/client/match" />
                         {/* MATCH PATH */}
                         <Route element={<Match />} path="/match" />
                         <Route element={<AddMatch />} path="/match/add" />

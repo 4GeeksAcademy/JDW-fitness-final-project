@@ -5,13 +5,21 @@ import { Context } from "../store/appContext";
 
 export const Client = () => {
 	const { store, actions } = useContext(Context);
-	const [ clientID, setClientID ] = useState(0) 
-	const tokenCoach = localStorage.getItem("token_coach")
+	const [ clientID, setClientID ] = useState(0); 
+	const tokenCoach = localStorage.getItem("token_coach");
 	const navigate = useNavigate();
 
 	useEffect(() => {
-        actions.getClients()
+        actions.getClients();
     },[]);
+
+	const handleLike = (clientID) => {
+        actions.addLike(clientID);
+    };
+
+	const handleUnlike = (likeID) => {
+        actions.removeLike(likeID);
+    };
 
 	// if(!tokenCoach) {
 	// 	navigate("/coach/login")
@@ -26,23 +34,31 @@ export const Client = () => {
 				</Link>
 			</div>
 			<ul>
-				{store.clients.map((client, index) => 
-					<li key={index} className="list-group-item my-2 border-3">
-						<div className="d-flex flex-column justify-content-center">
-							<div className="d-flex">
-								<span className="fw-bold">Username: </span>
-								{client.username}
+				{store.clients.map((client, index) => {
+					const like = store.likes.find(like => like.client_id === client.id && like.coach_id === tokenCoach);
+
+					return (
+						<li key={index} className="list-group-item my-2 border-3">
+							<div className="d-flex flex-column justify-content-center">
+								<div className="d-flex">
+									<span className="fw-bold">Username: </span>
+									{client.username}
+								</div>
+								<div className="d-flex">
+									<Link to={`/client/${client.id}`} className="mb-1">
+										<button className="btn btn-info py-0 px-1 ms-auto">show more information</button>					
+									</Link>
+									<button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> setClientID(client.id)}>delete</button>
+								</div>
+								{like ? (
+									<button className="btn btn-secondary py-0 px-1 ms-auto" onClick={() => handleUnlike(like.id)}>Unlike</button>
+								) : (
+									<button className="btn btn-secondary py-0 px-1 ms-auto" onClick={() => handleLike(client.id)}>Like</button>
+								)}
 							</div>
-							<div className="d-flex">
-								<Link to={`/client/${client.id}`} className="mb-1">
-									<button className="btn btn-info py-0 px-1 ms-auto">show more information</button>					
-								</Link>
-								<button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> setClientID(client.id)}>delete</button>
-							</div>
-							<button className="btn btn-secondary py-0 px-1 ms-auto">Like</button>	
-						</div>
-					</li>
-				)}
+						</li>
+					);
+				})}
 			</ul>
 			<div className="modal" id="deleteModal" tabIndex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
 				<div className="modal-dialog">

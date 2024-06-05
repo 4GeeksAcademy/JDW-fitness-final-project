@@ -10,11 +10,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 			singleCoach: {},
 			errorForm: null,
 			authCoach: false,
-			authClient: false,
-			matches: [],
+			authClient: false, 
 			availability: [],
 			singleAvailability: {}, 
 			likes: [],
+            matches: [],
+            givenLikesCoach: [],
+            receivedLikesCoach: [],
+            noGivenLikesCoach: [],
+            matchesCoach: [],
+            givenLikesClient: [],
+            receivedLikesClient: [],
+            noGivenLikesClient: [],
+            matchesClient: [],
       goals: [],
 			singleGoal:{},
       diseases: [],
@@ -29,7 +37,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		},
 
 		actions: {
-			// Use getActions to call a function within a fuction
+			
 	// CLIENT
 	getClients: () => {
 		fetch(process.env.BACKEND_URL + "/api/client")
@@ -230,37 +238,108 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
         
        	// LIKES
-	getLikes: () => {
-		fetch(process.env.BACKEND_URL + "api/likes")
-		.then( (response) => response.json())
-		.then( data => setStore({ likes: data }))	
-	  },
-	addLikeAPI: (coachID, clientID) => {
-		const requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				"coach_id": coachID,
-				"client_id": clientID
+	  getLikes: async () => {
+		try {
+			const resp = await fetch(process.env.BACKEND_URL + "/api/like");
+			const data = await resp.json();
+			console.log("getLikesResponse",data);
+			setStore({ likes: data });
+		} catch (error) {
+			console.error("Error fetching likes:", error);
+		}
+		},
+		addLikeAPI: (source, clientID, coachID) => {
+			const requestOptions = {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					"source": source,
+					"client_id": clientID,
+					"coach_id": coachID
+				})
+			};
+			fetch(process.env.BACKEND_URL + "/api/like", requestOptions)
+			.then( () => getActions().checkAuth())
+			.then( () => {
+				if(getStore().authCoach){
+					getActions().getNoGivenLikes(coachID)
+					getActions().getReceivedLikes(coachID)
+				} else {
+					getActions().getNoGivenLikes(clientID)
+					getActions().getReceivedLikes(clientID)
+				}
+				
 			})
-		};
-		fetch(process.env.BACKEND_URL + "api/likes", requestOptions)
-		.then(response => {
-			if(response.status == 200) {
-				setStore({ error: null })
+		},
+		deleteLike: async (likeID, loggedUserID) => {
+			fetch(process.env.BACKEND_URL + `/api/like/${likeID}`, { method: 'DELETE' })
+			.then( () => getActions().getGivenLikes(loggedUserID))
+		},
+		getGivenLikes: async (loggedUserID) => {
+			try {
+				await getActions().checkAuth()
+				console.log(getStore().authCoach);
+				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
+	
+				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
+				const data = await resp.json();
+				if(getStore().authCoach){
+					setStore({ givenLikesCoach: data.given_likes });
+				} else {
+					setStore({ givenLikesClient: data.given_likes });
+				}
+			} catch (error) {
+				console.error("Error fetching given likes:", error);
 			}
-			return response.json()
-		})
-		.then(data => {
-			if(data.error) {
-				setStore({ error: data.error })
+		},
+		getNoGivenLikes: async (loggedUserID) => {
+			try {
+				await getActions().checkAuth()
+				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
+	
+				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
+				const data = await resp.json();
+				if(getStore().authCoach){
+					setStore({ noGivenLikesCoach: data.no_given_likes });
+				} else {
+					setStore({ noGivenLikesClient: data.no_given_likes });
+				}
+			} catch (error) {
+				console.error("Error fetching no given likes:", error);
 			}
-		})
-	},
-	deleteLike: (likeID) => {
-		fetch(process.env.BACKEND_URL + `api/like/${likeID}`, { method: 'DELETE' })
-		.then( () => getActions().getLikes())
-	}, 
+		},
+		getReceivedLikes: async (loggedUserID) => {
+			try {
+				await getActions().checkAuth()
+				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
+	
+				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
+				const data = await resp.json();
+				if(getStore().authCoach){
+					setStore({ receivedLikesCoach: data.received_likes });
+				} else {
+					setStore({ receivedLikesClient: data.received_likes });
+				}
+			} catch (error) {
+				console.error("Error fetching received likes:", error);
+			}
+		},
+		getUserMatches: async (loggedUserID) => {
+			try {
+				await getActions().checkAuth()
+				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
+	
+				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
+				const data = await resp.json();
+				if(getStore().authCoach){
+					setStore({ matchesCoach: data.matches });
+				} else {
+					setStore({ matchesClient: data.matches });
+				}
+			} catch (error) {
+				console.error("Error fetching received likes:", error);
+			}
+		},
         
             // MATCH
       		getMatches: () => {

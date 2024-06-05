@@ -39,14 +39,17 @@ export const Login = () => {
             setError(null);
             if (data.access_coach_token) {
                 const loggedCoach = await store.coaches.find(coach => coach.email === email);
-                localStorage.setItem("loggedCoach", loggedCoach.username);
+                localStorage.setItem("loggedCoach", JSON.stringify({ "id": loggedCoach.id, "username": loggedCoach.username }));
+                // actions.setSingleCoach(loggedCoach)
+                // localStorage.setItem("loggedCoach", loggedCoach.username);
                 await actions.setAuth("coach", true)  
                 localStorage.setItem("token_coach", data.access_coach_token);
                 navigate("/client")  
             }
             if (data.access_client_token) {
                 const loggedClient = await store.clients.find(client => client.email === email);
-                localStorage.setItem("loggedClient", loggedClient.username); 
+                localStorage.setItem("loggedClient", JSON.stringify({ "id": loggedClient.id, "username": loggedClient.username }));
+                // localStorage.setItem("loggedClient", loggedClient.username); 
                 await actions.setAuth("client", true)  
                 localStorage.setItem("token_client", data.access_client_token); 
                 navigate("/coach")   

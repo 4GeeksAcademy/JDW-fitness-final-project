@@ -88,7 +88,7 @@ class Client(db.Model):
     physical_habits = db.Column(db.String(120), unique=False, nullable=True)
     # Cambiar a valor unique true como el anterior
     activity_frequency_id = db.Column(db.Integer, db.ForeignKey('activity_frequency.id'))
-    activity_frequency = db.relationship('ActivityFrequency', backref='clients') 
+    activity_frequency = db.relationship('ActivityFrequency') 
     
     def __repr__(self):
         return f'<Client {self.email}>'  

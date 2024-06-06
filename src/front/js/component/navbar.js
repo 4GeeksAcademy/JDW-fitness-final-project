@@ -33,12 +33,7 @@ export const Navbar = () => {
 					<span className="navbar-brand mb-0 h1">Home</span>
 				</Link>
 				<div className="ms-auto" >
-				<ul className="navbar-nav me-auto mb-2 mb-lg-0 title">
-						<li className="nav-item my-auto fw-bold">
-							<Link to={`/${currentUser}/${currentUserID}`} className="nav-link active">
-								My Profile
-							</Link>
-						</li>
+					<ul className="navbar-nav me-auto mb-2 mb-lg-0 title">
 						<li className="nav-item my-auto fw-bold">
 							<Link to={`/${currentUserList}`} className="nav-link active">
 								{currentUserList === "client" ? "Client List" : "Coach List"}
@@ -67,10 +62,13 @@ export const Navbar = () => {
 					</ul>					
 				</div>
 				{ (store.authCoach || store.authClient) && 				
-				<div className="ms-auto">
-					<span className="fw-bold me-4">{username}'s session</span>
-					<Link to="/">
-						<button onClick={actions.logout} className="btn btn-primary">Log out</button>
+				<div className="d-flex align-items-center ms-auto">
+					<i className="fa-solid fa-user fs-3 me-3"></i>
+					<Link to={`/${currentUser}/${currentUserID}`} className="nav-link active">
+						<button className="btn btn-dark fw-bold me-2">{username}</button>
+					</Link>
+					<Link to="/" onClick={actions.logout}>
+						Log out
 					</Link>
 				</div>		
 				}

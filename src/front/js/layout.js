@@ -4,7 +4,7 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Home } from "./pages/home";
-import { SignUpCoach } from "./pages/signUpCoach";
+import { SignUp } from "./pages/signUp";
 import { Login } from "./pages/login";
 
 import { Availability } from "./pages/availability";
@@ -43,6 +43,7 @@ import { AddClient } from "./pages/addClient";
 import { UpdateClient } from "./pages/updateClient";
 
 import { Coach } from "./pages/coach";
+import { SignUpCoach } from "./pages/signUpCoach";
 import { SingleCoach } from "./pages/singleCoach";
 import { AddCoach } from "./pages/addCoach";
 import { UpdateCoachSignUp } from "./pages/updateCoachSignUp";
@@ -77,7 +78,8 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
-                        <Route element={<SignUpCoach />} path="/signup" />
+                        <Route element={<SignUp />} path="/signup" />
+                        <Route element={<SignUpCoach />} path="/coach/signup" />
                         <Route element={<Login />} path="/login" />
                         {/* AVAILABILITY ROUTES */}  
                         <Route element={<Availability />} path="/availability" />
@@ -125,8 +127,8 @@ const Layout = () => {
                         {/* LIKES AND MATCH PATH */}
                         <Route element={<Likes />} path="/likes" />
                         <Route element={<GivenLikesCoach />} path="/coach/likes/given" /> 
-                        <Route element={<NoGivenLikesCoach />} path="/coach/likes/received" /> 
-                        <Route element={<ReceivedLikesCoach />} path="/coach/likes/nogiven" /> 
+                        <Route element={<NoGivenLikesCoach />} path="/coach/likes/nogiven" /> 
+                        <Route element={<ReceivedLikesCoach />} path="/coach/likes/received" /> 
                         <Route element={<MatchCoach />} path="/coach/match" />
                         {/* NOT FOUND */}
                         <Route element={<h1>Not found!</h1>} />

@@ -62,8 +62,8 @@ export const SingleCoach = () => {
             <Link to={`/coach/update/${coachID}`} className="ms-auto my-1">
 					<button className="btn btn-secondary py-0 px-1 ms-auto" >Update</button>					
 			</Link>
-            <Link to="/coach">
-				<button className="btn btn-primary ms-3 fw-bold" >Back to Coach list</button>
+            <Link to="/client">
+				<button className="btn btn-primary ms-3 fw-bold" >Back to Client list</button>
 			</Link>
 		</div>
 	);

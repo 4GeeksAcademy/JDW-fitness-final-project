@@ -43,19 +43,19 @@ import { AddClient } from "./pages/addClient";
 import { UpdateClient } from "./pages/updateClient";
 
 import { Coach } from "./pages/coach";
+import { SignUpCoach } from "./pages/signUpCoach";
 import { SingleCoach } from "./pages/singleCoach";
 import { AddCoach } from "./pages/addCoach";
-import { UpdateCoachSignUp } from "./pages/updateCoachSignUp";
 import { UpdateCoach } from "./pages/updateCoach";
 
 import { Likes } from "./pages/likes";
-import { AddLike } from "./pages/addLikes";
-
-import { Match } from "./pages/match";
-import { AddMatch } from "./pages/addMatch";
+import { GivenLikesCoach } from "./pages/givenLikesCoach";
+import { NoGivenLikesCoach } from "./pages/noGivenLikesCoach";
+import { ReceivedLikesCoach } from "./pages/receivedLikesCoach";
+import { MatchCoach } from "./pages/matchCoach";
 
 import injectContext from "./store/appContext";
-import { AvailabilityClient } from "./pages/availabilityClient";
+// import { AvailabilityClient } from "./pages/availabilityClient";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -78,6 +78,7 @@ const Layout = () => {
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<SignUp />} path="/signup" />
+                        <Route element={<SignUpCoach />} path="/coach/signup" />
                         <Route element={<Login />} path="/login" />
                         {/* AVAILABILITY ROUTES */}  
                         <Route element={<Availability />} path="/availability" />
@@ -90,7 +91,7 @@ const Layout = () => {
                         <Route element={<AddGoal />} path="/goals/form" />
                         <Route element={<UpdateGoal />} path="/goals/update/:goalID" />
                         {/* AVAILABILITY_CLIENT ROUTES */}
-                        <Route element={<AvailabilityClient />} path="/availability-client" />
+                        {/* <Route element={<AvailabilityClient />} path="/availabilityclient" /> */}
                         {/* DISEASES ROUTES */}
                         <Route element={<Diseases />} path="/diseases" />
                         <Route element={<SingleDiseases />}  path="/diseases/:diseasesID" />
@@ -114,7 +115,6 @@ const Layout = () => {
                         {/* COACH PATH */}
                         <Route element={<Coach />} path="/coach" />
                         <Route element={<AddCoach />} path="/coach/signup" />
-                        <Route element={<UpdateCoachSignUp />} path="/coach/signup/update/:coachID" />
                         <Route element={<UpdateCoach />} path="/coach/update/:coachID" />
                         <Route element={<SingleCoach />} path="/coach/:coachID" />
                         {/* CLIENT PATH */}
@@ -122,12 +122,12 @@ const Layout = () => {
                         <Route element={<SingleClient />} path="/client/:clientID" />
                         <Route element={<AddClient />} path="/client/signup" />
                         <Route element={<UpdateClient />} path="/client/update/:clientID" />
-                        {/* LIKES PATH */}
+                        {/* LIKES AND MATCH PATH */}
                         <Route element={<Likes />} path="/likes" />
-                        <Route element={<AddLike />} path="/likes/add" />    
-                        {/* MATCH PATH */}
-                        <Route element={<Match />} path="/match" />
-                        <Route element={<AddMatch />} path="/match/add" />
+                        <Route element={<GivenLikesCoach />} path="/coach/likes/given" /> 
+                        <Route element={<NoGivenLikesCoach />} path="/coach/likes/nogiven" /> 
+                        <Route element={<ReceivedLikesCoach />} path="/coach/likes/received" /> 
+                        <Route element={<MatchCoach />} path="/coach/match" />
                         {/* NOT FOUND */}
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>

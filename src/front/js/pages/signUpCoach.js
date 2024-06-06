@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
-export const UpdateCoach = () => {
+export const SignUpCoach = () => {
 	const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const [username, setUsername] = useState("")
@@ -14,43 +14,55 @@ export const UpdateCoach = () => {
     const [educationID, setEducationID] = useState(0)
     const [experienceID, setExperienceID] = useState(0)
     const [showPassword, setShowPassword] = useState(false)
-    const [handleButton, setHandleButton] = useState(false)
-    const { coachID } = useParams();
 
     useEffect(() => {
         actions.getEducation()
         actions.getExperience()
-        actions.getSingleCoach(coachID);
     },[])
 
-    useEffect(() => {
-        if (store.singleCoach && !username && !email && !password && !firstName && !lastName) {
-            setUsername(store.singleCoach.username || "");
-            setEmail(store.singleCoach.email || "");
-            setPassword(store.singleCoach.password || "");
-            setFirstName(store.singleCoach.first_name || "");
-            setLastName(store.singleCoach.last_name || "");
-            setEducationID(store.singleCoach.education_id || 0);
-            setExperienceID(store.singleCoach.experience_id || 0);
+    const login = async (email, password) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                "email": email,
+                "password": password 
+            })
+        };
+    
+        try {
+            const response = await fetch(process.env.BACKEND_URL + "/api/login", requestOptions);
+            const data = await response.json();
+            
+            if (data.access_coach_token) {
+                await actions.getCoaches()
+                const loggedCoach = await store.coaches.find(coach => coach.email === email);
+                console.log(loggedCoach);
+                localStorage.setItem("loggedCoach", JSON.stringify({ "id": loggedCoach.id, "username": loggedCoach.username }));
+                await actions.setAuth("coach", true)  
+                localStorage.setItem("token_coach", data.access_coach_token);
+                navigate("/client")  
+            }
+            return data
+        }  
+        catch (error) {
+            console.error("Error during coach login:", error);
         }
-    }, [store.singleCoach]);
+    }
 
-    useEffect(() => {
-        if (!store.errorForm && handleButton && username != "" && email != "" && password != "") {
-            navigate("/client");
-        }
-    },[store.errorForm, handleButton])
-
-    function updateCoach(e) {
+    const signUp = async (e) => {
         e.preventDefault();
-        actions.updateCoachAPI(username, email, password, firstName, lastName, educationID, experienceID, coachID)
-        setHandleButton(true)
+        await actions.coachSignUp(username, email, password, firstName, lastName, educationID, experienceID);
+        const error = await store.errorForm
+        if (!error) {
+            login(email, password)
+        }
     };
 
 	return (
 		<div className="container mt-3">
-            <h3 className="text-center mb-2">Coach Sign up</h3>
-            <form>
+            <h3 className="text-center mb-2">Sign up</h3>
+            <form onSubmit={signUp}>
                 <div className="row">
                 <div className="mb-3 col-6 offset-3">
                     <input 
@@ -85,7 +97,7 @@ export const UpdateCoach = () => {
                     >
                     </button>
                 </div>
-                <div className="mb-3 col-3 offset-3">
+				<div className="mb-3 col-3 offset-3">
                     <input 
                     type="text" 
                     className="form-control" 
@@ -126,9 +138,9 @@ export const UpdateCoach = () => {
                 }
                 </div>
                 <div className="d-flex justify-content-center">
-                    <button type="submit" className="btn btn-warning fw-bold mt-2" onClick={updateCoach}>Save changes</button>
-                    <Link to={`/coach/${coachID}`}>
-                        <button className="btn btn-primary ms-3 fw-bold mt-2" >Back to {username} Coach information</button>
+                    <button type="submit" className="btn btn-warning fw-bold mt-2" >Create your profile</button>
+                    <Link to="/">
+                        <button className="btn btn-primary ms-3 fw-bold mt-2" >Back Home</button>
                     </Link>
                 </div>
             </form>

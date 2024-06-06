@@ -544,26 +544,18 @@ def get_client_likes(client_id):
     received_likes = Likes.query.filter_by(client_id=client_id, source="coach").all()
     matches = Match.query.filter_by(client_id=client_id).all()
 
-    # Obtener los IDs de los coaches a los que ya se les ha dado like
     given_like_coach_ids = [like.coach_id for like in given_likes]
     received_like_coach_ids = [like.coach_id for like in received_likes]
     match_coach_ids = [match.coach_id for match in matches]
 
-    # Obtener los coaches correspondientes a todos los IDs
     all_coach_ids = set(given_like_coach_ids + received_like_coach_ids + match_coach_ids)
     coaches = Coach.query.filter(Coach.id.in_(all_coach_ids)).all()
     coaches_dict = {coach.id: coach.serialize() for coach in coaches}
 
-    # Añadir solo los detalles del coach a given_likes_list
     given_likes_coaches_list = [coaches_dict.get(coach_id) for coach_id in given_like_coach_ids]
-
-    # Añadir solo los detalles del coach a received_likes_list
     received_likes_coaches_list = [coaches_dict.get(coach_id) for coach_id in received_like_coach_ids]
-
-    # Añadir solo los detalles del coach a matches_list
     matches_coaches_list = [coaches_dict.get(coach_id) for coach_id in match_coach_ids]
 
-    # Obtener los coaches a los que no se les ha dado like
     no_given_likes = Coach.query.filter(Coach.id.notin_(given_like_coach_ids)).all()
     no_given_likes_list = list(map(lambda coach: coach.serialize(), no_given_likes))
 
@@ -572,6 +564,35 @@ def get_client_likes(client_id):
         "received_likes": received_likes_coaches_list,
         "no_given_likes": no_given_likes_list,
         "matches": matches_coaches_list
+    })
+    return response, 200
+
+@api.route('/coach_likes/<int:coach_id>', methods=['GET'])
+def get_coach_likes(coach_id):
+    given_likes = Likes.query.filter_by(coach_id=coach_id, source="coach").all()
+    received_likes = Likes.query.filter_by(coach_id=coach_id, source="client").all()
+    matches = Match.query.filter_by(coach_id=coach_id).all()
+
+    given_like_client_ids = [like.client_id for like in given_likes]
+    received_like_client_ids = [like.client_id for like in received_likes]
+    match_client_ids = [match.client_id for match in matches]
+
+    all_client_ids = set(given_like_client_ids + received_like_client_ids + match_client_ids)
+    clients = Client.query.filter(Client.id.in_(all_client_ids)).all()
+    clients_dict = {client.id: client.serialize() for client in clients}
+
+    given_likes_clients_list = [clients_dict.get(client_id) for client_id in given_like_client_ids]
+    received_likes_clients_list = [clients_dict.get(client_id) for client_id in received_like_client_ids]
+    matches_clients_list = [clients_dict.get(client_id) for client_id in match_client_ids]
+
+    no_given_likes = Client.query.filter(Client.id.notin_(given_like_client_ids)).all()
+    no_given_likes_list = list(map(lambda client: client.serialize(), no_given_likes))
+
+    response = jsonify({
+        "given_likes": given_likes_clients_list,
+        "received_likes": received_likes_clients_list,
+        "no_given_likes": no_given_likes_list,
+        "matches": matches_clients_list
     })
     return response, 200
 
@@ -655,52 +676,6 @@ def get_matches():
     matches_list = list(map(lambda match: match.serialize(),matches))
 
     return jsonify(matches_list), 200
-
-@api.route('/match/<int:match_id>', methods=['GET'])
-def get_match(match_id):
-    match = Match.query.filter_by(id=match_id).first()
-    if not match: return jsonify({"error": f"The ID '{match_id}' was not found in Coaches"}), 404
-    return jsonify(match.serialize()), 200
-  
-@api.route('/match', methods=['POST'])
-def add_match():
-    match_data = request.json
-    required_properties = ["coach_id", "client_id"]
-
-    for prop in required_properties:
-        if prop not in match_data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
-        if match_data[prop] == "" or match_data[prop] == 0: return jsonify({"error": f"The '{prop}' must not be empty or zero"}), 400
-
-    coach = Coach.query.get(match_data["coach_id"])
-    if coach is None:
-        return jsonify({"error": f"The coach with id '{match_data['coach_id']}' does not exist"}), 404
-
-    client = Client.query.get(match_data["client_id"])
-    if client is None:
-        return jsonify({"error": f"The client with id '{match_data['client_id']}' does not exist"}), 404
-
-    existing_match = Match.query.filter_by(coach_id=match_data["coach_id"], client_id=match_data["client_id"]).first()
-    if existing_match:
-        return jsonify({"error": f"The match between coach '{coach.username}' and client '{client.username}' already exists in the database"}), 400
-    
-    match_to_add = Match(**match_data)
-    db.session.add(match_to_add)
-    db.session.commit()
-
-    return jsonify(match_to_add.serialize()), 201  
-
-@api.route('/match/<int:match_id>', methods=['DELETE'])
-def del_match(match_id):
-    match = Match.query.get(match_id)
-    if not match: return jsonify({"error": f"The ID '{match_id}' was not found in Matches"}), 404
-    coach = Coach.query.get(match.coach_id)
-    client = Client.query.get(match.client_id)
-    db.session.delete(match)
-    db.session.commit()
-    
-    return jsonify({"deleted": f"The match between coach '{coach.username}' and client '{client.username}' was deleted successfully"}), 200  
-  
-  
   
   
   

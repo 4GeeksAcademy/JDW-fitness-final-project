@@ -268,9 +268,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 		.then( () => getActions().checkAuth())
 		.then( () => {
 			if(getStore().authCoach){
+				getActions().getLikes()
 				getActions().getNoGivenLikes(coachID)
 				getActions().getReceivedLikes(coachID)
 			} else {
+				getActions().getLikes()
 				getActions().getNoGivenLikes(clientID)
 				getActions().getReceivedLikes(clientID)
 			}
@@ -279,7 +281,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 	},
 	deleteLike: (likeID, loggedUserID) => {
 		fetch(process.env.BACKEND_URL + `/api/like/${likeID}`, { method: 'DELETE' })
-		.then( () => getActions().getGivenLikes(loggedUserID))
+		.then( () => {
+			getActions().getGivenLikes(loggedUserID)
+			getActions().getLikes()
+		})
 	},
 	getGivenLikes: async (loggedUserID) => {
 		try {

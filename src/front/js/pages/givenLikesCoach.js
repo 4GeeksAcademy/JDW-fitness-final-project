@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 
-export const GivenLikes = () => {
+export const GivenLikesCoach = () => {
 	const { store, actions } = useContext(Context);
     const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
     const [ clientID, setClientID ] = useState(0)
     
     useEffect(() => {
-        actions.getGivenLikes(loggedCoach.id)
         actions.getLikes()
+        actions.getGivenLikes(loggedCoach.id)
     },[])
 
     const deleteSingleLike = async (clientID) => {
@@ -26,7 +26,7 @@ export const GivenLikes = () => {
                             <div className="d-flex">
                                 <span className="fw-bold">Username: </span>
                                 {user.username}
-                                <button className="btn btn-danger py-0 px-1 ms-auto mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> setClientID(user.id)}>delete</button>
+                                <button className="btn btn-danger py-0 px-1 ms-auto mt-1 fw-semibold" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> setClientID(user.id)}>Cancel your request</button>
                             </div>
 						</div>
 					</li>

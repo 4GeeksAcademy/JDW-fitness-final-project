@@ -49,13 +49,10 @@ import { UpdateCoachSignUp } from "./pages/updateCoachSignUp";
 import { UpdateCoach } from "./pages/updateCoach";
 
 import { Likes } from "./pages/likes";
-import { AddLike } from "./pages/addLikes";
-import { GivenLikes } from "./pages/givenLikes";
-import { ReceivedLikes } from "./pages/receivedLikes";
-import { NoGivenLikes } from "./pages/noGivenLikes";
-
-import { Match } from "./pages/match";
-import { AddMatch } from "./pages/addMatch";
+import { GivenLikesCoach } from "./pages/givenLikesCoach";
+import { NoGivenLikesCoach } from "./pages/noGivenLikesCoach";
+import { ReceivedLikesCoach } from "./pages/receivedLikesCoach";
+import { MatchCoach } from "./pages/matchCoach";
 
 import injectContext from "./store/appContext";
 // import { AvailabilityClient } from "./pages/availabilityClient";
@@ -125,15 +122,12 @@ const Layout = () => {
                         <Route element={<SingleClient />} path="/client/:clientID" />
                         <Route element={<AddClient />} path="/client/signup" />
                         <Route element={<UpdateClient />} path="/client/update/:clientID" />
-                        {/* LIKES PATH */}
+                        {/* LIKES AND MATCH PATH */}
                         <Route element={<Likes />} path="/likes" />
-                        <Route element={<AddLike />} path="/likes/add" />
-                        <Route element={<GivenLikes />} path="/likes/given" /> 
-                        <Route element={<ReceivedLikes />} path="/likes/received" /> 
-                        <Route element={<NoGivenLikes />} path="/likes/nogiven" /> 
-                        {/* MATCH PATH */}
-                        <Route element={<Match />} path="/match" />
-                        <Route element={<AddMatch />} path="/match/add" />
+                        <Route element={<GivenLikesCoach />} path="/coach/likes/given" /> 
+                        <Route element={<NoGivenLikesCoach />} path="/coach/likes/received" /> 
+                        <Route element={<ReceivedLikesCoach />} path="/coach/likes/nogiven" /> 
+                        <Route element={<MatchCoach />} path="/coach/match" />
                         {/* NOT FOUND */}
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>

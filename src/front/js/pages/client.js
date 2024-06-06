@@ -1,38 +1,43 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-
-import { Card } from "../component/card";
+import { Link } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
 export const Client = () => {
 	const { store, actions } = useContext(Context);
 	const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
-	const [like, setLike ] = useState(false)
+	const [like, setLike ] = useState({})
 
 	useEffect(() => {
         actions.getClients()
-		actions.getGivenLikes(loggedCoach.id)
+		actions.getLikes()
     },[]);
 
 	useEffect(() => {
-        const existingLike = store.likes.some((like) => like.source === source && like.client_id === userID && like.coach_id === loggedCoach.id);
-        if(existingLike) {
-            setFavStar("fa-solid fa-star text-warning") 
-        } else {
-            setFavStar("fa-regular fa-star text-warning") 
-        }
-    },[store.likes])
+        const likeStatus = {};
+        store.clients.forEach((client) => {
+            const existingLike = store.likes.find((like) => like.source === "coach" && like.client_id === client.id && like.coach_id === loggedCoach.id);
+            likeStatus[client.id] = !existingLike;
+        });
+        setLike(likeStatus);
+    }, [store.likes, store.clients]);
 
-	const handleLike= (userLike) => {
-        const existingLike = store.likes.find((like) => like.source === source && like.client_id === userLike && like.coach_id === loggedCoach.id);
-        if(existingLike) {
-            actions.deleteLike(existingLike.id);
-        } 
-        else {
-            actions.addLikeAPI(source, userLike, loggedCoach.id);
-
-        }	
+	const handleLike= async (userID) => {
+		try {
+			const existingLike = await store.likes.find((like) => like.source === "coach" && like.client_id === userID && like.coach_id === loggedCoach.id);
+			if(existingLike) {
+				actions.deleteLike(existingLike.id, loggedCoach.id);
+			} 
+			else {
+				actions.addLikeAPI("coach", userID, loggedCoach.id);
+			}	
+			setLike((prevLike) => ({
+				...prevLike,
+				[userID]: !prevLike[userID],
+			}));
+		} catch (error) {
+			console.log("An error ocurred with like or dislike function", error);
+		}
     }
 
 	return (
@@ -40,21 +45,21 @@ export const Client = () => {
             <h1 className="text-center mt-3">Client List</h1>
 			<ul>
 				{store.clients.map((client, index) => 
-					<div key={index} className="col-12 col-md-6 col-xl-3 my-xl-2">
+					<div key={index} className="">
 						<li className="list-group-item my-2 border-3">
-						<div className="d-flex flex-column justify-content-center">
-						<div className="d-flex">
-							<span className="fw-bold">Username: </span>
-							{client.username}
-							<Link to={`/client/${client.id}`} className="btn btn-warning mt-2 fw-bold">
+							<div className="d-flex justify-content-between">
+								<div>
+								<span className="fw-bold">Username: </span>
+								{client.username}
+								</div>
+								<button className="btn btn-warning py-0 px-1 fw-semibold" onClick={() => handleLike(client.id)}>
+									{like[client.id] ? "Request to train" : "Cancel your request"}
+								</button>					
+							</div>
+							<Link to={`/client/${client.id}`} className="btn btn-info mt-2 fw-bold">
                     			<span>Show more information</span>
                 			</Link>
-							<button className="btn btn-secondary py-0 px-1 ms-auto" onClick={() => handleLike(client.id)}>
-								{like[client.id] ? "hide email" : "show email"}
-							</button>					
-						</div>
-						</div>
-					</li>
+						</li>
 					</div>
 				)}
 			</ul>

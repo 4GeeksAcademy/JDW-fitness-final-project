@@ -37,7 +37,7 @@ export const UpdateCoach = () => {
 
     useEffect(() => {
         if (!store.errorForm && handleButton && username != "" && email != "" && password != "") {
-            navigate("/coach");
+            navigate("/client");
         }
     },[store.errorForm, handleButton])
 

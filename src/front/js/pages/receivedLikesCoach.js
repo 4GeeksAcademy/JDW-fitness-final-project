@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
-export const ReceivedLikes = () => {
+export const ReceivedLikesCoach = () => {
 	const { store, actions } = useContext(Context);
     const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
 	const [matchedClients, setMatchedClients] = useState([]);
@@ -38,9 +38,9 @@ export const ReceivedLikes = () => {
 								<span className="fw-bold">Username: </span>
 								{user.username}
 								{matchedClients.includes(user.id) ? (
-                                    <span className="alert alert-success py-0 px-1 ms-auto mt-1">match done!</span>
+                                    <span className="alert alert-success py-0 px-1 ms-auto mt-1 fw-bold">Match done!</span>
                                 ) : (
-                                    <button className="btn btn-warning py-0 px-1 ms-auto mt-1" onClick={() => addSingleLike(user.id)}>like</button>
+                                    <button className="btn btn-warning py-0 px-1 ms-auto mt-1 fw-semibold" onClick={() => addSingleLike(user.id)}>Request to train</button>
                                 )}
 							</div>
 						</div>

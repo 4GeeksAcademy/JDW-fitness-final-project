@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 
-export const Match = () => {
+export const MatchCoach = () => {
     const { store, actions } = useContext(Context);
     const [showEmails, setShowEmails] = useState({});
     const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 
-export const NoGivenLikes = () => {
+export const NoGivenLikesCoach = () => {
 	const { store, actions } = useContext(Context);
     const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
 
@@ -10,7 +10,7 @@ export const NoGivenLikes = () => {
     },[])
 
     const addSingleLike = (clientID) => {
-            actions.addLikeAPI("coach", clientID, loggedCoach.id);
+        actions.addLikeAPI("coach", clientID, loggedCoach.id);
     }
 
 	return (
@@ -23,7 +23,7 @@ export const NoGivenLikes = () => {
                             <div className="d-flex">
                                 <span className="fw-bold">Username: </span>
                                 {user.username}
-                                <button className="btn btn-warning py-0 px-1 ms-auto mt-1" onClick={() => addSingleLike(user.id)}>like</button>
+                                <button className="btn btn-warning py-0 px-1 ms-auto mt-1 fw-semibold" onClick={() => addSingleLike(user.id)}>Request to train</button>
                             </div>
 						</div>
 					</li>

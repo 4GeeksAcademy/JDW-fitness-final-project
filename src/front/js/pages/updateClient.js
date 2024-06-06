@@ -39,13 +39,13 @@ export const UpdateClient = () => {
             setWeight(store.singleClient.weight || "");
             setGender(store.singleClient.gender || "");
             setPhysicalHabits(store.singleClient.physical_habits || "");
-            setActivityFrequencyID(store.singleClient.physical_habits || 0);
+            setActivityFrequencyID(store.singleClient.activity_frequency || 0);
         }
     }, [store.singleClient]);
 
     useEffect(() => {
         if (!store.errorForm && handleButton && username != "" && email != "" && password != "") {
-            navigate("/client");
+            navigate("/coach");
         }
     },[store.errorForm, handleButton])
 
@@ -173,8 +173,8 @@ export const UpdateClient = () => {
                 </div>
                 <div className="d-flex justify-content-center">
                     <button type="submit" className="btn btn-warning fw-bold mt-2" onClick={updateClient}>Save changes</button>
-                    <Link to="/client">
-                        <button className="btn btn-primary ms-3 fw-bold mt-2" >Back to Client list.</button>
+                    <Link to={`/client/${clientID}`}>
+                        <button className="btn btn-primary ms-3 fw-bold mt-2" >Back to your information</button>
                     </Link>
                 </div>
             </form>

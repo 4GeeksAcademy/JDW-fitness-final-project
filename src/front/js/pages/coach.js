@@ -30,7 +30,6 @@ export const Coach = () => {
 			} 
 			else {
 				actions.addLikeAPI("client",loggedClient.id,userID);
-				console.log();
 			}	
 			setLike((prevLike) => ({
 				...prevLike,

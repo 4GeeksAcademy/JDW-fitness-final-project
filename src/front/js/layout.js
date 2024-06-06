@@ -38,7 +38,7 @@ import { UpdateActivity } from "./pages/updateActivity";
 import { SingleActivity } from "./pages/singleActivity";
 
 import { Client } from "./pages/client";
-import { SignUpClient } from "./pages/signupClient";
+import { SignUpClient } from "./pages/signUpClient";
 import { SingleClient } from "./pages/singleClient";
 import { AddClient } from "./pages/addClient";
 import { UpdateClient } from "./pages/updateClient";

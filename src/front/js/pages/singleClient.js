@@ -77,12 +77,18 @@ export const SingleClient = () => {
                 </ul>
                 {(loggedClient && store.singleClient.id === loggedClient.id) &&            
                 <Link to={`/client/update/${clientID}`} className="ms-auto my-1">
-                        <button className="btn btn-secondary py-0 px-1 ms-auto" >Update</button>					
+                        <button className="btn btn-secondary ms-auto fw-bold" >Update</button>					
                 </Link>
                 }
+                {loggedClient ?                
+                <Link to="/coach">
+                    <button className="btn btn-primary ms-3 fw-bold" >Back to Coach list</button>
+                </Link>
+                :
                 <Link to="/client">
                     <button className="btn btn-primary ms-3 fw-bold" >Back to Client list</button>
                 </Link>
+                }
             </div>
         }
         </>

@@ -37,7 +37,6 @@ export const SignUpCoach = () => {
             if (data.access_coach_token) {
                 await actions.getCoaches()
                 const loggedCoach = await store.coaches.find(coach => coach.email === email);
-                console.log(loggedCoach);
                 localStorage.setItem("loggedCoach", JSON.stringify({ "id": loggedCoach.id, "username": loggedCoach.username }));
                 await actions.setAuth("coach", true)  
                 localStorage.setItem("token_coach", data.access_coach_token);

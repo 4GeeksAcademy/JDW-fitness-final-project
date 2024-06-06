@@ -37,7 +37,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		},
 
 		actions: {
-	// Use getActions to call a function within a fuction
+			
 	// CLIENT
 	getClients: async () => {
 		try {
@@ -57,28 +57,56 @@ const getState = ({ getStore, getActions, setStore }) => {
             console.error("Error fetching single client:", error);
         }
     },
-	clientSignUp: (username, email, password) => {
+	clientSignUp: async (username, email, password, firstName, lastName,age,height,weight,gender,physicalHabits,activityFrequencyID) => {
+		const requestBody = {
+			"username": username,
+			"email": email,
+			"password": password,
+		};
+	
+		if (firstName) {
+			requestBody["first_name"] = firstName;
+		}
+		if (lastName) {
+			requestBody["last_name"] = lastName;
+		}
+		if (age) {
+			requestBody["age"] = age;
+		}
+		if (height) {
+			requestBody["height"] = height;
+		}
+		if (weight) {
+			requestBody["weight"] = weight;
+		}
+		if (gender) {
+			requestBody["gender"] = gender;
+		}
+		if (physicalHabits) {
+			requestBody["physical_habits"] = physicalHabits;
+		}
+		if (activityFrequencyID !== 0) {
+			requestBody["activity_frequency_id"] = activityFrequencyID;
+		}
+	
 		const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				"username": username,
-				"email": email,
-				"password": password,
-			})
+			body: JSON.stringify(requestBody)
 		};
-		fetch(process.env.BACKEND_URL + "/api/client/signup", requestOptions)
-		.then(response => {
-			if(response.status == 200) {
+		try {
+			const response = await fetch(process.env.BACKEND_URL + "/api/client/signup", requestOptions);
+			const data = await response.json();
+			if (response.ok) {
 				setStore({ errorForm: null })
-			}
-			return response.json()
-		})
-		.then(data => {
-			if(data.error) {
+				await getActions().getClients()
+			} else {
 				setStore({ errorForm: data.error })
+				return
 			}
-		})
+		} catch(error) {
+			console.error("Error during client sign up:", error);
+		}
 	},
 	deleteClient: (clientID) => {
 		fetch(process.env.BACKEND_URL + `/api/client/${clientID}`, { method: 'DELETE' })
@@ -261,108 +289,108 @@ const getState = ({ getStore, getActions, setStore }) => {
         
        	// LIKES
 	  getLikes: async () => {
-		try {
-			const resp = await fetch(process.env.BACKEND_URL + "/api/like");
-			const data = await resp.json();
-			setStore({ likes: data });
-		} catch (error) {
-			console.error("Error fetching likes:", error);
-		}
-	},
-	addLikeAPI: (source, clientID, coachID) => {
-		const requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				"source": source,
-				"client_id": clientID,
-				"coach_id": coachID
+			try {
+				const resp = await fetch(process.env.BACKEND_URL + "/api/like");
+				const data = await resp.json();
+				setStore({ likes: data });
+			} catch (error) {
+				console.error("Error fetching likes:", error);
+			}
+		},
+		addLikeAPI: (source, clientID, coachID) => {
+			const requestOptions = {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					"source": source,
+					"client_id": clientID,
+					"coach_id": coachID
+				})
+			};
+			fetch(process.env.BACKEND_URL + "/api/like", requestOptions)
+			.then( () => getActions().checkAuth())
+			.then( () => {
+				if(getStore().authCoach){
+					getActions().getLikes()
+					getActions().getNoGivenLikes(coachID)
+					getActions().getReceivedLikes(coachID)
+				} else {
+					getActions().getLikes()
+					getActions().getNoGivenLikes(clientID)
+					getActions().getReceivedLikes(clientID)
+				}
+				
 			})
-		};
-		fetch(process.env.BACKEND_URL + "/api/like", requestOptions)
-		.then( () => getActions().checkAuth())
-		.then( () => {
-			if(getStore().authCoach){
-				getActions().getLikes()
-				getActions().getNoGivenLikes(coachID)
-				getActions().getReceivedLikes(coachID)
-			} else {
-				getActions().getLikes()
-				getActions().getNoGivenLikes(clientID)
-				getActions().getReceivedLikes(clientID)
-			}
-			
-		})
-	},
-	deleteLike: async (likeID, loggedUserID) => {
-		await fetch(process.env.BACKEND_URL + `/api/like/${likeID}`, { method: 'DELETE' })
-		await getActions().getGivenLikes(loggedUserID)
-		await getActions().getLikes()
-	},
-	getGivenLikes: async (loggedUserID) => {
-		try {
-			await getActions().checkAuth()
-			const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
+		},
+		deleteLike: async (likeID, loggedUserID) => {
+			await fetch(process.env.BACKEND_URL + `/api/like/${likeID}`, { method: 'DELETE' })
+			await getActions().getGivenLikes(loggedUserID)
+			await getActions().getLikes()
+		},
+		getGivenLikes: async (loggedUserID) => {
+			try {
+				await getActions().checkAuth()
+				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
 
-			const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
-			const data = await resp.json();
-			if(getStore().authCoach){
-				setStore({ givenLikesCoach: data.given_likes });
-			} else {
-				setStore({ givenLikesClient: data.given_likes });
+				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
+				const data = await resp.json();
+				if(getStore().authCoach){
+					setStore({ givenLikesCoach: data.given_likes });
+				} else {
+					setStore({ givenLikesClient: data.given_likes });
+				}
+			} catch (error) {
+				console.error("Error fetching given likes:", error);
 			}
-		} catch (error) {
-			console.error("Error fetching given likes:", error);
-		}
-	},
-	getNoGivenLikes: async (loggedUserID) => {
-		try {
-			await getActions().checkAuth()
-			const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
+		},
+		getNoGivenLikes: async (loggedUserID) => {
+			try {
+				await getActions().checkAuth()
+				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
 
-			const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
-			const data = await resp.json();
-			if(getStore().authCoach){
-				setStore({ noGivenLikesCoach: data.no_given_likes });
-			} else {
-				setStore({ noGivenLikesClient: data.no_given_likes });
+				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
+				const data = await resp.json();
+				if(getStore().authCoach){
+					setStore({ noGivenLikesCoach: data.no_given_likes });
+				} else {
+					setStore({ noGivenLikesClient: data.no_given_likes });
+				}
+			} catch (error) {
+				console.error("Error fetching no given likes:", error);
 			}
-		} catch (error) {
-			console.error("Error fetching no given likes:", error);
-		}
-	},
-	getReceivedLikes: async (loggedUserID) => {
-		try {
-			await getActions().checkAuth()
-			const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
+		},
+		getReceivedLikes: async (loggedUserID) => {
+			try {
+				await getActions().checkAuth()
+				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
 
-			const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
-			const data = await resp.json();
-			if(getStore().authCoach){
-				setStore({ receivedLikesCoach: data.received_likes });
-			} else {
-				setStore({ receivedLikesClient: data.received_likes });
+				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
+				const data = await resp.json();
+				if(getStore().authCoach){
+					setStore({ receivedLikesCoach: data.received_likes });
+				} else {
+					setStore({ receivedLikesClient: data.received_likes });
+				}
+			} catch (error) {
+				console.error("Error fetching received likes:", error);
 			}
-		} catch (error) {
-			console.error("Error fetching received likes:", error);
-		}
-	},
-	getUserMatches: async (loggedUserID) => {
-		try {
-			await getActions().checkAuth()
-			const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
+		},
+		getUserMatches: async (loggedUserID) => {
+			try {
+				await getActions().checkAuth()
+				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
 
-			const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
-			const data = await resp.json();
-			if(getStore().authCoach){
-				setStore({ matchesCoach: data.matches });
-			} else {
-				setStore({ matchesClient: data.matches });
+				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
+				const data = await resp.json();
+				if(getStore().authCoach){
+					setStore({ matchesCoach: data.matches });
+				} else {
+					setStore({ matchesClient: data.matches });
+				}
+			} catch (error) {
+				console.error("Error fetching received likes:", error);
 			}
-		} catch (error) {
-			console.error("Error fetching received likes:", error);
-		}
-	},
+		},
             // MATCH
       		getMatches: async () => {
 				try {

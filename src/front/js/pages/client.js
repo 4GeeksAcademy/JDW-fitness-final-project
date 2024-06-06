@@ -58,7 +58,7 @@ export const Client = () => {
 								</button>
 								:	
 								<button className="btn btn-danger py-0 px-1 fw-semibold" onClick={() => handleLike(client.id)}>
-									Cancel your request"
+									Cancel your request
 								</button>					
 								}
 							</div>

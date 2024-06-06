@@ -46,7 +46,6 @@ import { Coach } from "./pages/coach";
 import { SignUpCoach } from "./pages/signUpCoach";
 import { SingleCoach } from "./pages/singleCoach";
 import { AddCoach } from "./pages/addCoach";
-import { UpdateCoachSignUp } from "./pages/updateCoachSignUp";
 import { UpdateCoach } from "./pages/updateCoach";
 
 import { Likes } from "./pages/likes";
@@ -116,7 +115,6 @@ const Layout = () => {
                         {/* COACH PATH */}
                         <Route element={<Coach />} path="/coach" />
                         <Route element={<AddCoach />} path="/coach/signup" />
-                        <Route element={<UpdateCoachSignUp />} path="/coach/signup/update/:coachID" />
                         <Route element={<UpdateCoach />} path="/coach/update/:coachID" />
                         <Route element={<SingleCoach />} path="/coach/:coachID" />
                         {/* CLIENT PATH */}

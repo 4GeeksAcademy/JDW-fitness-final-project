@@ -4,7 +4,6 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Home } from "./pages/home";
-import { SignUp } from "./pages/signUp";
 import { Login } from "./pages/login";
 
 import { Availability } from "./pages/availability";
@@ -38,12 +37,11 @@ import { UpdateActivity } from "./pages/updateActivity";
 import { SingleActivity } from "./pages/singleActivity";
 
 import { Client } from "./pages/client";
-import { SingleClient } from "./pages/singleClient";
 import { AddClient } from "./pages/addClient";
 import { UpdateClient } from "./pages/updateClient";
+import { SignUpClient } from "./pages/signupClient";
 
 import { Coach } from "./pages/coach";
-import { SingleCoach } from "./pages/singleCoach";
 import { AddCoach } from "./pages/addCoach";
 import { UpdateCoach } from "./pages/updateCoach";
 
@@ -78,7 +76,7 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
-                        <Route element={<SignUp />} path="/signup" />
+                        <Route element={<SignUpClient />} path="/client/signup" />
                         <Route element={<Login />} path="/login" />
                         {/* AVAILABILITY ROUTES */}  
                         <Route element={<Availability />} path="/availability" />
@@ -116,10 +114,8 @@ const Layout = () => {
                         <Route element={<Coach />} path="/coach" />
                         <Route element={<AddCoach />} path="/coach/signup" />
                         <Route element={<UpdateCoach />} path="/coach/update/:coachID" />
-                        <Route element={<SingleCoach />} path="/coach/:coachID" />
                         {/* CLIENT PATH */}
                         <Route element={<Client />} path="/client" />
-                        <Route element={<SingleClient />} path="/client/:clientID" />
                         <Route element={<AddClient />} path="/client/signup" />
                         <Route element={<UpdateClient />} path="/client/update/:clientID" />
                         {/* LIKES PATH */}

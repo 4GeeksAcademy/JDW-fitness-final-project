@@ -53,28 +53,56 @@ const getState = ({ getStore, getActions, setStore }) => {
             console.error("Error fetching single client:", error);
         }
     },
-	clientSignUp: (username, email, password) => {
+	clientSignUp: async (username, email, password, firstName, lastName,age,height,weight,gender,physicalHabits,activityFrequencyID) => {
+		const requestBody = {
+			"username": username,
+			"email": email,
+			"password": password,
+		};
+	
+		if (firstName) {
+			requestBody["first_name"] = firstName;
+		}
+		if (lastName) {
+			requestBody["last_name"] = lastName;
+		}
+		if (age) {
+			requestBody["age"] = age;
+		}
+		if (height) {
+			requestBody["height"] = height;
+		}
+		if (weight) {
+			requestBody["weight"] = weight;
+		}
+		if (gender) {
+			requestBody["gender"] = gender;
+		}
+		if (physicalHabits) {
+			requestBody["physical_habits"] = physicalHabits;
+		}
+		if (activityFrequencyID !== 0) {
+			requestBody["activity_frequency_id"] = activityFrequencyID;
+		}
+	
 		const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				"username": username,
-				"email": email,
-				"password": password,
-			})
+			body: JSON.stringify(requestBody)
 		};
-		fetch(process.env.BACKEND_URL + "/api/client/signup", requestOptions)
-		.then(response => {
-			if(response.status == 200) {
+		try {
+			const response = await fetch(process.env.BACKEND_URL + "/api/client/signup", requestOptions);
+			const data = await response.json();
+			if (response.ok) {
 				setStore({ errorForm: null })
-			}
-			return response.json()
-		})
-		.then(data => {
-			if(data.error) {
+				await getActions().getClients()
+			} else {
 				setStore({ errorForm: data.error })
+				return
 			}
-		})
+		} catch(error) {
+			console.error("Error during client sign up:", error);
+		}
 	},
 	deleteClient: (clientID) => {
 		fetch(process.env.BACKEND_URL + `/api/client/${clientID}`, { method: 'DELETE' })

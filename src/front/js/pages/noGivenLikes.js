@@ -23,7 +23,7 @@ export const NoGivenLikesClient = () => {
                             <div className="d-flex">
                                 <span className="fw-bold">Username: </span>
                                 {user.username}
-                                <button className="btn btn-warning py-0 px-1 ms-auto mt-1" onClick={() => addSingleLike(user.id)}>like</button>
+                                <button className="btn btn-warning py-0 px-1 ms-auto mt-1 fw-semibold" onClick={() => addSingleLike(user.id)}>Request to train</button>
                             </div>
                         </div>
                     </li>

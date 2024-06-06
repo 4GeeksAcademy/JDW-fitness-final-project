@@ -75,11 +75,11 @@ export const Navbar = () => {
 				</div>
 				:
 				<div>
-				<Link to="/signup" onClick={actions.logout} className="me-1">
+				<Link to="/signup" className="me-1">
 					Sign Up
 				</Link>
 				/	
-				<Link to="/login" onClick={actions.logout} className="ms-1">
+				<Link to="/login" className="ms-1">
 					Login
 				</Link>	
 				</div>

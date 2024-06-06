@@ -10,19 +10,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 			singleCoach: {},
 			errorForm: null,
 			authCoach: false,
-			authClient: false, 
+			authClient: false,
 			availability: [],
 			singleAvailability: {}, 
 			likes: [],
-            matches: [],
-            givenLikesCoach: [],
-            receivedLikesCoach: [],
-            noGivenLikesCoach: [],
-            matchesCoach: [],
-            givenLikesClient: [],
-            receivedLikesClient: [],
-            noGivenLikesClient: [],
-            matchesClient: [],
+			matches: [],
+			givenLikesCoach: [],
+			receivedLikesCoach: [],
+			noGivenLikesCoach: [],
+			matchesCoach: [],
+			givenLikesClient: [],
+			receivedLikesClient: [],
+			noGivenLikesClient: [],
+			matchesClient: [],
       goals: [],
 			singleGoal:{},
       diseases: [],
@@ -39,11 +39,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 		actions: {
 			
 	// CLIENT
-	getClients: () => {
-		fetch(process.env.BACKEND_URL + "/api/client")
-		.then( (response) => response.json())
-		.then( data => setStore({ clients: data }))	
-	  },
+	getClients: async () => {
+		try {
+			const resp = await fetch(process.env.BACKEND_URL + "/api/client");
+			const data = await resp.json();
+			setStore({ clients: data });
+		} catch (error) {
+			console.error("Error fetching clients:", error);
+		}
+	},
 	  getSingleClient: async (clientID) => {
         try {
             const response = await fetch(process.env.BACKEND_URL + `/api/client/${clientID}`);
@@ -172,29 +176,47 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ singleCoach: data })
 				})
 			},
-			coachSignUp: (username, email, password) => {
+			setSingleCoach: () => {
+				setStore({ singleCoach: currentCoach })
+			},
+			coachSignUp: async (username, email, password, firstName, lastName, educationID, experienceID) => {
+				const requestBody = {
+					"username": username,
+					"email": email,
+					"password": password,
+				};
+			
+				if (firstName) {
+					requestBody["first_name"] = firstName;
+				}
+				if (lastName) {
+					requestBody["last_name"] = lastName;
+				}
+				if (educationID !== 0) {
+					requestBody["education_id"] = educationID;
+				}
+				if (experienceID !== 0) {
+					requestBody["experience_id"] = experienceID;
+				}
+			
 				const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						"username": username,
-						"email": email,
-						"password": password,
-					})
+					body: JSON.stringify(requestBody)
 				};
-				fetch(process.env.BACKEND_URL + "/api/coach/signup", requestOptions)
-				.then(response => {
-					if(response.status == 200) {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/coach/signup", requestOptions);
+					const data = await response.json();
+					if (response.ok) {
 						setStore({ errorForm: null })
-						getActions().getCoaches()
-					}
-					return response.json()
-				})
-				.then(data => {
-					if(data.error) {
+						await getActions().getCoaches()
+					} else {
 						setStore({ errorForm: data.error })
+						return
 					}
-				})
+				} catch(error) {
+					console.error("Error during coach sign up:", error);
+				}
 			},
 			logout: () => {
 				if (getStore().authCoach) {
@@ -267,14 +289,13 @@ const getState = ({ getStore, getActions, setStore }) => {
         
        	// LIKES
 	  getLikes: async () => {
-		try {
-			const resp = await fetch(process.env.BACKEND_URL + "/api/like");
-			const data = await resp.json();
-			console.log("getLikesResponse",data);
-			setStore({ likes: data });
-		} catch (error) {
-			console.error("Error fetching likes:", error);
-		}
+			try {
+				const resp = await fetch(process.env.BACKEND_URL + "/api/like");
+				const data = await resp.json();
+				setStore({ likes: data });
+			} catch (error) {
+				console.error("Error fetching likes:", error);
+			}
 		},
 		addLikeAPI: (source, clientID, coachID) => {
 			const requestOptions = {
@@ -290,9 +311,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			.then( () => getActions().checkAuth())
 			.then( () => {
 				if(getStore().authCoach){
+					getActions().getLikes()
 					getActions().getNoGivenLikes(coachID)
 					getActions().getReceivedLikes(coachID)
 				} else {
+					getActions().getLikes()
 					getActions().getNoGivenLikes(clientID)
 					getActions().getReceivedLikes(clientID)
 				}
@@ -307,9 +330,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 		getGivenLikes: async (loggedUserID) => {
 			try {
 				await getActions().checkAuth()
-				console.log(getStore().authCoach);
 				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
-	
+
 				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
 				const data = await resp.json();
 				if(getStore().authCoach){
@@ -325,7 +347,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			try {
 				await getActions().checkAuth()
 				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
-	
+
 				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
 				const data = await resp.json();
 				if(getStore().authCoach){
@@ -341,7 +363,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			try {
 				await getActions().checkAuth()
 				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
-	
+
 				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
 				const data = await resp.json();
 				if(getStore().authCoach){
@@ -357,7 +379,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			try {
 				await getActions().checkAuth()
 				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
-	
+
 				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
 				const data = await resp.json();
 				if(getStore().authCoach){
@@ -369,38 +391,50 @@ const getState = ({ getStore, getActions, setStore }) => {
 				console.error("Error fetching received likes:", error);
 			}
 		},
-        
             // MATCH
-      		getMatches: () => {
-				fetch(process.env.BACKEND_URL + "/api/match")
-				.then( (response) => response.json())
-				.then( data => setStore({ matches: data }))	
+      		getMatches: async () => {
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + "/api/match");
+					const data = await resp.json();
+					setStore({ matches: data });
+				} catch (error) {
+					console.error("Error fetching likes:", error);
+				}
 	  		},
-			addMatchAPI: (coachID, clientID) => {
-				const requestOptions = {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						"coach_id": coachID,
-						"client_id": clientID
-					})
-				};
-				fetch(process.env.BACKEND_URL + "/api/match", requestOptions)
-				.then(response => {
-					if(response.status == 200) {
-						setStore({ error: null })
-					}
-					return response.json()
-				})
-				.then(data => {
-					if(data.error) {
-						setStore({ error: data.error })
-					}
-				})
+			getCoachMatches: async (coachID) => {
+				try {
+					await getActions().getMatches()
+					await getActions().getClients();
+
+					const allClients = getStore().clients;
+					const coachMatches = await getStore().matches.filter((match) => match.coach_id === coachID)
+					const coachMatchesClientIDs = coachMatches.map(like => like.client_id);
+					const usersMatched = allClients.filter(client => coachMatchesClientIDs.includes(client.id));
+		
+					setStore({ userMatches: usersMatched })
+				} catch (error) {
+					console.log("Error getting received likes", error);
+				}
 			},
-			deleteMatch: (matchID) => {
-				fetch(process.env.BACKEND_URL + `/api/match/${matchID}`, { method: 'DELETE' })
-				.then( () => getActions().getMatches())
+			deleteMatch: async (clientID, coachID) => {
+				try {
+					const { matches } = getStore();
+					const matchToDelete = matches.find(match => match.coach_id === coachID && match.client_id === clientID);
+			
+					if (matchToDelete) {
+						const resp = await fetch(process.env.BACKEND_URL + `/api/match/${matchToDelete.id}`, { method: 'DELETE' });
+						if (resp.ok) {
+							const updatedUserMatches = getStore().userMatches.filter(match => match.id !== matchToDelete.id);
+							setStore({ userMatches: updatedUserMatches });
+						} else {
+							console.error("Error deleting match:", resp.statusText);
+						}
+					} else {
+						console.error("Match not found for deletion");
+					}
+				} catch (error) {
+					console.error("Error deleting match:", error);
+				}
 			},
       		// AVAILABILITY
       		getAvailability: () => {
@@ -557,9 +591,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then( (response) => response.json())
 				.then( data => setStore({ experience: data }))	
 			},
-
-			// ENDPOINT GETAVAILABILITYCLIENT
-
 			getSingleExperience: (experienceID) => {
 				fetch(process.env.BACKEND_URL + `/api/experience/${experienceID}`)
 				.then( (response) => response.json())

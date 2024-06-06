@@ -39,6 +39,7 @@ export const UpdateClient = () => {
             setWeight(store.singleClient.weight || "");
             setGender(store.singleClient.gender || "");
             setPhysicalHabits(store.singleClient.physical_habits || "");
+            setActivityFrequencyID(store.singleClient.physical_habits || 0);
         }
     }, [store.singleClient]);
 

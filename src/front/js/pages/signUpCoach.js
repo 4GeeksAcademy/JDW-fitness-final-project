@@ -9,6 +9,10 @@ export const SignUpCoach = () => {
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
+    const [educationID, setEducationID] = useState(0)
+    const [experienceID, setExperienceID] = useState(0)
     const [showPassword, setShowPassword] = useState(false)
 
     useEffect(() => {
@@ -16,55 +20,43 @@ export const SignUpCoach = () => {
         actions.getExperience()
     },[])
 
-    // useEffect(() => {
-    //     if (!store.errorCoach) {
-    //         const currentCoach = store.coaches.find ((coach) => coach.username === username)
-    //         // if(currentCoach) console.log(currentCoach);
+    const login = async (email, password) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                "email": email,
+                "password": password 
+            })
+        };
+    
+        try {
+            const response = await fetch(process.env.BACKEND_URL + "/api/login", requestOptions);
+            const data = await response.json();
             
-    //         navigate(`/coach/signup/update/${currentCoach.id}`);
-    //     }
-    // },[store.errorCoach, store.coaches])
+            if (data.access_coach_token) {
+                await actions.getCoaches()
+                const loggedCoach = await store.coaches.find(coach => coach.email === email);
+                console.log(loggedCoach);
+                localStorage.setItem("loggedCoach", JSON.stringify({ "id": loggedCoach.id, "username": loggedCoach.username }));
+                await actions.setAuth("coach", true)  
+                localStorage.setItem("token_coach", data.access_coach_token);
+                navigate("/client")  
+            }
+            return data
+        }  
+        catch (error) {
+            console.error("Error during coach login:", error);
+        }
+    }
 
-    // function addCoach(e) {
-    //     e.preventDefault();
-    //     actions.coachSignUp(username, email, password);
-    //     setHandleButton(true)
-    // };
-
-    // const signUp = async (e) => {
-    //     e.preventDefault()
-    //     if(!tokenCoach || email === "" || password === "") {
-    //         console.log("error despues de login");
-    //     }
-    //     try {
-    //         await actions.coachSignUp(username, email, password);
-    //         const currentCoach = store.coaches.find ((coach) => coach.username === username)
-    //         navigate(`/coach/signup/update/${currentCoach.id}`);
-    //         navigate("/client")
-    //     }
-    //     catch (error) {
-    //         console.log("error fatal", error);
-    //     }
-    // }
-
-	// useEffect(() => {
-    //     if (!store.errorForm && selectedRole === "coach") {
-    //         const currentCoach = store.coaches.find((coach) => coach.username === username);
-    //         if (currentCoach) {
-    //             navigate(`/coach/signup/${currentCoach.id}`);
-    //         }
-    //     } else if (store.errorForm === undefined && selectedRole === "client") {
-	// 		const currentClient = store.clients.find((client) => client.username === username);
-    //         if (currentClient) {
-    //             navigate(`/client/signup/${currentClient.id}`);
-    //         }
-    //     }
-    // }, [store.errorForm, store.coaches,store.clients, selectedRole, username, actions]);
-
-	const signUp = (e) => {
+    const signUp = async (e) => {
         e.preventDefault();
-        actions.coachSignUp(username, email, password, firstName, lastName, educationID, experienceID);
-		navigate(`/coach/login`);
+        await actions.coachSignUp(username, email, password, firstName, lastName, educationID, experienceID);
+        const error = await store.errorForm
+        if (!error) {
+            login(email, password)
+        }
     };
 
 	return (
@@ -105,33 +97,40 @@ export const SignUpCoach = () => {
                     >
                     </button>
                 </div>
-				<div className="d-flex justify-content-center my-3">
-				<div className="form-check me-3">
-					<input 
-					className="form-check-input" 
-					type="radio" 
-					name="role" 
-					id="client" 
-					value="client" 
-					onChange={(e) => setSelectedRole(e.target.value)}
-					/>
-					<label className="form-check-label" htmlFor="client">
-						Client
-					</label>
-				</div>
-				<div className="form-check ms-3">
-					<input 
-					className="form-check-input" 
-					type="radio" 
-					name="role" 
-					id="coach" 
-					value="coach" 
-					onChange={(e) => setSelectedRole(e.target.value)}/>
-					<label className="form-check-label" htmlFor="coach">
-						Coach
-					</label>
-				</div>
-				</div>
+				<div className="mb-3 col-3 offset-3">
+                    <input 
+                    type="text" 
+                    className="form-control" 
+                    value={firstName} 
+                    onChange={(e) => setFirstName(e.target.value)} 
+                    placeholder="First Name"
+                    />
+                </div>
+                <div className="mb-3 col-3">
+                    <input 
+                    type="text" 
+                    className="form-control" 
+                    value={lastName} 
+                    onChange={(e) => setLastName(e.target.value)} 
+                    placeholder="Last Name"
+                    />
+                </div>
+                <select value={educationID} className="form-select form-select-lg mb-3 w-50 offset-3" aria-label=".form-select-lg example" onChange={(e) => setEducationID(e.target.value)}>
+                    {educationID == 0 && <option defaultValue>Select your education</option>}
+                    {store.education.map((element, index) => (
+                            <option key={index} value={element.id}>
+                                    {element.rank}
+                            </option>          
+                    ))}
+                </select>
+                <select value={experienceID} className="form-select form-select-lg mb-3 w-50 offset-3" aria-label=".form-select-lg example" onChange={(e) => setExperienceID(e.target.value)}>
+                    {experienceID == 0 && <option defaultValue>Select your experience</option>}  
+                    {store.experience.map((element, index) => (
+                            <option key={index} value={element.id}>
+                                    {element.time}
+                            </option>          
+                    ))}
+                </select>
                 {store.errorForm &&                 
                 <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
                     {store.errorForm}

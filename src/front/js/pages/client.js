@@ -52,9 +52,15 @@ export const Client = () => {
 								<span className="fw-bold">Username: </span>
 								{client.username}
 								</div>
+								{like[client.id] ?
 								<button className="btn btn-warning py-0 px-1 fw-semibold" onClick={() => handleLike(client.id)}>
-									{like[client.id] ? "Request to train" : "Cancel your request"}
+									 Request to train
+								</button>
+								:	
+								<button className="btn btn-danger py-0 px-1 fw-semibold" onClick={() => handleLike(client.id)}>
+									Cancel your request"
 								</button>					
+								}
 							</div>
 							<Link to={`/client/${client.id}`} className="btn btn-info mt-2 fw-bold">
                     			<span>Show more information</span>

@@ -272,8 +272,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			})
 		},
 		deleteLike: async (likeID, loggedUserID) => {
-			fetch(process.env.BACKEND_URL + `/api/like/${likeID}`, { method: 'DELETE' })
-			.then( () => getActions().getGivenLikes(loggedUserID))
+			await fetch(process.env.BACKEND_URL + `/api/like/${likeID}`, { method: 'DELETE' })
+			await getActions().getGivenLikes(loggedUserID)
+			await getActions().getLikes()
 		},
 		getGivenLikes: async (loggedUserID) => {
 			try {
@@ -623,7 +624,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			getSingleActivityFrequency: async (activityFrequencyID) => {
 				try {
-					const response = await fetch(process.env.BACKEND_URL + `api/activities/${activityFrequencyID}`);
+					const response = await fetch(process.env.BACKEND_URL + `/api/activities/${activityFrequencyID}`);
 					const data = await response.json();
 					setStore({ singleActivityFrequency: data });
 				} catch (error) {
@@ -638,7 +639,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						"mode": mode,
 					})
 				};
-				fetch(process.env.BACKEND_URL + "api/activities", requestOptions)
+				fetch(process.env.BACKEND_URL + "/api/activities", requestOptions)
 				.then(response => response.json())
 				.then(()=>getActions().getActivityFrequency())
 			},

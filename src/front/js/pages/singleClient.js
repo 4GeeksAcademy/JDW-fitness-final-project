@@ -51,6 +51,26 @@ export const SingleClient = () => {
                     {(store.singleClient.last_name)}
                 </li>
                 <li>
+                    <span className="fw-bold">Age: </span> 
+                    {(store.singleClient.age)}
+                </li>
+                <li>
+                    <span className="fw-bold">Height: </span> 
+                    {(store.singleClient.height)}
+                </li>
+                <li>
+                    <span className="fw-bold">Weight: </span> 
+                    {(store.singleClient.weight)}
+                </li>
+                <li>
+                    <span className="fw-bold">Gender: </span> 
+                    {(store.singleClient.gender)}
+                </li>
+                <li>
+                    <span className="fw-bold">Physical Habits: </span> 
+                    {(store.singleClient.physical_habits)}
+                </li>
+                <li>
                     <span className="fw-bold">Activity Frequency: </span> 
                     {(activityFrequency)}
                 </li>
@@ -58,8 +78,8 @@ export const SingleClient = () => {
             <Link to={`/client/update/${clientID}`} className="ms-auto my-1">
 					<button className="btn btn-secondary py-0 px-1 ms-auto" >Update</button>					
 			</Link>
-            <Link to="/client">
-				<button className="btn btn-primary ms-3 fw-bold" >Back to Client list</button>
+            <Link to="/coach">
+				<button className="btn btn-primary ms-3 fw-bold" >Back to Coach list</button>
 			</Link>
 		</div>
 	);

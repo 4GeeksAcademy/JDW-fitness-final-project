@@ -45,18 +45,15 @@ import { UpdateClient } from "./pages/updateClient";
 import { Coach } from "./pages/coach";
 import { SingleCoach } from "./pages/singleCoach";
 import { AddCoach } from "./pages/addCoach";
-import { UpdateCoachSignUp } from "./pages/updateCoachSignUp";
 import { UpdateCoach } from "./pages/updateCoach";
 
 import { Likes } from "./pages/likes";
-import { AddLike } from "./pages/addLikes";
 import { GivenLikesClient } from "./pages/givenLikesClient";
 import { ReceivedLikesClient } from "./pages/receivedLikesClient";
 import { NoGivenLikesClient } from "./pages/noGivenLikes";
 import { MatchClient } from "./pages/matchClient";
 
 import { Match } from "./pages/match";
-import { AddMatch } from "./pages/addMatch";
 
 import injectContext from "./store/appContext";
 import { AvailabilityClient } from "./pages/availabilityClient";
@@ -118,7 +115,6 @@ const Layout = () => {
                         {/* COACH PATH */}
                         <Route element={<Coach />} path="/coach" />
                         <Route element={<AddCoach />} path="/coach/signup" />
-                        <Route element={<UpdateCoachSignUp />} path="/coach/signup/update/:coachID" />
                         <Route element={<UpdateCoach />} path="/coach/update/:coachID" />
                         <Route element={<SingleCoach />} path="/coach/:coachID" />
                         {/* CLIENT PATH */}
@@ -128,14 +124,12 @@ const Layout = () => {
                         <Route element={<UpdateClient />} path="/client/update/:clientID" />
                         {/* LIKES PATH */}
                         <Route element={<Likes />} path="/likes" />
-                        <Route element={<AddLike />} path="/likes/add" />   
-                        <Route element={<GivenLikesClient />} path="/likes/given" />  
-                        <Route element={<ReceivedLikesClient />} path="/likes/received" />
-                        <Route element={<NoGivenLikesClient />} path="/likes/nogiven" />
+                        <Route element={<GivenLikesClient />} path="client/likes/given" />  
+                        <Route element={<ReceivedLikesClient />} path="client/likes/received" />
+                        <Route element={<NoGivenLikesClient />} path="client/likes/nogiven" />
                         <Route element={<MatchClient />} path="/client/match" />
                         {/* MATCH PATH */}
                         <Route element={<Match />} path="/match" />
-                        <Route element={<AddMatch />} path="/match/add" />
                         {/* NOT FOUND */}
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>

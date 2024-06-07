@@ -17,7 +17,7 @@ export const UpdateClient = () => {
     const [weight, setWeight] = useState("");
     const [gender, setGender] = useState("");
     const [physicalHabits, setPhysicalHabits] = useState("");
-    const [photoUrl, setPhotoUrl] = useState(""); // Estado para almacenar la URL de la foto de Cloudinary
+    const [photoUrl, setPhotoUrl] = useState("");
     const [activityFrequencyID, setActivityFrequencyID] = useState(0);
     const [showPassword, setShowPassword] = useState(false);
     const [handleButton, setHandleButton] = useState(false);
@@ -50,7 +50,7 @@ export const UpdateClient = () => {
             setGender(store.singleClient.gender || "");
             setPhysicalHabits(store.singleClient.physical_habits || "");
             setActivityFrequencyID(store.singleClient.activity_frequency_id || 0);
-            setPhotoUrl(store.singleClient.client_photo_url || ""); // Cargar la URL de la foto si existe
+            setPhotoUrl(store.singleClient.client_photo_url || "");
         }
     }, [store.singleClient]);
 
@@ -69,8 +69,8 @@ export const UpdateClient = () => {
             try {
                 const formData = new FormData();
                 formData.append("file", newImageFile);
-                formData.append("upload_preset", "gastondios"); // Reemplaza con tu propio upload_preset
-                formData.append("cloud_name", "df7nqepxm"); // Reemplaza con tu propio cloud_name
+                formData.append("upload_preset", "gastondios");
+                formData.append("cloud_name", "df7nqepxm");
 
                 const cloudinaryResponse = await fetch(
                     "https://api.cloudinary.com/v1_1/df7nqepxm/image/upload",
@@ -89,7 +89,7 @@ export const UpdateClient = () => {
 
                 console.log("Imagen cargada exitosamente en Cloudinary. URL:", cloudinaryImageUrl);
 
-                setPhotoUrl(cloudinaryImageUrl); // Almacenar la URL de la imagen en el estado
+                setPhotoUrl(cloudinaryImageUrl);
             } catch (error) {
                 console.error("Error uploading image:", error);
             }
@@ -110,9 +110,8 @@ export const UpdateClient = () => {
             weight,
             gender,
             physicalHabits,
-            activityFrequencyID,
-            clientID,
-            photoUrl // Incluir la URL de la foto en la solicitud
+            photoUrl,
+            activityFrequencyID
         );
         setHandleButton(true);
     };

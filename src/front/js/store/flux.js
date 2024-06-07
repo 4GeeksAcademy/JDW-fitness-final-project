@@ -181,8 +181,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		gender,
 		physicalHabits,
 		photoUrl,
-		activityFrequencyID,
-		clientID
+		activityFrequencyID
 	) => {
 		// Construcción dinámica del cuerpo de la solicitud
 		const requestBody = {
@@ -205,7 +204,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${localStorage.getItem("token_client")}` // Añadir el token JWT para autenticación
+				'Authorization': `Bearer ${localStorage.getItem("token_client")}` // Asegúrate de usar el token correcto
 			},
 			body: JSON.stringify(requestBody)
 		};

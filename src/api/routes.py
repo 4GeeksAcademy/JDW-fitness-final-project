@@ -411,36 +411,49 @@ def signup_client():
 #     return jsonify(client.serialize()), 200
 
 @api.route('/profile', methods=['PUT'])
-@jwt_required
+@jwt_required()
 def update_client():
-    client_id = get_jwt_identity()
-    client = Client.query.get(client_id)
+    try:
+        # Obtener la identidad del JWT y extraer el client_id
+        identity = get_jwt_identity()
+        print(f"Identidad obtenida del JWT: {identity}")  # Esto mostrará el diccionario completo
+        
+        # Extraer el client_id del diccionario de identidad
+        client_id = identity.get('id')
+        print(f"Client ID extraído: {client_id}")
 
-    if client is None:
-        return jsonify({"error": "Client not found"}), 404
+        if client_id is None:
+            return jsonify({"error": "Client ID not found in token"}), 400
 
-    body = request.get_json()
+        # Buscar el cliente en la base de datos usando el client_id
+        client = Client.query.get(client_id)
+        if client is None:
+            return jsonify({"error": "Client not found"}), 404
 
-    if body is None:
-        raise APIException("Request body is missing", status_code=400)
+        body = request.get_json()
+        if body is None:
+            raise APIException("Request body is missing", status_code=400)
 
-    # Actualizar campos del usuario
-    client.username = body.get("username", client.username)
-    client.email = body.get("email", client.email)
-    client.password = body.get("password", client.password)
-    client.first_name = body.get("first_name", client.first_name)
-    client.last_name = body.get("last_name", client.last_name)
-    client.age = body.get("age", client.age)
-    client.height = body.get("height", client.height)
-    client.weight = body.get("weight", client.weight)
-    client.gender = body.get("gender", client.gender)
-    client.physical_habits = body.get("physical_habits", client.physical_habits)
-    client.client_photo_url = body.get("client_photo_url", client.client_photo_url)
-    client.activity_frequency_id = body.get("activity_frequency_id", client.activity_frequency_id)
+        # Actualizar campos del usuario
+        client.username = body.get("username", client.username)
+        client.email = body.get("email", client.email)
+        client.password = body.get("password", client.password)
+        client.first_name = body.get("first_name", client.first_name)
+        client.last_name = body.get("last_name", client.last_name)
+        client.age = body.get("age", client.age)
+        client.height = body.get("height", client.height)
+        client.weight = body.get("weight", client.weight)
+        client.gender = body.get("gender", client.gender)
+        client.physical_habits = body.get("physical_habits", client.physical_habits)
+        client.client_photo_url = body.get("client_photo_url", client.client_photo_url)
+        client.activity_frequency_id = body.get("activity_frequency_id", client.activity_frequency_id)
 
-    db.session.commit()
+        db.session.commit()
 
-    return jsonify({"msg": "Perfil de usuario actualizado con éxito"}), 200
+        return jsonify({"msg": "Perfil de usuario actualizado con éxito"}), 200
+    except Exception as e:
+        print(f"Error actualizando el perfil: {e}")
+        return jsonify({"error": str(e)}), 500
   
 @api.route('/client/<int:client_id>', methods=['DELETE'])
 def del_client(client_id):
@@ -545,12 +558,12 @@ def login():
 
     coach = Coach.query.filter_by(email=data["email"]).first()
     if coach and coach.password == data["password"]:
-        access_coach_token = create_access_token(identity={"email": coach.email, "role": "coach"})
+        access_coach_token = create_access_token(identity={"email": coach.email, "role": "coach"})#añadir coach id like client
         return jsonify(access_coach_token=access_coach_token), 201
 
     client = Client.query.filter_by(email=data["email"]).first()
     if client and client.password == data["password"]:
-        access_client_token = create_access_token(identity={"email": client.email, "role": "client"})
+        access_client_token = create_access_token(identity={"id": client.id,"email": client.email, "role": "client"})
         return jsonify(access_client_token=access_client_token), 201
 
     return jsonify({"error": "Bad username or password"}), 401

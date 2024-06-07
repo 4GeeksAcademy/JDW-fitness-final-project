@@ -2,6 +2,8 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
+import cloudinary
+import cloudinary.uploader
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
@@ -35,6 +37,13 @@ else:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
+
+# Configuración de Cloudinary
+cloudinary.config( 
+  cloud_name = "df7nqepxm", 
+  api_key = "919997167265945", 
+  api_secret = "ppWtPUV__bkgKzyGKHLl5kRE0pY" 
+)
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = "sssdtsdgtsdgffdgfdgdf898gdfgfduo2345668okllxfhkjchyf12312gdskjfgshjdfgsdkjhfs12312312dds56g4sfd56g4fd5s6g4fd564gd56fg46d5f"  # Change this!

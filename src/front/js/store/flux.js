@@ -57,7 +57,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             console.error("Error fetching single client:", error);
         }
     },
-	clientSignUp: async (username, email, password, firstName, lastName,age,height,weight,gender,physicalHabits,activityFrequencyID) => {
+	clientSignUp: async (username, email, password, firstName, lastName,age,height,weight,gender,physicalHabits,clientPhotoUrl,activityFrequencyID) => {
 		const requestBody = {
 			"username": username,
 			"email": email,
@@ -84,6 +84,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 		}
 		if (physicalHabits) {
 			requestBody["physical_habits"] = physicalHabits;
+		}
+		if (clientPhotoUrl) {
+			requestBody["client_photo_url"] = clientPhotoUrl;
 		}
 		if (activityFrequencyID !== 0) {
 			requestBody["activity_frequency_id"] = activityFrequencyID;
@@ -112,55 +115,122 @@ const getState = ({ getStore, getActions, setStore }) => {
 		fetch(process.env.BACKEND_URL + `/api/client/${clientID}`, { method: 'DELETE' })
 		.then( () => getActions().getClients())
 	},
-	updateClientAPI: (username, email, password, firstName,lastName,age,height,weight,gender,physicalHabits,activityFrequencyID,clientID) => {
+	// updateClientAPI: (username, email, password, firstName,lastName,age,height,weight,gender,physicalHabits,photoUrl,activityFrequencyID,clientID) => {
+	// 	const requestBody = {
+	// 		"username": username,
+	// 		"email": email,
+	// 		"password": password,
+	// 	};
+	
+	// 	if (firstName) {
+	// 		requestBody["first_name"] = firstName;
+	// 	}
+	// 	if (lastName) {
+	// 		requestBody["last_name"] = lastName;
+	// 	}
+	// 	if (age) {
+	// 		requestBody["age"] = age;
+	// 	}
+	// 	if (height) {
+	// 		requestBody["height"] = height;
+	// 	}
+	// 	if (weight) {
+	// 		requestBody["weight"] = weight;
+	// 	}
+	// 	if (gender) {
+	// 		requestBody["gender"] = gender;
+	// 	}
+	// 	if (physicalHabits) {
+	// 		requestBody["physical_habits"] = physicalHabits;
+	// 	}
+	// 	if (photoUrl) {
+	// 		requestBody["client_photo_url"] = photoUrl;
+	// 	}
+	// 	if (activityFrequencyID !== 0) {
+	// 		requestBody["activity_frequency_id"] = activityFrequencyID;
+	// 	}
+	
+	// 	const requestOptions = {
+	// 		method: 'PUT',
+	// 		headers: { 'Content-Type': 'application/json' },
+	// 		body: JSON.stringify(requestBody)
+	// 	};
+	// 	fetch(process.env.BACKEND_URL + `/api/client/${clientID}`, requestOptions)
+	// 	.then(response => {
+	// 		if(response.status == 200) {
+	// 			setStore({ errorForm: null })
+	// 		}
+	// 		return response.json()
+	// 	})
+	// 	.then(data => {
+	// 		if(data.error) {
+	// 			setStore({ errorForm: data.error })
+	// 		}
+	// 	})
+	// },
+
+	updateClientAPI: (
+		username,
+		email,
+		password,
+		firstName,
+		lastName,
+		age,
+		height,
+		weight,
+		gender,
+		physicalHabits,
+		photoUrl,
+		activityFrequencyID,
+		clientID
+	) => {
+		// Construcción dinámica del cuerpo de la solicitud
 		const requestBody = {
 			"username": username,
 			"email": email,
-			"password": password,
+			"password": password
 		};
 	
-		if (firstName) {
-			requestBody["first_name"] = firstName;
-		}
-		if (lastName) {
-			requestBody["last_name"] = lastName;
-		}
-		if (age) {
-			requestBody["age"] = age;
-		}
-		if (height) {
-			requestBody["height"] = height;
-		}
-		if (weight) {
-			requestBody["weight"] = weight;
-		}
-		if (gender) {
-			requestBody["gender"] = gender;
-		}
-		if (physicalHabits) {
-			requestBody["physical_habits"] = physicalHabits;
-		}
-		if (activityFrequencyID !== 0) {
-			requestBody["activity_frequency_id"] = activityFrequencyID;
-		}
+		if (firstName) requestBody["first_name"] = firstName;
+		if (lastName) requestBody["last_name"] = lastName;
+		if (age) requestBody["age"] = age;
+		if (height) requestBody["height"] = height;
+		if (weight) requestBody["weight"] = weight;
+		if (gender) requestBody["gender"] = gender;
+		if (physicalHabits) requestBody["physical_habits"] = physicalHabits;
+		if (photoUrl) requestBody["client_photo_url"] = photoUrl;
+		if (activityFrequencyID !== 0) requestBody["activity_frequency_id"] = activityFrequencyID;
 	
 		const requestOptions = {
 			method: 'PUT',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${localStorage.getItem("token_client")}` // Añadir el token JWT para autenticación
+			},
 			body: JSON.stringify(requestBody)
 		};
-		fetch(process.env.BACKEND_URL + `/api/client/${clientID}`, requestOptions)
-		.then(response => {
-			if(response.status == 200) {
-				setStore({ errorForm: null })
-			}
-			return response.json()
-		})
-		.then(data => {
-			if(data.error) {
-				setStore({ errorForm: data.error })
-			}
-		})
+	
+		// Realizar la solicitud al backend para actualizar el perfil del cliente
+		fetch(`${process.env.BACKEND_URL}/api/profile`, requestOptions)
+			.then(response => {
+				if (response.status === 200) {
+					setStore({ errorForm: null });
+				}
+				return response.json();
+			})
+			.then(data => {
+				if (data.error) {
+					setStore({ errorForm: data.error });
+				} else {
+					// Actualizar el estado global con los datos actualizados del cliente
+					setStore({ singleClient: data });
+					console.log("Perfil del cliente actualizado con éxito:", data);
+				}
+			})
+			.catch(error => {
+				console.error("Error updating client profile:", error);
+				setStore({ errorForm: error.message });
+			});
 	},
 
       // COACH

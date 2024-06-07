@@ -381,35 +381,66 @@ def signup_client():
 
     return jsonify(client_to_add.serialize()), 201
 
-@api.route('/client/<int:client_id>', methods=['PUT'])
-def update_client(client_id):
-    client_data = request.json
-    required_properties = ["username", "email", "password"]
+# @api.route('/client/<int:client_id>', methods=['PUT'])
+# def update_client(client_id):
+#     client_data = request.json
+#     required_properties = ["username", "email", "password"]
 
-    for prop in required_properties:
-        if prop not in client_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
+#     for prop in required_properties:
+#         if prop not in client_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
     
-    for key in required_properties:
-        if client_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+#     for key in required_properties:
+#         if client_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
     
-    existing_username = Client.query.filter(Client.username == client_data["username"], Client.id != client_id).first()
-    if existing_username:
-        return jsonify({"error": f"The username '{client_data['username']}' already exists in the database"}), 400
+#     existing_username = Client.query.filter(Client.username == client_data["username"], Client.id != client_id).first()
+#     if existing_username:
+#         return jsonify({"error": f"The username '{client_data['username']}' already exists in the database"}), 400
 
-    existing_email = Client.query.filter(Client.email == client_data["email"], Client.id != client_id).first()
-    if existing_email:
-        return jsonify({"error": f"The email '{client_data['email']}' already exists in the database"}), 400
+#     existing_email = Client.query.filter(Client.email == client_data["email"], Client.id != client_id).first()
+#     if existing_email:
+#         return jsonify({"error": f"The email '{client_data['email']}' already exists in the database"}), 400
       
-    client = Client.query.get(client_id)
-    if client is None:
-        return jsonify({"error": f"The ID '{client_id}' was not found in Clients"}), 404
+#     client = Client.query.get(client_id)
+#     if client is None:
+#         return jsonify({"error": f"The ID '{client_id}' was not found in Clients"}), 404
 
-    for prop in client_data:
-        setattr(client, prop, client_data[prop])
+#     for prop in client_data:
+#         setattr(client, prop, client_data[prop])
+
+#     db.session.commit()
+#     return jsonify(client.serialize()), 200
+
+@api.route('/profile', methods=['PUT'])
+@jwt_required
+def update_client():
+    client_id = get_jwt_identity()
+    client = Client.query.get(client_id)
+
+    if client is None:
+        return jsonify({"error": "Client not found"}), 404
+
+    body = request.get_json()
+
+    if body is None:
+        raise APIException("Request body is missing", status_code=400)
+
+    # Actualizar campos del usuario
+    client.username = body.get("username", client.username)
+    client.email = body.get("email", client.email)
+    client.password = body.get("password", client.password)
+    client.first_name = body.get("first_name", client.first_name)
+    client.last_name = body.get("last_name", client.last_name)
+    client.age = body.get("age", client.age)
+    client.height = body.get("height", client.height)
+    client.weight = body.get("weight", client.weight)
+    client.gender = body.get("gender", client.gender)
+    client.physical_habits = body.get("physical_habits", client.physical_habits)
+    client.client_photo_url = body.get("client_photo_url", client.client_photo_url)
+    client.activity_frequency_id = body.get("activity_frequency_id", client.activity_frequency_id)
 
     db.session.commit()
 
-    return jsonify(client.serialize()), 200
+    return jsonify({"msg": "Perfil de usuario actualizado con éxito"}), 200
   
 @api.route('/client/<int:client_id>', methods=['DELETE'])
 def del_client(client_id):
@@ -810,4 +841,16 @@ def update_availability_client_day(id):
         db.session.rollback()
         return jsonify({'message': 'Error while updating the availability client entry', 'error': str(e)}), 500
 
+
+# @api.route('/upload', methods=['POST'])
+# def upload_image():
+#     client_id = request.form.get('client_id')
+#     file_to_upload = request.files['file']
+#     if file_to_upload:
+#         upload_result = cloudinary.uploader.upload(file_to_upload)
+#         client = Client.query.get(client_id)
+#         client.client_photo_url = upload_result['url']
+#         db.session.commit()
+#         return jsonify({"message": "Image uploaded successfully", "url": upload_result['url']}), 200
+#     return jsonify({"error": "No file provided"}), 400
 

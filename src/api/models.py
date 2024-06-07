@@ -86,6 +86,7 @@ class Client(db.Model):
     gender = db.Column(db.String(120), unique=False, nullable=True)
     # Cambiar a valor unique = True de momento dejarlo así
     physical_habits = db.Column(db.String(120), unique=False, nullable=True)
+    client_photo_url=db.Column(db.String(255), nullable=True)
     # Cambiar a valor unique true como el anterior
     activity_frequency_id = db.Column(db.Integer, db.ForeignKey('activity_frequency.id'))
     activity_frequency = db.relationship('ActivityFrequency') 
@@ -104,6 +105,7 @@ class Client(db.Model):
             "weight": self.weight,
             "gender": self.gender,
             "physical_habits": self.physical_habits,
+            "client_photo_url": self.client_photo_url,
             "activity_frequency_id": self.activity_frequency_id,
           }
 

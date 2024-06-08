@@ -40,8 +40,6 @@ export const Login = () => {
             if (data.access_coach_token) {
                 const loggedCoach = await store.coaches.find(coach => coach.email === email);
                 localStorage.setItem("loggedCoach", JSON.stringify({ "id": loggedCoach.id, "username": loggedCoach.username }));
-                // actions.setSingleCoach(loggedCoach)
-                // localStorage.setItem("loggedCoach", loggedCoach.username);
                 await actions.setAuth("coach", true)  
                 localStorage.setItem("token_coach", data.access_coach_token);
                 navigate("/client")  
@@ -49,7 +47,6 @@ export const Login = () => {
             if (data.access_client_token) {
                 const loggedClient = await store.clients.find(client => client.email === email);
                 localStorage.setItem("loggedClient", JSON.stringify({ "id": loggedClient.id, "username": loggedClient.username }));
-                // localStorage.setItem("loggedClient", loggedClient.username); 
                 await actions.setAuth("client", true)  
                 localStorage.setItem("token_client", data.access_client_token); 
                 navigate("/coach")   
@@ -63,46 +60,75 @@ export const Login = () => {
     }
 
 	return (
-		<div className="container mt-3">
-            <h3 className="text-center">Login</h3>
-            <form onSubmit={login}>
-                <div className="mb-3 mt-3 col-6 offset-3">
-                    <input 
-                    type="text" 
-                    className="form-control" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
-                    placeholder="Email"
-                    />
+        <div className="authincation h-100 mt-5">
+        <div className="container h-100">
+            <div className="row justify-content-center h-100 align-items-center">
+                <div className="col-md-6">
+                    <div className="authincation-content">
+                        <div className="row no-gutters">
+                            <div className="col-xl-12">
+                                <div className="p-5">
+									<div className="text-center mb-3">
+										JDW FITNESS
+									</div>
+                                    <h5 className="text-center mb-4">Login to your account</h5>
+                                    <form onSubmit={login}>
+                                        <div className="form-group">
+                                            <label className="mb-1 form-label"> Email</label>
+                                            <input 
+                                            type="email" 
+                                            className="form-control p-3" 
+                                            placeholder="hello@example.com" 
+                                            value={email} 
+                                            onChange={(e) => setEmail(e.target.value)} 
+                                            />
+                                        </div>
+                                        <div className="mb-4 position-relative">
+											<label className="mb-1 form-label">Password</label>
+											<input 
+                                            type={showPassword ? "text" : "password"}
+                                            className="form-control p-3" 
+                                            placeholder="******"
+                                            value={password} 
+                                            onChange={(e) => setPassword(e.target.value)} 
+                                            />
+											<span className="show-pass eye" type="button" onClick={() => setShowPassword(!showPassword)} >
+											{showPassword ? 
+                                                <i className="fa fa-eye"></i>
+                                                :
+												<i className="fa fa-eye-slash"></i>
+                                                }
+											</span>
+										</div>
+                                        {/* <div className="form-row d-flex justify-content-between mt-4 mb-2">
+                                            <div className="form-group">
+                                                <a href="page-forgot-password.html">Forgot Password?</a>
+                                            </div>
+                                        </div> */}
+                                        {error &&                 
+                                        <div className="alert alert-danger alert-dismissible fade show text-center fw-semibold mb-4" role="alert">
+                                            {error}
+                                        </div>
+                                        }
+                                        <div className="text-center">
+                                            <button type="submit" className="btn btn-secondary light btn-block fw-bolder p-3 w-100">Login</button>
+                                        </div>
+                                    </form>
+                                    <div className="new-account mt-4">
+                                        <p>Don't have an account?
+                                        <Link to="/signup" className="text-secondary text-decoration-none ms-2">
+                                            Sign up
+                                        </Link>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className="mb-3 col-6 offset-3">
-                    <input 
-                    type={showPassword ? "text" : "password"}  
-                    className="form-control" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    placeholder="Password"
-                    />
-                    <button 
-                    onClick={() => setShowPassword(!showPassword)} 
-                    className={`btn fa-solid ${showPassword ? "fa-eye" : "fa-eye-slash"}`} 
-                    type="button"
-                    >
-                    </button>
-                </div>
-                {error &&                 
-                <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
-                    {error}
-                </div>
-                }
-                <div className="d-flex justify-content-center">
-                <button type="submit" className="btn btn-warning fw-bold" >Login</button>
-                {/* Tengo que pulsar el botón de Login dos veces para que se haga correctamente y obtener el token. Pendiente de arreglar este error. */}
-                <Link to="/">
-				    <button className="btn btn-primary ms-3 fw-bold" >Back Home</button>
-			    </Link>
-                </div>
-            </form>
-		</div>
-	);
+            </div>
+        </div>
+    </div>
+    );
 };
+    

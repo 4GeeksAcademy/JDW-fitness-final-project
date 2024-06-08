@@ -38,13 +38,11 @@ import { UpdateActivity } from "./pages/updateActivity";
 import { SingleActivity } from "./pages/singleActivity";
 
 import { Client } from "./pages/client";
-import { SignUpClient } from "./pages/signUpClient";
 import { SingleClient } from "./pages/singleClient";
 import { AddClient } from "./pages/addClient";
 import { UpdateClient } from "./pages/updateClient";
 
 import { Coach } from "./pages/coach";
-import { SignUpCoach } from "./pages/signUpCoach";
 import { SingleCoach } from "./pages/singleCoach";
 import { AddCoach } from "./pages/addCoach";
 import { UpdateCoach } from "./pages/updateCoach";
@@ -81,8 +79,6 @@ const Layout = () => {
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<SignUp />} path="/signup" />
-                        <Route element={<SignUpClient />} path="/client/signup" />
-                        <Route element={<SignUpCoach />} path="/coach/signup" />
                         <Route element={<Login />} path="/login" />
                         {/* AVAILABILITY ROUTES */}  
                         <Route element={<Availability />} path="/availability" />

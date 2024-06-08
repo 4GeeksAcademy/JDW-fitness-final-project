@@ -57,42 +57,15 @@ const getState = ({ getStore, getActions, setStore }) => {
             console.error("Error fetching single client:", error);
         }
     },
-	clientSignUp: async (username, email, password, firstName, lastName,age,height,weight,gender,physicalHabits,activityFrequencyID) => {
-		const requestBody = {
-			"username": username,
-			"email": email,
-			"password": password,
-		};
-	
-		if (firstName) {
-			requestBody["first_name"] = firstName;
-		}
-		if (lastName) {
-			requestBody["last_name"] = lastName;
-		}
-		if (age) {
-			requestBody["age"] = age;
-		}
-		if (height) {
-			requestBody["height"] = height;
-		}
-		if (weight) {
-			requestBody["weight"] = weight;
-		}
-		if (gender) {
-			requestBody["gender"] = gender;
-		}
-		if (physicalHabits) {
-			requestBody["physical_habits"] = physicalHabits;
-		}
-		if (activityFrequencyID !== 0) {
-			requestBody["activity_frequency_id"] = activityFrequencyID;
-		}
-	
+	clientSignUp: async (username, email, password) => {
 		const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(requestBody)
+			body: JSON.stringify({
+				"username": username,
+				"email": email,
+				"password": password,
+			})
 		};
 		try {
 			const response = await fetch(process.env.BACKEND_URL + "/api/client/signup", requestOptions);
@@ -188,30 +161,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 			setSingleCoach: () => {
 				setStore({ singleCoach: currentCoach })
 			},
-			coachSignUp: async (username, email, password, firstName, lastName, educationID, experienceID) => {
-				const requestBody = {
-					"username": username,
-					"email": email,
-					"password": password,
-				};
-			
-				if (firstName) {
-					requestBody["first_name"] = firstName;
-				}
-				if (lastName) {
-					requestBody["last_name"] = lastName;
-				}
-				if (educationID !== 0) {
-					requestBody["education_id"] = educationID;
-				}
-				if (experienceID !== 0) {
-					requestBody["experience_id"] = experienceID;
-				}
-			
+			coachSignUp: async (username, email, password) => {
 				const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(requestBody)
+					body: JSON.stringify({
+						"username": username,
+						"email": email,
+						"password": password,
+					})
 				};
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/coach/signup", requestOptions);

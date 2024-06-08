@@ -169,7 +169,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	// 	})
 	// },
 
-	updateClientAPI: (
+	updateClientAPI: async (
 		username,
 		email,
 		password,
@@ -181,7 +181,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 		gender,
 		physicalHabits,
 		photoUrl,
-		activityFrequencyID
+		activityFrequencyID,
+		clientID
 	) => {
 		// Construcción dinámica del cuerpo de la solicitud
 		const requestBody = {
@@ -200,37 +201,37 @@ const getState = ({ getStore, getActions, setStore }) => {
 		if (photoUrl) requestBody["client_photo_url"] = photoUrl;
 		if (activityFrequencyID !== 0) requestBody["activity_frequency_id"] = activityFrequencyID;
 	
+		const token = localStorage.getItem("token_client");
+		console.log("Sending token in header:", token);
+	
 		const requestOptions = {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${localStorage.getItem("token_client")}` // Asegúrate de usar el token correcto
+				'Authorization': `Bearer ${token}` // Asegúrate de usar el token correcto
 			},
 			body: JSON.stringify(requestBody)
 		};
 	
-		// Realizar la solicitud al backend para actualizar el perfil del cliente
-		fetch(`${process.env.BACKEND_URL}/api/profile`, requestOptions)
-			.then(response => {
-				if (response.status === 200) {
-					setStore({ errorForm: null });
-				}
-				return response.json();
-			})
-			.then(data => {
-				if (data.error) {
-					setStore({ errorForm: data.error });
-				} else {
-					// Actualizar el estado global con los datos actualizados del cliente
-					setStore({ singleClient: data });
-					console.log("Perfil del cliente actualizado con éxito:", data);
-				}
-			})
-			.catch(error => {
-				console.error("Error updating client profile:", error);
-				setStore({ errorForm: error.message });
-			});
+		try {
+			// Realizar la solicitud al backend para actualizar el perfil del cliente
+			const response = await fetch(process.env.BACKEND_URL + `/api/client/${clientID}`, requestOptions);
+			const data = await response.json();
+	
+			if (response.status === 200) {
+				setStore({ errorForm: null, singleClient: data });
+				console.log("Perfil del cliente actualizado con éxito:", data);
+			} else {
+				setStore({ errorForm: data.error });
+			}
+		} catch (error) {
+			console.error("Error updating client profile:", error);
+			setStore({ errorForm: error.message });
+		}
 	},
+	
+	
+	
 
       // COACH
 			getCoaches: () => {

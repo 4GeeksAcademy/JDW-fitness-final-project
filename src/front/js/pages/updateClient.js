@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 
@@ -6,6 +6,7 @@ export const UpdateClient = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const { clientID } = useParams();
+    const initialLoad = useRef(true);
 
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -25,6 +26,7 @@ export const UpdateClient = () => {
 
     // Redirigir si no hay token
     useEffect(() => {
+        console.log("Token from localStorage:", tokenClient);
         if (!tokenClient) {
             navigate("/");
         }
@@ -32,9 +34,12 @@ export const UpdateClient = () => {
 
     // Obtener datos del cliente y frecuencias de actividad al montar el componente
     useEffect(() => {
-        actions.getActivityFrequency();
-        actions.getSingleClient(clientID);
-    }, []);
+        if (initialLoad.current) {
+            actions.getActivityFrequency();
+            actions.getSingleClient(clientID);
+            initialLoad.current = false;
+        }
+    }, [actions, clientID]);
 
     // Establecer los datos del cliente en el estado local cuando estén disponibles
     useEffect(() => {
@@ -97,9 +102,9 @@ export const UpdateClient = () => {
     };
 
     // Manejar la actualización del perfil
-    const updateClient = (e) => {
+    const updateClient = async (e) => {
         e.preventDefault();
-        actions.updateClientAPI(
+        await actions.updateClientAPI(
             username,
             email,
             password,
@@ -111,9 +116,12 @@ export const UpdateClient = () => {
             gender,
             physicalHabits,
             photoUrl,
-            activityFrequencyID
+            activityFrequencyID,
+            clientID
         );
         setHandleButton(true);
+        // Obtener los datos actualizados del cliente
+        actions.getSingleClient(clientID);
     };
 
     return (

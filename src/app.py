@@ -47,6 +47,7 @@ cloudinary.config(
 
 # Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = "sssdtsdgtsdgffdgfdgdf898gdfgfduo2345668okllxfhkjchyf12312gdskjfgshjdfgsdkjhfs12312312dds56g4sfd56g4fd5s6g4fd564gd56fg46d5f"  # Change this!
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 86400  # 1 día (en segundos)
 jwt = JWTManager(app)
 
 # add the admin

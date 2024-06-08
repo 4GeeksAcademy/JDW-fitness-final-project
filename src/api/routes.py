@@ -410,9 +410,9 @@ def signup_client():
 #     db.session.commit()
 #     return jsonify(client.serialize()), 200
 
-@api.route('/profile', methods=['PUT'])
+@api.route('/client/<int:client_id>', methods=['PUT'])
 @jwt_required()
-def update_client():
+def update_client(client_id):
     try:
         # Obtener la identidad del JWT y extraer el client_id
         identity = get_jwt_identity()

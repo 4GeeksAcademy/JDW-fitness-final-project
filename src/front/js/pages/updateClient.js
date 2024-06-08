@@ -26,7 +26,6 @@ export const UpdateClient = () => {
 
     // Redirigir si no hay token
     useEffect(() => {
-        console.log("Token from localStorage:", tokenClient);
         if (!tokenClient) {
             navigate("/");
         }

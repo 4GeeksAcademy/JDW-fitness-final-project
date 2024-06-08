@@ -448,6 +448,10 @@ def update_client(client_id):
         client.client_photo_url = body.get("client_photo_url", client.client_photo_url)
         client.activity_frequency_id = body.get("activity_frequency_id", client.activity_frequency_id)
 
+        required_properties = ["username", "email", "password"]
+        for key in required_properties:
+            if request.json[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+
         db.session.commit()
 
         return jsonify({"msg": "Perfil de usuario actualizado con éxito"}), 200

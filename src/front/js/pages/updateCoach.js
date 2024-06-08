@@ -22,7 +22,6 @@ export const UpdateCoach = () => {
 
     // Redirigir si no hay token
     useEffect(() => {
-        console.log("Token from localStorage:", tokenCoach);
         if (!tokenCoach) {
             navigate("/");
         }

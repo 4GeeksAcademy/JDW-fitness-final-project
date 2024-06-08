@@ -202,7 +202,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 		if (activityFrequencyID !== 0) requestBody["activity_frequency_id"] = activityFrequencyID;
 	
 		const token = localStorage.getItem("token_client");
-		console.log("Sending token in header:", token);
 	
 		const requestOptions = {
 			method: 'PUT',

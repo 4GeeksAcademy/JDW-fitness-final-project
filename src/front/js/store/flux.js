@@ -318,43 +318,95 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, { method: 'DELETE' })
 				.then( () => getActions().getCoaches())
 			},
-			updateCoachAPI: (username, email, password, firstName, lastName, educationID, experienceID, coachID) => {
+			// updateCoachAPI: (username, email, password, firstName, lastName, educationID, experienceID, coachID) => {
+			// 	const requestBody = {
+			// 		"username": username,
+			// 		"email": email,
+			// 		"password": password,
+			// 	};
+			
+			// 	if (firstName) {
+			// 		requestBody["first_name"] = firstName;
+			// 	}
+			// 	if (lastName) {
+			// 		requestBody["last_name"] = lastName;
+			// 	}
+			// 	if (educationID !== 0) {
+			// 		requestBody["education_id"] = educationID;
+			// 	}
+			// 	if (experienceID !== 0) {
+			// 		requestBody["experience_id"] = experienceID;
+			// 	}
+			
+			// 	const requestOptions = {
+			// 		method: 'PUT',
+			// 		headers: { 'Content-Type': 'application/json' },
+			// 		body: JSON.stringify(requestBody)
+			// 	};
+			// 	fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, requestOptions)
+			// 	.then(response => {
+			// 		if(response.status == 200) {
+			// 			setStore({ errorForm: null })
+			// 		}
+			// 		return response.json()
+			// 	})
+			// 	.then(data => {
+			// 		if(data.error) {
+			// 			setStore({ errorForm: data.error })
+			// 		}
+			// 	})
+			// },
+
+			updateCoachAPI: async (
+				username,
+				email,
+				password,
+				firstName,
+				lastName,
+				educationID, 
+            	experienceID,
+				photoUrl,
+				coachID
+			) => {
+				// Construcción dinámica del cuerpo de la solicitud
 				const requestBody = {
 					"username": username,
 					"email": email,
-					"password": password,
+					"password": password
 				};
 			
-				if (firstName) {
-					requestBody["first_name"] = firstName;
-				}
-				if (lastName) {
-					requestBody["last_name"] = lastName;
-				}
-				if (educationID !== 0) {
-					requestBody["education_id"] = educationID;
-				}
-				if (experienceID !== 0) {
-					requestBody["experience_id"] = experienceID;
-				}
+				if (firstName) requestBody["first_name"] = firstName;
+				if (lastName) requestBody["last_name"] = lastName;
+				if (educationID !== 0) requestBody["education_id"] = educationID;
+				if (experienceID !== 0) requestBody["experience_id"] = experienceID;
+				if (photoUrl) requestBody["coach_photo_url"] = photoUrl;
+			
+				const token = localStorage.getItem("token_coach");
 			
 				const requestOptions = {
 					method: 'PUT',
-					headers: { 'Content-Type': 'application/json' },
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${token}` // Asegúrate de usar el token correcto
+					},
 					body: JSON.stringify(requestBody)
 				};
-				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, requestOptions)
-				.then(response => {
-					if(response.status == 200) {
-						setStore({ errorForm: null })
+			
+				try {
+					// Realizar la solicitud al backend para actualizar el perfil del cliente
+					const response = await fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, requestOptions);
+					const data = await response.json();
+			
+					if (response.status === 200) {
+						setStore({ errorForm: null, singleCoach: data });
+						console.log("Perfil del coach actualizado con éxito:", data);
+					} else {
+						setStore({ errorForm: data.error });
 					}
-					return response.json()
-				})
-				.then(data => {
-					if(data.error) {
-						setStore({ errorForm: data.error })
-					}
-				})
+				} catch (error) {
+					console.error("Error updating coach profile:", error);
+					setStore({ errorForm: error.message });
+				}
 			},
         
        	// LIKES

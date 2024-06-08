@@ -158,6 +158,7 @@ class Coach(db.Model):
     password = db.Column(db.String(80), unique=False, nullable=False)
     first_name = db.Column(db.String(120), unique=False, nullable=True)
     last_name = db.Column(db.String(120), unique=False, nullable=True)
+    coach_photo_url=db.Column(db.String(255), nullable=True)
     education_id = db.Column(db.Integer, db.ForeignKey('education.id'), nullable=True)
     experience_id = db.Column(db.Integer, db.ForeignKey('experience.id'), nullable=True)
     education = db.relationship(Education)
@@ -172,6 +173,7 @@ class Coach(db.Model):
             "username": self.username,
             "first_name": self.first_name,
             "last_name": self.last_name,
+            "coach_photo_url": self.coach_photo_url,
             "education_id": self.education_id,
             "experience_id": self.experience_id
             # do not serialize the password, its a security breach

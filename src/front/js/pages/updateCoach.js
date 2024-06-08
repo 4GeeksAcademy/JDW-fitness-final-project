@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
-
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const UpdateCoach = () => {
-	const { store, actions } = useContext(Context);
+    const { store, actions } = useContext(Context);
     const navigate = useNavigate();
+    const { coachID } = useParams();
+    const initialLoad = useRef(true);
+
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -13,18 +15,32 @@ export const UpdateCoach = () => {
     const [lastName, setLastName] = useState("")
     const [educationID, setEducationID] = useState(0)
     const [experienceID, setExperienceID] = useState(0)
-    const [showPassword, setShowPassword] = useState(false)
-    const [handleButton, setHandleButton] = useState(false)
-    const { coachID } = useParams();
+    const [photoUrl, setPhotoUrl] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [handleButton, setHandleButton] = useState(false);
+    const tokenCoach = localStorage.getItem("token_coach");
 
+    // Redirigir si no hay token
     useEffect(() => {
-        actions.getEducation()
-        actions.getExperience()
-        actions.getSingleCoach(coachID);
-    },[])
+        console.log("Token from localStorage:", tokenCoach);
+        if (!tokenCoach) {
+            navigate("/");
+        }
+    }, [tokenCoach, navigate]);
 
+    // Obtener datos del Coache y frecuencias de actividad al montar el componente
     useEffect(() => {
-        if (store.singleCoach && !username && !email && !password && !firstName && !lastName) {
+        if (initialLoad.current) {
+            actions.getEducation()
+            actions.getExperience()
+            actions.getSingleCoach(coachID);
+            initialLoad.current = false;
+        }
+    }, [actions, coachID]);
+
+    // Establecer los datos del coache en el estado local cuando estén disponibles
+    useEffect(() => {
+        if (store.singleCoach) {
             setUsername(store.singleCoach.username || "");
             setEmail(store.singleCoach.email || "");
             setPassword(store.singleCoach.password || "");
@@ -32,25 +48,75 @@ export const UpdateCoach = () => {
             setLastName(store.singleCoach.last_name || "");
             setEducationID(store.singleCoach.education_id || 0);
             setExperienceID(store.singleCoach.experience_id || 0);
+            setPhotoUrl(store.singleCoach.coach_photo_url || "");
         }
     }, [store.singleCoach]);
 
+    // Navegar de vuelta si la actualización es exitosa
     useEffect(() => {
-        if (!store.errorForm && handleButton && username != "" && email != "" && password != "") {
-            navigate("/client");
+        if (!store.errorForm && handleButton && username && email && password) {
+            navigate("/coach");
         }
-    },[store.errorForm, handleButton])
+    }, [store.errorForm, handleButton, username, email, password, navigate]);
 
-    function updateCoach(e) {
+    // Manejar la carga de imagen y obtener la URL de Cloudinary
+    const handleImageChange = async (e) => {
+        const newImageFile = e.target.files[0];
+
+        if (newImageFile) {
+            try {
+                const formData = new FormData();
+                formData.append("file", newImageFile);
+                formData.append("upload_preset", "gastondios");
+                formData.append("cloud_name", "df7nqepxm");
+
+                const cloudinaryResponse = await fetch(
+                    "https://api.cloudinary.com/v1_1/df7nqepxm/image/upload",
+                    {
+                        method: "POST",
+                        body: formData,
+                    }
+                );
+
+                if (!cloudinaryResponse.ok) {
+                    throw new Error("Error uploading image to Cloudinary");
+                }
+
+                const cloudinaryData = await cloudinaryResponse.json();
+                const cloudinaryImageUrl = cloudinaryData.secure_url;
+
+                console.log("Imagen cargada exitosamente en Cloudinary. URL:", cloudinaryImageUrl);
+
+                setPhotoUrl(cloudinaryImageUrl);
+            } catch (error) {
+                console.error("Error uploading image:", error);
+            }
+        }
+    };
+
+    // Manejar la actualización del perfil
+    const updateCoach = async (e) => {
         e.preventDefault();
-        actions.updateCoachAPI(username, email, password, firstName, lastName, educationID, experienceID, coachID)
-        setHandleButton(true)
+        await actions.updateCoachAPI(
+            username,
+            email,
+            password,
+            firstName,
+            lastName,
+            educationID, 
+            experienceID,
+            photoUrl,
+            coachID
+        );
+        setHandleButton(true);
+        // Obtener los datos actualizados del coache
+        actions.getSingleCoach(coachID);
     };
 
 	return (
 		<div className="container mt-3">
-            <h3 className="text-center mb-2">Coach Sign up</h3>
-            <form>
+            <h3 className="text-center mb-2">Actualizar Perfil del Coach</h3>
+            <form onSubmit={updateCoach}>
                 <div className="row">
                 <div className="mb-3 col-6 offset-3">
                     <input 
@@ -103,6 +169,19 @@ export const UpdateCoach = () => {
                     placeholder="Last Name"
                     />
                 </div>
+                <div className="mb-3 col-6 offset-3">
+                        <label className="form-label">Subir Foto de Perfil</label>
+                        <input
+                            type="file"
+                            className="form-control"
+                            onChange={handleImageChange}
+                        />
+                        {photoUrl && (
+                            <div className="mt-2">
+                                <img src={photoUrl} alt="Profile" className="img-thumbnail" style={{ maxWidth: "200px" }} />
+                            </div>
+                        )}
+                    </div>
                 <select value={educationID} className="form-select form-select-lg mb-3 w-50 offset-3" aria-label=".form-select-lg example" onChange={(e) => setEducationID(e.target.value)}>
                     {educationID == 0 && <option defaultValue>Select your education</option>}
                     {store.education.map((element, index) => (
@@ -119,19 +198,21 @@ export const UpdateCoach = () => {
                             </option>          
                     ))}
                 </select>
-                {store.errorForm &&                 
-                <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
-                    {store.errorForm}
-                </div>
-                }
+                {store.errorForm && (
+                        <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
+                            {store.errorForm}
+                        </div>
+                    )}
                 </div>
                 <div className="d-flex justify-content-center">
-                    <button type="submit" className="btn btn-warning fw-bold mt-2" onClick={updateCoach}>Save changes</button>
+                    <button type="submit" className="btn btn-warning fw-bold mt-2">
+                        Save changes
+                    </button>
                     <Link to={`/coach/${coachID}`}>
-                        <button className="btn btn-primary ms-3 fw-bold mt-2" >Back to your information</button>
+                        <button className="btn btn-primary ms-3 fw-bold mt-2">Back to your information</button>
                     </Link>
                 </div>
             </form>
-		</div>
+        </div>
 	);
 };

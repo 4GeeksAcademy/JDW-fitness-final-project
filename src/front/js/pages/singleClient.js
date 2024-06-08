@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
+import { MapComponent } from "../component/mapComponent";
 
 import { Context } from "../store/appContext";
 
@@ -41,54 +42,72 @@ export const SingleClient = () => {
             <div className="container mt-3">
                 <h3 className="mb-2">Client: { (store.singleClient.username)}</h3>
                 <h5>Some details about me:</h5>
-                <ul className="my-3 fs-5">
-                    <li>
-                        <span className="fw-bold">First name: </span> 
-                        {(store.singleClient.first_name)}
-                    </li>
-                    <li>
-                        <span className="fw-bold">Last name: </span> 
-                        {(store.singleClient.last_name)}
-                    </li>
-                    <li>
-                        <span className="fw-bold">Age: </span> 
-                        {(store.singleClient.age)}
-                    </li>
-                    <li>
-                        <span className="fw-bold">Height: </span> 
-                        {(store.singleClient.height)}
-                    </li>
-                    <li>
-                        <span className="fw-bold">Weight: </span> 
-                        {(store.singleClient.weight)}
-                    </li>
-                    <li>
-                        <span className="fw-bold">Gender: </span> 
-                        {(store.singleClient.gender)}
-                    </li>
-                    <li>
-                        <span className="fw-bold">Physical Habits: </span> 
-                        {(store.singleClient.physical_habits)}
-                    </li>
-                    <li>
-                        <span className="fw-bold">Activity Frequency: </span> 
-                        {(activityFrequency)}
-                    </li>  
-                </ul>
-                {(loggedClient && store.singleClient.id === loggedClient.id) &&            
-                <Link to={`/client/update/${clientID}`} className="ms-auto my-1">
-                        <button className="btn btn-secondary ms-auto fw-bold" >Update</button>					
-                </Link>
-                }
-                {loggedClient ?                
-                <Link to="/coach">
-                    <button className="btn btn-primary ms-3 fw-bold" >Back to Coach list</button>
-                </Link>
-                :
-                <Link to="/client">
-                    <button className="btn btn-primary ms-3 fw-bold" >Back to Client list</button>
-                </Link>
-                }
+                <div className="">
+                    <ul className="my-3 fs-5">
+                        <li>
+                            <span className="fw-bold">First name: </span> 
+                            {(store.singleClient.first_name)}
+                        </li>
+                        <li>
+                            <span className="fw-bold">Last name: </span> 
+                            {(store.singleClient.last_name)}
+                        </li>
+                        <li>
+                            <span className="fw-bold">Age: </span> 
+                            {(store.singleClient.age)}
+                        </li>
+                        <li>
+                            <span className="fw-bold">Height: </span> 
+                            {(store.singleClient.height)}
+                        </li>
+                        <li>
+                            <span className="fw-bold">Weight: </span> 
+                            {(store.singleClient.weight)}
+                        </li>
+                        <li>
+                            <span className="fw-bold">Gender: </span> 
+                            {(store.singleClient.gender)}
+                        </li>
+                        <li>
+                            <span className="fw-bold">Physical Habits: </span> 
+                            {(store.singleClient.physical_habits)}
+                        </li>
+                        <li>
+                            <span className="fw-bold">Activity Frequency: </span> 
+                            {(activityFrequency)}
+                        </li>
+                        {store.singleClient.city && 
+                        <li>
+                            <span className="fw-bold">City: </span> 
+                            {store.singleClient.city}
+                        </li>
+                        }  
+                    </ul>
+                    {(store.singleClient.latitude && store.singleClient.longitude) &&                 
+                    <div className="">
+                        <MapComponent 
+                            lat = {store.singleClient.latitude}
+                            lng = {store.singleClient.longitude} 
+                        />
+                    </div>
+                    }
+                </div>
+                <div className="mt-3">
+                    {(loggedClient && store.singleClient.id === loggedClient.id) &&            
+                    <Link to={`/client/update/${clientID}`} className="ms-auto my-1">
+                            <button className="btn btn-secondary ms-auto fw-bold" >Update</button>					
+                    </Link>
+                    }
+                    {loggedClient ?                
+                    <Link to="/coach">
+                        <button className="btn btn-primary ms-3 fw-bold" >Back to Coach list</button>
+                    </Link>
+                    :
+                    <Link to="/client">
+                        <button className="btn btn-primary ms-3 fw-bold" >Back to Client list</button>
+                    </Link>
+                    }
+                </div>
             </div>
         }
         </>

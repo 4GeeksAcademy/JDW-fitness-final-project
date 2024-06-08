@@ -1,6 +1,8 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
+import os
+import requests
 from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User, Availability, Goals, Diseases, Experience, Education, ActivityFrequency, Coach, Client, Availability_client, Likes, Match
 from api.utils import generate_sitemap, APIException
@@ -14,6 +16,38 @@ api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api)
+
+# Obtener la clave de API de Google desde las variables de entorno
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+
+# Endpoint para geocodificación (dirección a coordenadas)
+@api.route('/geocode', methods=['GET'])
+def geocode_address():
+    address = request.args.get('address')
+    if not address:
+        return jsonify({'error': 'Address parameter is required'}), 400
+
+    url = f'https://maps.googleapis.com/maps/api/geocode/json?address={address}&key={GOOGLE_API_KEY}'
+    response = requests.get(url)
+    if response.status_code == 200:
+        return jsonify(response.json())
+    else:
+        return jsonify({'error': 'Failed to get geocoding data'}), 500
+
+# Endpoint para geocodificación inversa (coordenadas a dirección)
+@api.route('/reverse-geocode', methods=['GET'])
+def reverse_geocode():
+    lat = request.args.get('lat')
+    lng = request.args.get('lng')
+    if not lat or not lng:
+        return jsonify({'error': 'Latitude and longitude parameters are required'}), 400
+
+    url = f'https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&key={GOOGLE_API_KEY}'
+    response = requests.get(url)
+    if response.status_code == 200:
+        return jsonify(response.json())
+    else:
+        return jsonify({'error': 'Failed to get reverse geocoding data'}), 500
 
 # AVAILABILITY ENDPOINTS
 @api.route('/availability', methods=['GET'])

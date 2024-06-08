@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import axios from 'axios';
+import { MapComponent } from "../component/mapComponent";
 
 import { Context } from "../store/appContext";
 
@@ -15,6 +17,9 @@ export const UpdateCoach = () => {
     const [experienceID, setExperienceID] = useState(0)
     const [showPassword, setShowPassword] = useState(false)
     const [handleButton, setHandleButton] = useState(false)
+    const [address, setAddress] = useState("");
+    const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
+    const [city, setCity] = useState("")
     const { coachID } = useParams();
 
     useEffect(() => {
@@ -43,13 +48,40 @@ export const UpdateCoach = () => {
 
     function updateCoach(e) {
         e.preventDefault();
-        actions.updateCoachAPI(username, email, password, firstName, lastName, educationID, experienceID, coachID)
+        actions.updateCoachAPI(username, email, password, firstName, lastName, educationID, experienceID, coordinates.lat, coordinates.lng, city, coachID)
         setHandleButton(true)
     };
 
+    const handleGeocode = async () => {
+        try {
+            const response = await axios.get(process.env.BACKEND_URL + '/api/geocode', {
+                params: { address }
+            });
+            setCoordinates(response.data.results[0].geometry.location)
+            const addressComponents = await response.data.results[0].address_components
+            const localityComponent = await addressComponents.find(component => component.types.includes("locality"));
+            if (localityComponent) {
+            setCity(localityComponent.long_name);
+            }   
+        } catch (error) {
+            if (error.response) {
+                console.error('Error response:', error.response.data);
+                console.error('Error status:', error.response.status);
+                console.error('Error headers:', error.response.headers);
+            } else if (error.request) {
+                console.error('Error request:', error.request);
+            } else {
+                console.error('Error message:', error.message);
+            }
+            console.error('Error config:', error.config);
+        }
+    };
+
+    console.log("city", city);
+
 	return (
 		<div className="container mt-3">
-            <h3 className="text-center mb-2">Coach Sign up</h3>
+            <h3 className="text-center mb-2">Coach Update</h3>
             <form>
                 <div className="row">
                 <div className="mb-3 col-6 offset-3">
@@ -119,6 +151,27 @@ export const UpdateCoach = () => {
                             </option>          
                     ))}
                 </select>
+                <div>
+                    <div className="input-group mb-3">
+                        <input 
+                        type="text"
+                        value={address} 
+                        onChange={(e) => setAddress(e.target.value)}
+                        className="form-control" 
+                        placeholder="Enter address" 
+                        aria-label="Adress" 
+                        aria-describedby="geocode"/>
+                        <button className="btn btn-outline-secondary" type="button" id="geocode" onClick={handleGeocode} >Geocode</button>
+                    </div>
+                    {(coordinates.lat && coordinates.lng) && (
+                        <div className="">
+                            <MapComponent 
+                            lat = {coordinates.lat}
+                            lng = {coordinates.lng} 
+                            />
+                        </div>
+                    )}
+                </div>
                 {store.errorForm &&                 
                 <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
                     {store.errorForm}

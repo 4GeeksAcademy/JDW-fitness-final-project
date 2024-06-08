@@ -112,7 +112,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		fetch(process.env.BACKEND_URL + `/api/client/${clientID}`, { method: 'DELETE' })
 		.then( () => getActions().getClients())
 	},
-	updateClientAPI: (username, email, password, firstName,lastName,age,height,weight,gender,physicalHabits,activityFrequencyID,clientID) => {
+	updateClientAPI: (username, email, password, firstName, lastName, age, height, weight, gender, physicalHabits, activityFrequencyID, latitude, longitude, city, clientID) => {
 		const requestBody = {
 			"username": username,
 			"email": email,
@@ -142,6 +142,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 		}
 		if (activityFrequencyID !== 0) {
 			requestBody["activity_frequency_id"] = activityFrequencyID;
+		}
+		if (latitude) {
+			requestBody["latitude"] = latitude;
+		}
+		if (longitude) {
+			requestBody["longitude"] = longitude;
+		}
+		if (city) {
+			requestBody["city"] = city;
 		}
 	
 		const requestOptions = {
@@ -248,7 +257,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, { method: 'DELETE' })
 				.then( () => getActions().getCoaches())
 			},
-			updateCoachAPI: (username, email, password, firstName, lastName, educationID, experienceID, coachID) => {
+			updateCoachAPI: (username, email, password, firstName, lastName, educationID, experienceID, latitude, longitude, city, coachID) => {
 				const requestBody = {
 					"username": username,
 					"email": email,
@@ -266,6 +275,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 				if (experienceID !== 0) {
 					requestBody["experience_id"] = experienceID;
+				}
+				if (latitude) {
+					requestBody["latitude"] = latitude;
+				}
+				if (longitude) {
+					requestBody["longitude"] = longitude;
+				}
+				if (city) {
+					requestBody["city"] = city;
 				}
 			
 				const requestOptions = {

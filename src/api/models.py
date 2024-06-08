@@ -89,6 +89,9 @@ class Client(db.Model):
     # Cambiar a valor unique true como el anterior
     activity_frequency_id = db.Column(db.Integer, db.ForeignKey('activity_frequency.id'))
     activity_frequency = db.relationship('ActivityFrequency') 
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
+    city = db.Column(db.String(120), unique=False, nullable=True)
     
     def __repr__(self):
         return f'<Client {self.email}>'  
@@ -105,6 +108,9 @@ class Client(db.Model):
             "gender": self.gender,
             "physical_habits": self.physical_habits,
             "activity_frequency_id": self.activity_frequency_id,
+            "latitude": self.latitude,
+            "longitude": self.longitude, 
+            "city": self.city
           }
 
 class Availability_client(db.Model):
@@ -160,6 +166,9 @@ class Coach(db.Model):
     experience_id = db.Column(db.Integer, db.ForeignKey('experience.id'), nullable=True)
     education = db.relationship(Education)
     experience = db.relationship(Experience)
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
+    city = db.Column(db.String(120), unique=False, nullable=True)
     
     def __repr__(self):
         return f"<Coach {self.id}>"
@@ -171,7 +180,10 @@ class Coach(db.Model):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "education_id": self.education_id,
-            "experience_id": self.experience_id
+            "experience_id": self.experience_id,
+            "latitude": self.latitude,
+            "longitude": self.longitude, 
+            "city": self.city
             # do not serialize the password, its a security breach
         }
       

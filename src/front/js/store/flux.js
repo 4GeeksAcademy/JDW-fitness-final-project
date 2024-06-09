@@ -182,6 +182,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 		physicalHabits,
 		photoUrl,
 		activityFrequencyID,
+		latitude, 
+		longitude, 
+		city,
 		clientID
 	) => {
 		// Construcción dinámica del cuerpo de la solicitud
@@ -199,6 +202,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 		if (gender) requestBody["gender"] = gender;
 		if (physicalHabits) requestBody["physical_habits"] = physicalHabits;
 		if (photoUrl) requestBody["client_photo_url"] = photoUrl;
+		if (latitude) requestBody["latitude"] = latitude;
+		if (longitude) requestBody["longitude"] = longitude;
+		if (city) requestBody["city"] = city;
 		if (activityFrequencyID !== 0) requestBody["activity_frequency_id"] = activityFrequencyID;
 	
 		const token = localStorage.getItem("token_client");

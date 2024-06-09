@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import axios from 'axios';
+import { MapComponent } from "../component/mapComponent";
 import { Context } from "../store/appContext";
 
 export const UpdateClient = () => {
@@ -22,6 +24,9 @@ export const UpdateClient = () => {
     const [activityFrequencyID, setActivityFrequencyID] = useState(0);
     const [showPassword, setShowPassword] = useState(false);
     const [handleButton, setHandleButton] = useState(false);
+    const [address, setAddress] = useState("");
+    const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
+    const [city, setCity] = useState("")
     const tokenClient = localStorage.getItem("token_client");
 
     // Redirigir si no hay token
@@ -116,12 +121,50 @@ export const UpdateClient = () => {
             physicalHabits,
             photoUrl,
             activityFrequencyID,
+            coordinates.lat, 
+            coordinates.lng, 
+            city,
             clientID
         );
         setHandleButton(true);
         // Obtener los datos actualizados del cliente
         actions.getSingleClient(clientID);
     };
+
+    const handleGeocode = async () => {
+        try {
+            const response = await axios.get(process.env.BACKEND_URL + '/api/geocode', {
+                params: { address }
+            });
+    
+            if (response.data.results && response.data.results.length > 0) {
+                const location = response.data.results[0].geometry.location;
+                setCoordinates(location);
+    
+                const addressComponents = response.data.results[0].address_components;
+                const localityComponent = addressComponents.find(component => component.types.includes("locality"));
+                if (localityComponent) {
+                    setCity(localityComponent.long_name);
+                } else {
+                    setCity("Unknown city");
+                }
+            } else {
+                console.error("Geocoding response does not contain results.");
+            }
+        } catch (error) {
+            if (error.response) {
+                console.error('Error response:', error.response.data);
+                console.error('Error status:', error.response.status);
+                console.error('Error headers:', error.response.headers);
+            } else if (error.request) {
+                console.error('Error request:', error.request);
+            } else {
+                console.error('Error message:', error.message);
+            }
+            console.error('Error config:', error.config);
+        }
+    };
+    
 
     return (
         <div className="container mt-3">
@@ -250,6 +293,27 @@ export const UpdateClient = () => {
                                 </option>
                             ))}
                         </select>
+                    </div>
+                    <div>
+                        <div className="input-group mb-3">
+                            <input 
+                            type="text"
+                            value={address} 
+                            onChange={(e) => setAddress(e.target.value)}
+                            className="form-control" 
+                            placeholder="Enter address" 
+                            aria-label="Adress" 
+                            aria-describedby="geocode"/>
+                            <button className="btn btn-outline-secondary" type="button" id="geocode" onClick={handleGeocode} >Geocode</button>
+                        </div>
+                    {(coordinates.lat && coordinates.lng) && (
+                        <div className="">
+                            <MapComponent 
+                            lat = {coordinates.lat}
+                            lng = {coordinates.lng} 
+                            />
+                        </div>
+                    )}
                     </div>
                     {store.errorForm && (
                         <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">

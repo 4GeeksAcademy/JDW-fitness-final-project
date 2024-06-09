@@ -12,6 +12,7 @@ export const AvailabilityClient = () => {
     if (client_id) {
       actions.getSingleAvailabilityClient(client_id);
     }
+    actions.getAvailability(); // Obtener los días disponibles al montar el componente
   }, [client_id]);
 
   const handleAddNewAvailability = async () => {
@@ -73,7 +74,7 @@ export const AvailabilityClient = () => {
             {store.singleAvailabilityClient.map((availability, index) => (
               <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
                 <div>
-                  Day: {availability.availability_day}, Hour: {availability.availability_hour || "N/A"}
+                  Day: {availability.availability_day} 
                 </div>
                 <div>
                   <button className="btn btn-danger btn-sm ml-2" onClick={() => handleDeleteAvailability(availability.id)}>
@@ -109,13 +110,19 @@ export const AvailabilityClient = () => {
                 <form>
                   <div className="form-group">
                     <label htmlFor="newDay">New Availability Day</label>
-                    <input
-                      type="text"
+                    <select
                       id="newDay"
                       className="form-control"
                       value={newDay}
                       onChange={(e) => setNewDay(e.target.value)}
-                    />
+                    >
+                      <option value="">Select a day</option>
+                      {store.availability && store.availability.map((availability, index) => (
+                        <option key={index} value={availability.day}>
+                          {availability.day}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </form>
               </div>
@@ -130,6 +137,9 @@ export const AvailabilityClient = () => {
     </div>
   );
 };
+
+
+
 
 
 

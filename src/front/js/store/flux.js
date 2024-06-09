@@ -371,6 +371,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				educationID, 
             	experienceID,
 				photoUrl,
+				latitude, 
+				longitude, 
+				city,
 				coachID
 			) => {
 				// Construcción dinámica del cuerpo de la solicitud
@@ -385,6 +388,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				if (educationID !== 0) requestBody["education_id"] = educationID;
 				if (experienceID !== 0) requestBody["experience_id"] = experienceID;
 				if (photoUrl) requestBody["coach_photo_url"] = photoUrl;
+				if (latitude) requestBody["latitude"] = latitude;
+				if (longitude) requestBody["longitude"] = longitude;
+				if (city) requestBody["city"] = city;
 			
 				const token = localStorage.getItem("token_coach");
 			

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import axios from 'axios';
+import { MapComponent } from "../component/mapComponent";
 import { Context } from "../store/appContext";
 
 export const UpdateCoach = () => {
@@ -18,6 +20,9 @@ export const UpdateCoach = () => {
     const [photoUrl, setPhotoUrl] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [handleButton, setHandleButton] = useState(false);
+    const [address, setAddress] = useState("");
+    const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
+    const [city, setCity] = useState("")
     const tokenCoach = localStorage.getItem("token_coach");
 
     // Redirigir si no hay token
@@ -54,7 +59,7 @@ export const UpdateCoach = () => {
     // Navegar de vuelta si la actualización es exitosa
     useEffect(() => {
         if (!store.errorForm && handleButton && username && email && password) {
-            navigate("/coach");
+            navigate("/client");
         }
     }, [store.errorForm, handleButton, username, email, password, navigate]);
 
@@ -105,13 +110,48 @@ export const UpdateCoach = () => {
             educationID, 
             experienceID,
             photoUrl,
+            coordinates.lat, 
+            coordinates.lng, 
+            city,
             coachID
         );
         setHandleButton(true);
         // Obtener los datos actualizados del coache
         actions.getSingleCoach(coachID);
     };
-
+    const handleGeocode = async () => {
+        try {
+            const response = await axios.get(process.env.BACKEND_URL + '/api/geocode', {
+                params: { address }
+            });
+    
+            if (response.data.results && response.data.results.length > 0) {
+                const location = response.data.results[0].geometry.location;
+                setCoordinates(location);
+    
+                const addressComponents = response.data.results[0].address_components;
+                const localityComponent = addressComponents.find(component => component.types.includes("locality"));
+                if (localityComponent) {
+                    setCity(localityComponent.long_name);
+                } else {
+                    setCity("Unknown city");
+                }
+            } else {
+                console.error("Geocoding response does not contain results.");
+            }
+        } catch (error) {
+            if (error.response) {
+                console.error('Error response:', error.response.data);
+                console.error('Error status:', error.response.status);
+                console.error('Error headers:', error.response.headers);
+            } else if (error.request) {
+                console.error('Error request:', error.request);
+            } else {
+                console.error('Error message:', error.message);
+            }
+            console.error('Error config:', error.config);
+        }
+    };
 	return (
 		<div className="container mt-3">
             <h3 className="text-center mb-2">Actualizar Perfil del Coach</h3>
@@ -197,6 +237,27 @@ export const UpdateCoach = () => {
                             </option>          
                     ))}
                 </select>
+                <div>
+                        <div className="input-group mb-3">
+                            <input 
+                            type="text"
+                            value={address} 
+                            onChange={(e) => setAddress(e.target.value)}
+                            className="form-control" 
+                            placeholder="Enter address" 
+                            aria-label="Adress" 
+                            aria-describedby="geocode"/>
+                            <button className="btn btn-outline-secondary" type="button" id="geocode" onClick={handleGeocode} >Geocode</button>
+                        </div>
+                    {(coordinates.lat && coordinates.lng) && (
+                        <div className="">
+                            <MapComponent 
+                            lat = {coordinates.lat}
+                            lng = {coordinates.lng} 
+                            />
+                        </div>
+                    )}
+                </div>
                 {store.errorForm && (
                         <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
                             {store.errorForm}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
+import { MapComponent } from "../component/mapComponent";
 
 import { Context } from "../store/appContext";
 
@@ -16,8 +17,11 @@ export const SingleCoach = () => {
 		const fetchData = async () => {
 			setLoading(true);
 			await actions.getSingleCoach(coachID);
-			if (store.singleClient.activity_frequency_id) {
-				await actions.getSingleActivityFrequency(store.singleClient.activity_frequency_id);
+			if (store.singleCoach.education) {
+				await actions.getSingleEducation(store.singleCoach.education_id);
+			}
+            if (store.singleCoach.experience) {
+				await actions.getSingleExperience(store.singleCoach.experience_id);
 			}
 			setLoading(false);
 		};
@@ -42,7 +46,6 @@ export const SingleCoach = () => {
         if (store.singleCoach.experience_id) setExperience(store.singleExperience.time);
     }, [store.singleExperience]);
 
-
 	return (
         <>
         {loading ? 
@@ -51,38 +54,56 @@ export const SingleCoach = () => {
             <div className="container mt-3">
                 <h3 className="mb-2">Coach: {store.singleCoach.username}</h3>
                 <h5>Some details about me:</h5>
-                <ul className="my-3 fs-5">
-                    <li>
-                        <span className="fw-bold">First name: </span> 
-                        {store.singleCoach.first_name}
-                    </li>
-                    <li>
-                        <span className="fw-bold">Last name: </span> 
-                        {store.singleCoach.last_name}
-                    </li>
-                    <li>
-                        <span className="fw-bold">Education: </span> 
-                        {education}
-                    </li>
-                    <li>
-                        <span className="fw-bold">Experience: </span> 
-                        {experience}
-                    </li>
-                </ul>
-                {(loggedCoach && store.singleCoach.id === loggedCoach.id) &&            
-                <Link to={`/coach/update/${coachID}`} className="ms-auto my-1">
-                        <button className="btn btn-secondary ms-auto fw-bold" >Update</button>					
-                </Link>
-                }
-                {loggedCoach ?                
-                <Link to="/client">
-                    <button className="btn btn-primary ms-3 fw-bold" >Back to Client list</button>
-                </Link>
-                :
-                <Link to="/coach">
-                    <button className="btn btn-primary ms-3 fw-bold" >Back to Coach list</button>
-                </Link>
-                }    
+                <div className="">
+                    <ul className="my-3 fs-5">
+                        <li>
+                            <span className="fw-bold">First name: </span> 
+                            {store.singleCoach.first_name}
+                        </li>
+                        <li>
+                            <span className="fw-bold">Last name: </span> 
+                            {store.singleCoach.last_name}
+                        </li>
+                        <li>
+                            <span className="fw-bold">Education: </span> 
+                            {education}
+                        </li>
+                        <li>
+                            <span className="fw-bold">Experience: </span> 
+                            {experience}
+                        </li>
+                        {store.singleCoach.city && 
+                        <li>
+                            <span className="fw-bold">City: </span> 
+                            {store.singleCoach.city}
+                        </li>
+                        }
+                    </ul>
+                    {(store.singleCoach.latitude && store.singleCoach.longitude) &&                 
+                    <div className="">
+                        <MapComponent 
+                            lat = {store.singleCoach.latitude}
+                            lng = {store.singleCoach.longitude} 
+                        />
+                    </div>
+                    }
+                </div>
+                <div className="mt-3">
+                    {(loggedCoach && store.singleCoach.id === loggedCoach.id) &&            
+                    <Link to={`/coach/update/${coachID}`} className="ms-auto my-1">
+                            <button className="btn btn-secondary ms-auto fw-bold" >Update</button>					
+                    </Link>
+                    }
+                    {loggedCoach ?                
+                    <Link to="/client">
+                        <button className="btn btn-primary ms-3 fw-bold" >Back to Client list</button>
+                    </Link>
+                    :
+                    <Link to="/coach">
+                        <button className="btn btn-primary ms-3 fw-bold" >Back to Coach list</button>
+                    </Link>
+                    }    
+                </div>
             </div>
         }
         </>

@@ -480,6 +480,9 @@ def update_client(client_id):
         client.gender = body.get("gender", client.gender)
         client.physical_habits = body.get("physical_habits", client.physical_habits)
         client.client_photo_url = body.get("client_photo_url", client.client_photo_url)
+        client.latitude = body.get("latitude", client.latitude)
+        client.longitude = body.get("longitude", client.longitude)
+        client.city = body.get("city", client.city)
         client.activity_frequency_id = body.get("activity_frequency_id", client.activity_frequency_id)
 
         required_properties = ["username", "email", "password"]
@@ -575,6 +578,9 @@ def update_coach(coach_id):
         coach.first_name = body.get("first_name", coach.first_name)
         coach.last_name = body.get("last_name", coach.last_name)
         coach.coach_photo_url = body.get("coach_photo_url", coach.coach_photo_url)
+        coach.latitude = body.get("latitude", coach.latitude)
+        coach.longitude = body.get("longitude", coach.longitude)
+        coach.city = body.get("city", coach.city)
         coach.education_id = body.get("education_id", coach.education_id)
         coach.experience_id = body.get("experience_id", coach.experience_id)
 

@@ -715,7 +715,44 @@ def get_coach_availabilities(coach_id):
     
     return jsonify(results), 200
 
+    # POST AVAILABILITYCOACH 
 
+@api.route('/availability_coach', methods=['POST'])
+def add_availability_coach():
+    data = request.get_json()
+    
+    if not data or not data.get('coach_email') or not data.get('availability_day'):
+        return jsonify({'message': 'Missing required fields'}), 400
+    
+    # Buscar el coach por email
+    coach = Coach.query.filter_by(email=data['coach_email']).first()
+    if not coach:
+        return jsonify({'message': 'Coach not found'}), 404
+    
+    # Buscar la disponibilidad por día
+    availability = Availability.query.filter_by(day=data['availability_day']).first()
+    if not availability:
+        return jsonify({'message': 'Availability not found'}), 404
+    
+    # Verificar si ya existe una disponibilidad para ese coach en ese día
+    existing_availability = AvailabilityCoach.query.filter_by(coach_id=coach.id, availability_id=availability.id).first()
+    if existing_availability:
+        return jsonify({'message': 'This availability is already assigned to the coach'}), 409
+    
+    # Crear una nueva instancia de AvailabilityCoach
+    new_availability_coach = AvailabilityCoach(
+        availability_id=availability.id,
+        coach_id=coach.id
+    )
+    
+    try:
+        db.session.add(new_availability_coach)
+        db.session.commit()
+        
+        return jsonify(new_availability_coach.serialize()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': 'An error occurred while creating the availability', 'error': str(e)}), 500
 
 
 

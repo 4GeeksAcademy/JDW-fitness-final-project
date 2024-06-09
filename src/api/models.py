@@ -190,6 +190,25 @@ class Coach(db.Model):
             "experience_id": self.experience_id,
             # do not serialize the password, its a security breach
         }
+
+        # AVAILABILITYCOACH 
+class AvailabilityCoach(db.Model):
+     id = db.Column(db.Integer, primary_key=True)
+     availability_id = db.Column(db.Integer, db.ForeignKey('availability.id'), nullable=False)
+     coach_id = db.Column(db.Integer, db.ForeignKey('coach.id'), nullable=False)
+ 
+     availability = db.relationship('Availability', backref=db.backref('availability_coaches', lazy=True))
+     coach = db.relationship('Coach', backref=db.backref('availability_coaches', lazy=True))
+
+     def __repr__(self):
+        return f'<AvailabilityCoach {self.id}>'
+
+     def serialize(self):
+        return {
+            "id": self.id,
+            "coach_email": self.coach.email if self.coach else None,
+            "availability_day": self.availability.day if self.availability else None
+        }
       
 class Likes(db.Model):
     id = db.Column(db.Integer, primary_key=True)

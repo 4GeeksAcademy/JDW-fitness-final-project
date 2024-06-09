@@ -771,6 +771,42 @@ def delete_availability_coach(id):
         return jsonify({'message': 'An error occurred while deleting the availability', 'error': str(e)}), 500 
 
 
+# PUT AVAILABILITYCOACH
+
+@api.route('/availability_coach/<int:id>', methods=['PUT'])
+def update_availability_coach_day(id):
+    availability_coach = AvailabilityCoach.query.get(id)
+    if not availability_coach:
+        return jsonify({'message': 'Availability coach entry not found'}), 404
+
+    data = request.json
+    if not data:
+        return jsonify({'message': 'No input data provided'}), 400
+
+    new_day = data.get('availability_day')
+    if not new_day:
+        return jsonify({'message': 'New availability day not provided'}), 400
+
+    try:
+        # Find the new availability_id by the provided day
+        new_availability = Availability.query.filter_by(day=new_day).first()
+        if not new_availability:
+            return jsonify({'message': 'The specified availability day does not exist'}), 404
+
+        # Check if the new availability_id is already occupied by the coach
+        existing_entry = AvailabilityCoach.query.filter_by(coach_id=availability_coach.coach_id, availability_id=new_availability.id).first()
+        if existing_entry:
+            return jsonify({'message': 'The new availability is already occupied by the coach'}), 400
+
+        availability_coach.availability_id = new_availability.id
+
+        db.session.commit()
+        return jsonify({'message': 'Availability coach entry updated successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': 'Error while updating the availability coach entry', 'error': str(e)}), 500
+
+
 
 @api.route('/like', methods=['POST'])
 def add_like():

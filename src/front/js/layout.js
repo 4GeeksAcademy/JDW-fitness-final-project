@@ -59,6 +59,11 @@ import { NoGivenLikesCoach } from "./pages/noGivenLikesCoach";
 import { ReceivedLikesCoach } from "./pages/receivedLikesCoach";
 import { MatchCoach } from "./pages/matchCoach";
 
+import { AvailabilityCoach } from "./pages/availabilityCoach";
+
+
+
+
 import injectContext from "./store/appContext";
 // import { AvailabilityClient } from "./pages/availabilityClient";
 
@@ -119,6 +124,10 @@ const Layout = () => {
                         <Route element={<SingleCoach />} path="/coach/:coachID" />
                         <Route element={<AddCoach />} path="/coach/signup" />
                         <Route element={<UpdateCoach />} path="/coach/update/:coachID" />
+                        
+                         {/* AVAILABILITYCOACH PATH */}
+                        <Route element={<AvailabilityCoach />} path="/availability-coach/:coach_id" />
+
                         {/* CLIENT PATH */}
                         <Route element={<Client />} path="/client" />
                         <Route element={<SingleClient />} path="/client/:clientID" />

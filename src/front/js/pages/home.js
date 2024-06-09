@@ -9,7 +9,6 @@ export const Home = () => {
 
 	return (
 		<div className="text-center mt-5">
-			<img src={helloThere} atl="hello there" className="rounded-circle mb-3"/>
 			<h1>WELCOME TO JDW FITNESS!!</h1>
 			<h2>Join to us and become a Jidower!</h2>
 			<p>Why should you create an account and be part of JDW Fitness? About Us</p>

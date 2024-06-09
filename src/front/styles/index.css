@@ -1,3 +1,74 @@
 /* 
     General Styles used on every website (Don't Repeat Yourself)
 */
+body {
+    font-family: Poppins;
+}
+.btn-secondary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #A02CFA;
+    --bs-btn-border-color: #A02CFA;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #8825d5;
+    --bs-btn-hover-border-color: #8023c8;
+    --bs-btn-focus-shadow-rgb: 174, 76, 251;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #8023c8;
+    --bs-btn-active-border-color: #7821bc;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0,0,0,0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #A02CFA;
+    --bs-btn-disabled-border-color: #A02CFA;
+}
+.authincation-content {
+    background: #fff;
+    box-shadow: 0 0 35px 20px rgba(154, 161, 171, 0.15);
+    border-radius: 8px;
+    margin: 20px 0;
+}
+.text-secondary {
+    --bs-text-opacity: 1;
+    color: #A02CFA !important;
+}
+.light.btn-secondary {
+    background-color: #f1dffe;
+    border-color: #f1dffe;
+    color: #A02CFA;
+}
+.form-group {
+    margin-bottom: 1rem;
+}
+input::placeholder {
+    font: .9rem/3 sans-serif;
+}
+.eye {
+    position: absolute;
+    right: 17px;
+    bottom: 16px;
+}
+.show-pass {
+    cursor: pointer;
+}
+.alert-danger {
+    background: #fff3f7;
+    border-color: #fff3f7;
+    color: #F94687;
+}
+.alert {
+    border-radius: .625rem;
+    padding: 1rem 3rem 1rem 1.5rem;
+}
+.alert-danger {
+    --bs-alert-color: var(--bs-danger-text-emphasis);
+    --bs-alert-bg: var(--bs-danger-bg-subtle);
+    --bs-alert-border-color: var(--bs-danger-border-subtle);
+    --bs-alert-link-color: var(--bs-danger-text-emphasis);
+}
+.form-check-input:checked {
+    background-color: #A02CFA;
+    border-color: #A02CFA;
+}
+.form-check-input:focus {
+    outline: none; /* Eliminar el contorno predeterminado */
+    box-shadow: 0 0 0 0.3rem #f1dffe; /* Ajusta el color y la transparencia del halo */
+}

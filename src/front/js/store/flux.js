@@ -35,16 +35,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 	    activities: [],
 		  singleActivityFrequency:{},
 		  error: null
-		},
+		
 		availabilityCoach:[],
 		  singleAvailabilityCoach:[],
 		  noAvailabilityMessage: false,
 		  
 		  coachDetails: {
 			coach_id: null,
+       email: ""
+		  },
+		availabilityClient:[],
+		  singleAvailabilityClient:[],
+		  noAvailabilityMessage: false,
+		  
+		  clientDetails: {
+			client_id: null,
 			email: ""
 		  },
-
+  },
 		actions: {
 			
 	// CLIENT
@@ -66,45 +74,16 @@ const getState = ({ getStore, getActions, setStore }) => {
             console.error("Error fetching single client:", error);
         }
     },
-	clientSignUp: async (username, email, password, firstName, lastName,age,height,weight,gender,physicalHabits,clientPhotoUrl,activityFrequencyID) => {
-		const requestBody = {
-			"username": username,
-			"email": email,
-			"password": password,
-		};
-	
-		if (firstName) {
-			requestBody["first_name"] = firstName;
-		}
-		if (lastName) {
-			requestBody["last_name"] = lastName;
-		}
-		if (age) {
-			requestBody["age"] = age;
-		}
-		if (height) {
-			requestBody["height"] = height;
-		}
-		if (weight) {
-			requestBody["weight"] = weight;
-		}
-		if (gender) {
-			requestBody["gender"] = gender;
-		}
-		if (physicalHabits) {
-			requestBody["physical_habits"] = physicalHabits;
-		}
-		if (clientPhotoUrl) {
-			requestBody["client_photo_url"] = clientPhotoUrl;
-		}
-		if (activityFrequencyID !== 0) {
-			requestBody["activity_frequency_id"] = activityFrequencyID;
-		}
-	
+
+	clientSignUp: async (username, email, password) => {
 		const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(requestBody)
+			body: JSON.stringify({
+				"username": username,
+				"email": email,
+				"password": password,
+			})
 		};
 		try {
 			const response = await fetch(process.env.BACKEND_URL + "/api/client/signup", requestOptions);
@@ -209,30 +188,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 			setSingleCoach: () => {
 				setStore({ singleCoach: currentCoach })
 			},
-			coachSignUp: async (username, email, password, firstName, lastName, educationID, experienceID) => {
-				const requestBody = {
-					"username": username,
-					"email": email,
-					"password": password,
-				};
-			
-				if (firstName) {
-					requestBody["first_name"] = firstName;
-				}
-				if (lastName) {
-					requestBody["last_name"] = lastName;
-				}
-				if (educationID !== 0) {
-					requestBody["education_id"] = educationID;
-				}
-				if (experienceID !== 0) {
-					requestBody["experience_id"] = experienceID;
-				}
-			
+			coachSignUp: async (username, email, password) => {
 				const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(requestBody)
+					body: JSON.stringify({
+						"username": username,
+						"email": email,
+						"password": password,
+					})
 				};
 				try {
 					const response = await fetch(process.env.BACKEND_URL + "/api/coach/signup", requestOptions);
@@ -776,7 +740,8 @@ updateCoachAPI: async (
 				.then(() => getActions().getActivityFrequency())
 			},
 
-			// getavailavilitycoach
+      
+      // AVAILABILITY COACH
 			getAvailabilityCoach: () => {
 				fetch(`${process.env.BACKEND_URL}/api/availability_coach`)
 					.then((response) => response.json())
@@ -787,7 +752,6 @@ updateCoachAPI: async (
 					.catch((error) => console.error("Error fetching coach availability:", error));
 			},
 
-			// getavailabilitycoach 
 			getSingleAvailabilityCoach: async (coach_id) => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/availability_coach/${coach_id}`);
@@ -833,8 +797,6 @@ updateCoachAPI: async (
 				}
 			},
 
-			// deleteavailabilitycoach
-
 			deleteAvailabilityCoach: async (availabilityId, coachId) => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/availability_coach/day/${availabilityId}`, {
@@ -860,6 +822,89 @@ updateCoachAPI: async (
 			
 			
 			
+      // AVAILABILITY CLIENT
+			getAvailabilityClient: () => {
+				fetch(process.env.BACKEND_URL + "/api/availability_client")
+				  .then((response) => response.json())
+				  .then((data) => {
+					console.log("Availability Client Data:", data); 
+					setStore({ availabilityClient: data });
+				  })
+				  .catch((error) => console.error("Error fetching availability client:", error)); 
+			  },
+			  getSingleAvailabilityClient: async (client_id) => {
+				try {
+				  const response = await fetch(`${process.env.BACKEND_URL}/api/availability_client/client/${client_id}`);
+				  if (!response.ok) {
+					throw new Error(`Error fetching client data: ${response.statusText}`);
+				  }
+				  const data = await response.json();
+			  
+				  // Verificar si se encontraron disponibilidades
+				  if (data.availabilities.length === 0) {
+					setStore({
+					  singleAvailabilityClient: [], // No hay disponibilidades
+					  noAvailabilityMessage: true,  // Indicar que no hay disponibilidades
+					  clientDetails: {
+						client_id: data.client_id,
+						email: data.client_email // Obtener el email del cliente de la respuesta
+					  }
+					});
+				  } else {
+					// Guardar detalles del cliente y sus disponibilidades
+					setStore({
+					  singleAvailabilityClient: data.availabilities,
+					  noAvailabilityMessage: false,
+					  clientDetails: {
+						client_id: data.client_id,
+						email: data.client_email
+					  }
+					});
+				  }
+			  
+				  console.log(`Fetched availability for client (ID: ${client_id}):`, data);
+				} catch (error) {
+				  console.error("Error fetching availability client:", error);
+				  // Manejar el error y posiblemente actualizar el store para reflejar el error
+				  setStore({
+					singleAvailabilityClient: [],
+					noAvailabilityMessage: true,
+					clientDetails: {
+					  client_id: client_id,
+					  email: "unknown@example.com" // Placeholder hasta obtener el email real
+					}
+				  });
+				}
+			  },
+			  
+			  // DELETE AVAILABILITYCLIENT 
+
+			  deleteAvailabilityClient: async (availabilityId, clientId) => {
+				try {
+				  const response = await fetch(`${process.env.BACKEND_URL}/api/availability_client/day/${availabilityId}`, {
+					method: 'DELETE',
+					headers: {
+					  'Content-Type': 'application/json'
+					}
+				  });
+			  
+				  if (!response.ok) {
+					throw new Error(`Error deleting availability: ${response.statusText}`);
+				  }
+			  
+				  const data = await response.json();
+				  console.log(`Deleted availability (ID: ${availabilityId}):`, data);
+			  
+				  // Volver a cargar las disponibilidades después de borrar
+				  await getActions().getSingleAvailabilityClient(clientId);
+				} catch (error) {
+				  console.error("Error deleting availability:", error);
+				}
+			  },
+			  
+						  
+			  			  
+
       loadBeginning: () => {
 			getActions().checkAuth()
 		  },    

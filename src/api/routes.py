@@ -388,6 +388,7 @@ def get_clients():
 @api.route('/client/<int:client_id>', methods=['GET'])
 def get_client(client_id):
     client = Client.query.filter_by(id=client_id).first()
+    if not client: return jsonify({"error": f"The ID '{client_id}' was not found in Clients"}), 404
     return jsonify(client.serialize()), 200
   
 @api.route('/client/signup', methods=['POST'])
@@ -450,14 +451,12 @@ def update_client(client_id):
     try:
         # Obtener la identidad del JWT y extraer el client_id
         identity = get_jwt_identity()
-        print(f"Identidad obtenida del JWT: {identity}")  # Esto mostrará el diccionario completo
         
         # Extraer el client_id del diccionario de identidad
-        client_id = identity.get('id')
-        print(f"Client ID extraído: {client_id}")
+        token_client_id = identity.get('id')
 
-        if client_id is None:
-            return jsonify({"error": "Client ID not found in token"}), 400
+        if token_client_id is None or token_client_id != client_id:
+            return jsonify({"error": "Unauthorized access"}), 403
 
         # Buscar el cliente en la base de datos usando el client_id
         client = Client.query.get(client_id)
@@ -468,7 +467,23 @@ def update_client(client_id):
         if body is None:
             raise APIException("Request body is missing", status_code=400)
 
-        # Actualizar campos del usuario
+        # Comprobar que los campos obligatorios no estén vacíos
+        required_properties = ["username", "email", "password"]
+        for key in required_properties:
+            if not body.get(key):
+                return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+
+        # Comprobar si el username ya existe en otro cliente
+        existing_username = Client.query.filter(Client.username == body["username"], Client.id != client_id).first()
+        if existing_username:
+            return jsonify({"error": f"The username '{body['username']}' already exists in the database"}), 400
+
+        # Comprobar si el email ya existe en otro cliente, excluyendo el actual
+        existing_email = Client.query.filter(Client.email == body["email"], Client.id != client_id).first()
+        if existing_email:
+            return jsonify({"error": f"The email '{body['email']}' already exists in the database"}), 400
+
+        # Actualizar campos del cliente
         client.username = body.get("username", client.username)
         client.email = body.get("email", client.email)
         client.password = body.get("password", client.password)
@@ -484,10 +499,6 @@ def update_client(client_id):
         client.longitude = body.get("longitude", client.longitude)
         client.city = body.get("city", client.city)
         client.activity_frequency_id = body.get("activity_frequency_id", client.activity_frequency_id)
-
-        required_properties = ["username", "email", "password"]
-        for key in required_properties:
-            if request.json[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
 
         db.session.commit()
 
@@ -550,11 +561,9 @@ def update_coach(coach_id):
     try:
         # Obtener la identidad del JWT
         identity = get_jwt_identity()
-        print(f"Identidad obtenida del JWT: {identity}")  # Esto mostrará el diccionario completo
         
         # Extraer el coach_id del diccionario de identidad
         token_coach_id = identity.get('id')
-        print(f"Coach ID extraído del token: {token_coach_id}")
 
         if token_coach_id is None:
             return jsonify({"error": "Coach ID not found in token"}), 400
@@ -562,7 +571,7 @@ def update_coach(coach_id):
         if token_coach_id != coach_id:
             return jsonify({"error": "Unauthorized access to this coach"}), 403
 
-        # Buscar el coache en la base de datos usando el coach_id de la URL
+        # Buscar el coach en la base de datos usando el coach_id de la URL
         coach = Coach.query.get(coach_id)
         if coach is None:
             return jsonify({"error": "Coach not found"}), 404
@@ -571,7 +580,23 @@ def update_coach(coach_id):
         if body is None:
             raise APIException("Request body is missing", status_code=400)
 
-        # Actualizar campos del usuario
+        # Comprobar que los campos obligatorios no estén vacíos
+        required_properties = ["username", "email", "password"]
+        for key in required_properties:
+            if not body.get(key):
+                return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+
+        # Comprobar si el username ya existe en otro coach
+        existing_username = Coach.query.filter(Coach.username == body["username"], Coach.id != coach_id).first()
+        if existing_username:
+            return jsonify({"error": f"The username '{body['username']}' already exists in the database"}), 400
+
+        # Comprobar si el email ya existe en otro coach, excluyendo el actual
+        existing_email = Coach.query.filter(Coach.email == body["email"], Coach.id != coach_id).first()
+        if existing_email:
+            return jsonify({"error": f"The email '{body['email']}' already exists in the database"}), 400
+
+        # Actualizar campos del coach
         coach.username = body.get("username", coach.username)
         coach.email = body.get("email", coach.email)
         coach.password = body.get("password", coach.password)
@@ -917,19 +942,27 @@ def get_availability_client():
     return jsonify(results), 200 
 
 # Availability_client GET_ID ENDPOINTS
-@api.route('/availability_client/<int:availability_client_id>', methods=['GET'])
-def get_client_availabilities(availability_client_id):
-    # Obtener todas las entradas de Availability_client asociadas con el client_id
-    availability_clients = Availability_client.query.filter_by(client_id=availability_client_id).all()
-    
-    if not availability_clients:
-        return jsonify({'message': 'No availabilities found for the given client_id'}), 404
-    
-    # Serializar cada entrada de Availability_client
-    results = [availability_client.serialize() for availability_client in availability_clients]
-    
-    return jsonify(results), 200
+@api.route('/availability_client/client/<int:client_id>', methods=['GET'])
+def get_client_availabilities(client_id):
+    # Consultar los datos del cliente
+    client = Client.query.get(client_id)
+    if not client:
+        return jsonify({'message': 'Client not found'}), 404
 
+    # Consultar las disponibilidades asociadas
+    availability_clients = Availability_client.query.filter_by(client_id=client_id).all()
+
+    # Serializar las disponibilidades si existen
+    availabilities = [availability_client.serialize() for availability_client in availability_clients]
+
+    # Crear la respuesta incluyendo los datos básicos del cliente
+    result = {
+        "client_id": client.id,
+        "client_email": client.email,
+        "availabilities": availabilities
+    }
+
+    return jsonify(result), 200
 
     # ENDPOINT PARA POST  
 
@@ -972,10 +1005,9 @@ def create_availability_client():
 
 
 
-
 # ENDPOINT TO DELETE A SINGLE AVAILABILITY_CLIENT ENTRY
 
-@api.route('/availability_client/<int:id>', methods=['DELETE'])
+@api.route('/availability_client/day/<int:id>', methods=['DELETE'])
 def delete_availability_client(id):
     availability_client = Availability_client.query.get(id)
     
@@ -987,32 +1019,12 @@ def delete_availability_client(id):
     
     return jsonify({'message': 'Availability client entry deleted successfully'}), 200
 
-# ENDPOINT TO DELETE ALL AVAILABILITY_CLIENT ENTRIES FOR A SPECIFIC CLIENT.
-@api.route('/availability_client/client/<int:client_id>', methods=['DELETE'])
-def delete_all_availability_client_for_client(client_id):
-    availability_clients = Availability_client.query.filter_by(client_id=client_id).all()
-    
-    if not availability_clients:
-        return jsonify({'message': 'No availabilities found for the given client_id'}), 404
-    
-    for availability_client in availability_clients:
-        db.session.delete(availability_client)
-    
-    db.session.commit()
-    
-    return jsonify({'message': 'All availability client entries for the client deleted successfully'}), 200
-
-
 
 
 # Availability_client PUT ENDPOINTS
 
-@api.route('/availability_client/<int:id>', methods=['PUT'])
-def update_availability_client_day(id):
-    availability_client = Availability_client.query.get(id)
-    if not availability_client:
-        return jsonify({'message': 'Availability client entry not found'}), 404
-
+@api.route('/availability_client/<int:client_id>/availability/<int:availability_client_id>', methods=['PUT'])
+def update_availability_client_day(client_id, availability_client_id):
     data = request.json
     if not data:
         return jsonify({'message': 'No input data provided'}), 400
@@ -1022,34 +1034,29 @@ def update_availability_client_day(id):
         return jsonify({'message': 'New availability day not provided'}), 400
 
     try:
-        # Find the new availability_id by the provided day
+        # Verificar que la entrada de disponibilidad cliente especificada existe y pertenece al cliente
+        availability_client = Availability_client.query.filter_by(id=availability_client_id, client_id=client_id).first()
+        if not availability_client:
+            return jsonify({'message': 'Availability client entry not found for the given client_id and availability_client_id'}), 404
+
+        # Encuentra la nueva disponibilidad por día
         new_availability = Availability.query.filter_by(day=new_day).first()
         if not new_availability:
-            return jsonify({'message': 'The specified availability day does not exist'}), 404
+            return jsonify({'message': f'The specified availability day {new_day} does not exist'}), 404
 
-        # Check if the new availability_id is already occupied by the client
-        existing_entry = Availability_client.query.filter_by(client_id=availability_client.client_id, availability_id=new_availability.id).first()
+        # Verificar si el cliente ya tiene asignada esta nueva disponibilidad (día específico)
+        existing_entry = Availability_client.query.filter_by(client_id=client_id, availability_id=new_availability.id).first()
         if existing_entry:
-            return jsonify({'message': 'The new availability is already occupied by the client'}), 400
+            return jsonify({'message': f'The new availability {new_day} is already occupied by the client'}), 400
 
+        # Actualizar el availability_id de la entrada específica
         availability_client.availability_id = new_availability.id
-
         db.session.commit()
+
         return jsonify({'message': 'Availability client entry updated successfully'}), 200
+
     except Exception as e:
         db.session.rollback()
+
         return jsonify({'message': 'Error while updating the availability client entry', 'error': str(e)}), 500
-
-
-# @api.route('/upload', methods=['POST'])
-# def upload_image():
-#     client_id = request.form.get('client_id')
-#     file_to_upload = request.files['file']
-#     if file_to_upload:
-#         upload_result = cloudinary.uploader.upload(file_to_upload)
-#         client = Client.query.get(client_id)
-#         client.client_photo_url = upload_result['url']
-#         db.session.commit()
-#         return jsonify({"message": "Image uploaded successfully", "url": upload_result['url']}), 200
-#     return jsonify({"error": "No file provided"}), 400
 

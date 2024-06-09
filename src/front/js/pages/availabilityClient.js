@@ -28,10 +28,10 @@ export const AvailabilityClient = () => {
       });
 
       if (response.ok) {
-        
+        // Vuelve a cargar las disponibilidades
         actions.getSingleAvailabilityClient(client_id);
-        setModalIsOpen(false);  
-        setNewDay("");  
+        setModalIsOpen(false);  // Cerrar modal después de agregar disponibilidad
+        setNewDay("");  // Limpiar el campo de entrada
       } else {
         console.error("Error adding new availability");
       }
@@ -40,14 +40,20 @@ export const AvailabilityClient = () => {
     }
   };
 
-  
+  const handleDeleteAvailability = async (availabilityId) => {
+    if (client_id) {
+      await actions.deleteAvailabilityClient(availabilityId, client_id);
+    }
+  };
+
+  // Abrir y cerrar el modal usando el estado
   const openModal = () => {
     setModalIsOpen(true);
   };
 
   const closeModal = () => {
     setModalIsOpen(false);
-    setNewDay("");  
+    setNewDay("");  // Limpiar el campo de entrada
   };
 
   return (
@@ -66,7 +72,14 @@ export const AvailabilityClient = () => {
           <ul className="list-group">
             {store.singleAvailabilityClient.map((availability, index) => (
               <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                Day: {availability.availability_day}, Hour: {availability.availability_hour || "N/A"}
+                <div>
+                  Day: {availability.availability_day}, Hour: {availability.availability_hour || "N/A"}
+                </div>
+                <div>
+                  <button className="btn btn-danger btn-sm ml-2" onClick={() => handleDeleteAvailability(availability.id)}>
+                    Delete
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

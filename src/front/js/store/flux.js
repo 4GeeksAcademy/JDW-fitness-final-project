@@ -634,6 +634,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			  },
 			  
+			  // DELETE AVAILABILITYCLIENT 
+
+			  deleteAvailabilityClient: async (availabilityId, clientId) => {
+				try {
+				  const response = await fetch(`${process.env.BACKEND_URL}/api/availability_client/day/${availabilityId}`, {
+					method: 'DELETE',
+					headers: {
+					  'Content-Type': 'application/json'
+					}
+				  });
+			  
+				  if (!response.ok) {
+					throw new Error(`Error deleting availability: ${response.statusText}`);
+				  }
+			  
+				  const data = await response.json();
+				  console.log(`Deleted availability (ID: ${availabilityId}):`, data);
+			  
+				  // Volver a cargar las disponibilidades después de borrar
+				  await getActions().getSingleAvailabilityClient(clientId);
+				} catch (error) {
+				  console.error("Error deleting availability:", error);
+				}
+			  },
 			  
 						  
 			  			  

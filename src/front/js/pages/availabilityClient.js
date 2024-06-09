@@ -1,50 +1,130 @@
-// src/components/AvailabilityClient.js
-
-import React, { useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { Context } from '../store/appContext';
+import React, { useEffect, useContext, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Context } from "../store/appContext";
 
 export const AvailabilityClient = () => {
-    const { store, actions } = useContext(Context);
+  const { store, actions } = useContext(Context);
+  const { client_id } = useParams();
+  const [newDay, setNewDay] = useState("");
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
-    useEffect(() => {
-        actions.getAvailabilityClient();
-    }, [actions]);
+  useEffect(() => {
+    if (client_id) {
+      actions.getSingleAvailabilityClient(client_id);
+    }
+  }, [client_id]);
 
-    return (
-        <div className="container mt-5">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h1 className="text-center">Selecciona un Cliente para Ver sus Días Ocupados</h1>
-              
-            </div>
+  const handleAddNewAvailability = async () => {
+    try {
+      const response = await fetch(`${process.env.BACKEND_URL}/api/availability_client`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          client_email: store.clientDetails.email || "user@example.com",
+          availability_day: newDay,
+        }),
+      });
 
-            <div className="list-group">
-                {store.availabilityClient.map((client, index) => (
-                    <div key={index} className="list-group-item list-group-item-action mb-2 p-3 d-flex justify-content-between align-items-center">
-                        <div className="d-flex flex-column">
-                            <h5 className="mb-1">ID: {client.id}</h5>
-                            <p className="mb-1">Email: {client.client_email}</p>
-                            <p className='mb-1'>Day Availability: {client.availability_day}</p>
-                            <div className="btn-container">
-                                <Link to={`/client/${client.id}`} className="btn btn-info btn-sm mt-2">
-                                    Show More
-                                </Link>
-                            </div>
-                        </div>
-                        <div className="d-flex align-items-center mx-3">
-                            <Link to={`/client/${client.id}/add-day`} className="btn btn-success btn-sm">
-                                Add New Day Available
-                            </Link>
-                            <span className="ms-2"></span>
-                            <Link to={`/client/update/${client.id}`} className="btn btn-secondary btn-sm">
-                                Update
-                            </Link>
-                        </div>
-                    </div>
-                ))}
-            </div>
+      if (response.ok) {
+        
+        actions.getSingleAvailabilityClient(client_id);
+        setModalIsOpen(false);  
+        setNewDay("");  
+      } else {
+        console.error("Error adding new availability");
+      }
+    } catch (error) {
+      console.error("Error adding new availability:", error);
+    }
+  };
+
+  
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+    setNewDay("");  
+  };
+
+  return (
+    <div className="container mt-5">
+      <h1 className="text-center mb-4">Availability for Client: {store.clientDetails?.email}</h1>
+      
+      {store.noAvailabilityMessage ? (
+        <div className="text-center">
+          <p>Aún no has agregado ningún día de disponibilidad, por favor agrega uno:</p>
+          <button className="btn btn-primary" onClick={openModal}>
+            Add New Availability
+          </button>
         </div>
-    );
+      ) : (
+        Array.isArray(store.singleAvailabilityClient) && store.singleAvailabilityClient.length > 0 ? (
+          <ul className="list-group">
+            {store.singleAvailabilityClient.map((availability, index) => (
+              <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                Day: {availability.availability_day}, Hour: {availability.availability_hour || "N/A"}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="text-center">
+            <p>Loading availability data...</p>
+          </div>
+        )
+      )}
+
+      <button className="btn btn-primary mt-4" onClick={openModal}>
+        Add New Availability
+      </button>
+
+      {/* Modal de Bootstrap */}
+      {modalIsOpen && (
+        <div className="modal show" style={{ display: "block" }} tabIndex="-1" role="dialog">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Add New Availability</h5>
+                <button type="button" className="close" onClick={closeModal}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <form>
+                  <div className="form-group">
+                    <label htmlFor="newDay">New Availability Day</label>
+                    <input
+                      type="text"
+                      id="newDay"
+                      className="form-control"
+                      value={newDay}
+                      onChange={(e) => setNewDay(e.target.value)}
+                    />
+                  </div>
+                </form>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={closeModal}>Cancel</button>
+                <button type="button" className="btn btn-success" onClick={handleAddNewAvailability}>Add Availability</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
+
+
+
+
+
+
+
+
+
 
 

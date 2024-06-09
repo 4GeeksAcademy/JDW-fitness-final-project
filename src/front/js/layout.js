@@ -48,6 +48,7 @@ import { LoginCoach } from "./pages/loginCoach";
 
 import injectContext from "./store/appContext";
 import { AvailabilityClient } from "./pages/availabilityClient";
+import { AddAvailabilityClient } from "./pages/addAvailabilityClient";
 
 
 
@@ -82,7 +83,10 @@ const Layout = () => {
                         <Route element={<AddGoal />} path="/goals/form" />
                         <Route element={<UpdateGoal />} path="/goals/update/:goalID" />
                         {/* AVAILABILITY_CLIENT ROUTES */}
-                        <Route element={<AvailabilityClient />} path="/availability-client" />
+                       <Route element={<AvailabilityClient />} path="/availability-client/:client_id" />
+                       <Route element={<AddAvailabilityClient />} path="/availability-client/:id" />
+                       
+
                         {/* DISEASES ROUTES */}
                         <Route element={<Diseases />} path="/diseases" />
                         <Route element={<SingleDiseases />}  path="/diseases/:diseasesID" />

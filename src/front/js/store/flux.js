@@ -25,7 +25,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 		  singleActivityFrequency:{},
 		},
 		availabilityClient:[],
-		  singleAvailabilityClient:{},
+		  singleAvailabilityClient:[],
+		  noAvailabilityMessage: false,
+		  
+		  clientDetails: {
+			client_id: null,
+			email: ""
+		  },
 
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -581,17 +587,56 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Availability Client Data:", data); 
 					setStore({ availabilityClient: data });
 				  })
-				  .catch((error) => console.error("Error fetching availability client:", error)); // Added error handling
+				  .catch((error) => console.error("Error fetching availability client:", error)); 
 			  },
-			getSingleAvailabilityClient: async (availabilityClientID) => {
+			  getSingleAvailabilityClient: async (client_id) => {
 				try {
-					const response = await fetch(process.env.BACKEND_URL + `api/availability_client/${availabilityClientID}`);
-					const data = await response.json();
-					setStore({ singleAvailabilityClient: data });
+				  const response = await fetch(`${process.env.BACKEND_URL}/api/availability_client/client/${client_id}`);
+				  if (!response.ok) {
+					throw new Error(`Error fetching client data: ${response.statusText}`);
+				  }
+				  const data = await response.json();
+			  
+				  // Verificar si se encontraron disponibilidades
+				  if (data.availabilities.length === 0) {
+					setStore({
+					  singleAvailabilityClient: [], // No hay disponibilidades
+					  noAvailabilityMessage: true,  // Indicar que no hay disponibilidades
+					  clientDetails: {
+						client_id: data.client_id,
+						email: data.client_email // Obtener el email del cliente de la respuesta
+					  }
+					});
+				  } else {
+					// Guardar detalles del cliente y sus disponibilidades
+					setStore({
+					  singleAvailabilityClient: data.availabilities,
+					  noAvailabilityMessage: false,
+					  clientDetails: {
+						client_id: data.client_id,
+						email: data.client_email
+					  }
+					});
+				  }
+			  
+				  console.log(`Fetched availability for client (ID: ${client_id}):`, data);
 				} catch (error) {
-					console.error("Error fetching activity frequency:", error);
+				  console.error("Error fetching availability client:", error);
+				  // Manejar el error y posiblemente actualizar el store para reflejar el error
+				  setStore({
+					singleAvailabilityClient: [],
+					noAvailabilityMessage: true,
+					clientDetails: {
+					  client_id: client_id,
+					  email: "unknown@example.com" // Placeholder hasta obtener el email real
+					}
+				  });
 				}
-			},
+			  },
+			  
+			  
+						  
+			  			  
       loadBeginning: () => {
 			getActions().checkAuth()
 		  },    

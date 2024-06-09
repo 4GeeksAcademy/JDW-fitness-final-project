@@ -415,35 +415,86 @@ def signup_client():
 
     return jsonify(client_to_add.serialize()), 201
 
-@api.route('/client/<int:client_id>', methods=['PUT'])
-def update_client(client_id):
-    client_data = request.json
-    required_properties = ["username", "email", "password"]
+# @api.route('/client/<int:client_id>', methods=['PUT'])
+# def update_client(client_id):
+#     client_data = request.json
+#     required_properties = ["username", "email", "password"]
 
-    for prop in required_properties:
-        if prop not in client_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
+#     for prop in required_properties:
+#         if prop not in client_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
     
-    for key in required_properties:
-        if client_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+#     for key in required_properties:
+#         if client_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
     
-    existing_username = Client.query.filter(Client.username == client_data["username"], Client.id != client_id).first()
-    if existing_username:
-        return jsonify({"error": f"The username '{client_data['username']}' already exists in the database"}), 400
+#     existing_username = Client.query.filter(Client.username == client_data["username"], Client.id != client_id).first()
+#     if existing_username:
+#         return jsonify({"error": f"The username '{client_data['username']}' already exists in the database"}), 400
 
-    existing_email = Client.query.filter(Client.email == client_data["email"], Client.id != client_id).first()
-    if existing_email:
-        return jsonify({"error": f"The email '{client_data['email']}' already exists in the database"}), 400
+#     existing_email = Client.query.filter(Client.email == client_data["email"], Client.id != client_id).first()
+#     if existing_email:
+#         return jsonify({"error": f"The email '{client_data['email']}' already exists in the database"}), 400
       
-    client = Client.query.get(client_id)
-    if client is None:
-        return jsonify({"error": f"The ID '{client_id}' was not found in Clients"}), 404
+#     client = Client.query.get(client_id)
+#     if client is None:
+#         return jsonify({"error": f"The ID '{client_id}' was not found in Clients"}), 404
 
-    for prop in client_data:
-        setattr(client, prop, client_data[prop])
+#     for prop in client_data:
+#         setattr(client, prop, client_data[prop])
 
-    db.session.commit()
+#     db.session.commit()
+#     return jsonify(client.serialize()), 200
 
-    return jsonify(client.serialize()), 200
+@api.route('/client/<int:client_id>', methods=['PUT'])
+@jwt_required()
+def update_client(client_id):
+    try:
+        # Obtener la identidad del JWT y extraer el client_id
+        identity = get_jwt_identity()
+        print(f"Identidad obtenida del JWT: {identity}")  # Esto mostrará el diccionario completo
+        
+        # Extraer el client_id del diccionario de identidad
+        client_id = identity.get('id')
+        print(f"Client ID extraído: {client_id}")
+
+        if client_id is None:
+            return jsonify({"error": "Client ID not found in token"}), 400
+
+        # Buscar el cliente en la base de datos usando el client_id
+        client = Client.query.get(client_id)
+        if client is None:
+            return jsonify({"error": "Client not found"}), 404
+
+        body = request.get_json()
+        if body is None:
+            raise APIException("Request body is missing", status_code=400)
+
+        # Actualizar campos del usuario
+        client.username = body.get("username", client.username)
+        client.email = body.get("email", client.email)
+        client.password = body.get("password", client.password)
+        client.first_name = body.get("first_name", client.first_name)
+        client.last_name = body.get("last_name", client.last_name)
+        client.age = body.get("age", client.age)
+        client.height = body.get("height", client.height)
+        client.weight = body.get("weight", client.weight)
+        client.gender = body.get("gender", client.gender)
+        client.physical_habits = body.get("physical_habits", client.physical_habits)
+        client.client_photo_url = body.get("client_photo_url", client.client_photo_url)
+        client.latitude = body.get("latitude", client.latitude)
+        client.longitude = body.get("longitude", client.longitude)
+        client.city = body.get("city", client.city)
+        client.activity_frequency_id = body.get("activity_frequency_id", client.activity_frequency_id)
+
+        required_properties = ["username", "email", "password"]
+        for key in required_properties:
+            if request.json[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+
+        db.session.commit()
+
+        return jsonify({"msg": "Perfil de usuario actualizado con éxito"}), 200
+    except Exception as e:
+        print(f"Error actualizando el perfil: {e}")
+        return jsonify({"error": str(e)}), 500
   
 @api.route('/client/<int:client_id>', methods=['DELETE'])
 def del_client(client_id):
@@ -494,40 +545,52 @@ def add_coach():
     return jsonify(coach_to_add.serialize()), 201
 
 @api.route('/coach/<int:coach_id>', methods=['PUT'])
-# @jwt_required()
+@jwt_required()
 def update_coach(coach_id):
-    coach_data = request.json
-    required_properties = ["username", "email", "password"]
+    try:
+        # Obtener la identidad del JWT
+        identity = get_jwt_identity()
+        print(f"Identidad obtenida del JWT: {identity}")  # Esto mostrará el diccionario completo
+        
+        # Extraer el coach_id del diccionario de identidad
+        token_coach_id = identity.get('id')
+        print(f"Coach ID extraído del token: {token_coach_id}")
 
-    for prop in required_properties:
-        if prop not in coach_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
-    
-    for key in required_properties:
-        if coach_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+        if token_coach_id is None:
+            return jsonify({"error": "Coach ID not found in token"}), 400
 
-    existing_username = Coach.query.filter(Coach.username == coach_data["username"], Coach.id != coach_id).first()
-    if existing_username:
-        return jsonify({"error": f"The username '{coach_data['username']}' already exists in the database"}), 400
+        if token_coach_id != coach_id:
+            return jsonify({"error": "Unauthorized access to this coach"}), 403
 
-    existing_email = Coach.query.filter(Coach.email == coach_data["email"], Coach.id != coach_id).first()
-    if existing_email:
-        return jsonify({"error": f"The email '{coach_data['email']}' already exists in the database"}), 400
+        # Buscar el coache en la base de datos usando el coach_id de la URL
+        coach = Coach.query.get(coach_id)
+        if coach is None:
+            return jsonify({"error": "Coach not found"}), 404
 
-    coach = Coach.query.get(coach_id)
-    if coach is None:
-        return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 404
-    
-    # current_coach = get_jwt_identity()
+        body = request.get_json()
+        if body is None:
+            raise APIException("Request body is missing", status_code=400)
 
-    # if coach.email != current_coach:
-    #     return jsonify({"unauthorized": "You are not authorized to access here"}), 401
+        # Actualizar campos del usuario
+        coach.username = body.get("username", coach.username)
+        coach.email = body.get("email", coach.email)
+        coach.password = body.get("password", coach.password)
+        coach.first_name = body.get("first_name", coach.first_name)
+        coach.last_name = body.get("last_name", coach.last_name)
+        coach.coach_photo_url = body.get("coach_photo_url", coach.coach_photo_url)
+        coach.latitude = body.get("latitude", coach.latitude)
+        coach.longitude = body.get("longitude", coach.longitude)
+        coach.city = body.get("city", coach.city)
+        coach.education_id = body.get("education_id", coach.education_id)
+        coach.experience_id = body.get("experience_id", coach.experience_id)
 
-    for prop in coach_data:
-        setattr(coach, prop, coach_data[prop])
+        db.session.commit()
 
-    db.session.commit()
+        return jsonify({"msg": "Perfil de usuario actualizado con éxito"}), 200
+    except Exception as e:
+        print(f"Error actualizando el perfil: {e}")
+        return jsonify({"error": str(e)}), 500
 
-    return jsonify(coach.serialize()), 200
   
 @api.route('/coach/<int:coach_id>', methods=['DELETE'])
 def del_coach(coach_id):
@@ -548,12 +611,12 @@ def login():
 
     coach = Coach.query.filter_by(email=data["email"]).first()
     if coach and coach.password == data["password"]:
-        access_coach_token = create_access_token(identity={"email": coach.email, "role": "coach"})
+        access_coach_token = create_access_token(identity={"id": coach.id,"email": coach.email, "role": "coach"})#añadir coach id like client
         return jsonify(access_coach_token=access_coach_token), 201
 
     client = Client.query.filter_by(email=data["email"]).first()
     if client and client.password == data["password"]:
-        access_client_token = create_access_token(identity={"email": client.email, "role": "client"})
+        access_client_token = create_access_token(identity={"id": client.id,"email": client.email, "role": "client"})
         return jsonify(access_client_token=access_client_token), 201
 
     return jsonify({"error": "Bad username or password"}), 401
@@ -844,4 +907,16 @@ def update_availability_client_day(id):
         db.session.rollback()
         return jsonify({'message': 'Error while updating the availability client entry', 'error': str(e)}), 500
 
+
+# @api.route('/upload', methods=['POST'])
+# def upload_image():
+#     client_id = request.form.get('client_id')
+#     file_to_upload = request.files['file']
+#     if file_to_upload:
+#         upload_result = cloudinary.uploader.upload(file_to_upload)
+#         client = Client.query.get(client_id)
+#         client.client_photo_url = upload_result['url']
+#         db.session.commit()
+#         return jsonify({"message": "Image uploaded successfully", "url": upload_result['url']}), 200
+#     return jsonify({"error": "No file provided"}), 400
 

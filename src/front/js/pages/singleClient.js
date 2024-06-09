@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import { MapComponent } from "../component/mapComponent";
+import ProfileImage from "../component/profileImage"
 
 import { Context } from "../store/appContext";
 
@@ -43,6 +44,9 @@ export const SingleClient = () => {
                 <h3 className="mb-2">Client: { (store.singleClient.username)}</h3>
                 <h5>Some details about me:</h5>
                 <div className="">
+                    <ProfileImage
+                        photoUrl = {store.singleClient.client_photo_url}
+                    />
                     <ul className="my-3 fs-5">
                         <li>
                             <span className="fw-bold">First name: </span> 

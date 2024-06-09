@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from 'axios';
 import { MapComponent } from "../component/mapComponent";
-
 import { Context } from "../store/appContext";
 
 export const UpdateCoach = () => {
-	const { store, actions } = useContext(Context);
+    const { store, actions } = useContext(Context);
     const navigate = useNavigate();
+    const { coachID } = useParams();
+    const initialLoad = useRef(true);
+
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -15,21 +17,34 @@ export const UpdateCoach = () => {
     const [lastName, setLastName] = useState("")
     const [educationID, setEducationID] = useState(0)
     const [experienceID, setExperienceID] = useState(0)
-    const [showPassword, setShowPassword] = useState(false)
-    const [handleButton, setHandleButton] = useState(false)
+    const [photoUrl, setPhotoUrl] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [handleButton, setHandleButton] = useState(false);
     const [address, setAddress] = useState("");
     const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
     const [city, setCity] = useState("")
-    const { coachID } = useParams();
+    const tokenCoach = localStorage.getItem("token_coach");
 
+    // Redirigir si no hay token
     useEffect(() => {
-        actions.getEducation()
-        actions.getExperience()
-        actions.getSingleCoach(coachID);
-    },[])
+        if (!tokenCoach) {
+            navigate("/");
+        }
+    }, [tokenCoach, navigate]);
 
+    // Obtener datos del Coache y frecuencias de actividad al montar el componente
     useEffect(() => {
-        if (store.singleCoach && !username && !email && !password && !firstName && !lastName) {
+        if (initialLoad.current) {
+            actions.getEducation()
+            actions.getExperience()
+            actions.getSingleCoach(coachID);
+            initialLoad.current = false;
+        }
+    }, [actions, coachID]);
+
+    // Establecer los datos del coache en el estado local cuando estén disponibles
+    useEffect(() => {
+        if (store.singleCoach) {
             setUsername(store.singleCoach.username || "");
             setEmail(store.singleCoach.email || "");
             setPassword(store.singleCoach.password || "");
@@ -37,32 +52,93 @@ export const UpdateCoach = () => {
             setLastName(store.singleCoach.last_name || "");
             setEducationID(store.singleCoach.education_id || 0);
             setExperienceID(store.singleCoach.experience_id || 0);
+            setPhotoUrl(store.singleCoach.coach_photo_url || "");
         }
     }, [store.singleCoach]);
 
+    // Navegar de vuelta si la actualización es exitosa
     useEffect(() => {
-        if (!store.errorForm && handleButton && username != "" && email != "" && password != "") {
+        if (!store.errorForm && handleButton && username && email && password) {
             navigate("/client");
         }
-    },[store.errorForm, handleButton])
+    }, [store.errorForm, handleButton, username, email, password, navigate]);
 
-    function updateCoach(e) {
-        e.preventDefault();
-        actions.updateCoachAPI(username, email, password, firstName, lastName, educationID, experienceID, coordinates.lat, coordinates.lng, city, coachID)
-        setHandleButton(true)
+    // Manejar la carga de imagen y obtener la URL de Cloudinary
+    const handleImageChange = async (e) => {
+        const newImageFile = e.target.files[0];
+
+        if (newImageFile) {
+            try {
+                const formData = new FormData();
+                formData.append("file", newImageFile);
+                formData.append("upload_preset", "gastondios");
+                formData.append("cloud_name", "df7nqepxm");
+
+                const cloudinaryResponse = await fetch(
+                    "https://api.cloudinary.com/v1_1/df7nqepxm/image/upload",
+                    {
+                        method: "POST",
+                        body: formData,
+                    }
+                );
+
+                if (!cloudinaryResponse.ok) {
+                    throw new Error("Error uploading image to Cloudinary");
+                }
+
+                const cloudinaryData = await cloudinaryResponse.json();
+                const cloudinaryImageUrl = cloudinaryData.secure_url;
+
+                console.log("Imagen cargada exitosamente en Cloudinary. URL:", cloudinaryImageUrl);
+
+                setPhotoUrl(cloudinaryImageUrl);
+            } catch (error) {
+                console.error("Error uploading image:", error);
+            }
+        }
     };
 
+    // Manejar la actualización del perfil
+    const updateCoach = async (e) => {
+        e.preventDefault();
+        await actions.updateCoachAPI(
+            username,
+            email,
+            password,
+            firstName,
+            lastName,
+            educationID, 
+            experienceID,
+            photoUrl,
+            coordinates.lat, 
+            coordinates.lng, 
+            city,
+            coachID
+        );
+        setHandleButton(true);
+        // Obtener los datos actualizados del coache
+        actions.getSingleCoach(coachID);
+    };
     const handleGeocode = async () => {
         try {
             const response = await axios.get(process.env.BACKEND_URL + '/api/geocode', {
                 params: { address }
             });
-            setCoordinates(response.data.results[0].geometry.location)
-            const addressComponents = await response.data.results[0].address_components
-            const localityComponent = await addressComponents.find(component => component.types.includes("locality"));
-            if (localityComponent) {
-            setCity(localityComponent.long_name);
-            }   
+    
+            if (response.data.results && response.data.results.length > 0) {
+                const location = response.data.results[0].geometry.location;
+                setCoordinates(location);
+    
+                const addressComponents = response.data.results[0].address_components;
+                const localityComponent = addressComponents.find(component => component.types.includes("locality"));
+                if (localityComponent) {
+                    setCity(localityComponent.long_name);
+                } else {
+                    setCity("Unknown city");
+                }
+            } else {
+                console.error("Geocoding response does not contain results.");
+            }
         } catch (error) {
             if (error.response) {
                 console.error('Error response:', error.response.data);
@@ -76,13 +152,10 @@ export const UpdateCoach = () => {
             console.error('Error config:', error.config);
         }
     };
-
-    console.log("city", city);
-
 	return (
 		<div className="container mt-3">
-            <h3 className="text-center mb-2">Coach Update</h3>
-            <form>
+            <h3 className="text-center mb-2">Actualizar Perfil del Coach</h3>
+            <form onSubmit={updateCoach}>
                 <div className="row">
                 <div className="mb-3 col-6 offset-3">
                     <input 
@@ -135,6 +208,19 @@ export const UpdateCoach = () => {
                     placeholder="Last Name"
                     />
                 </div>
+                <div className="mb-3 col-6 offset-3">
+                        <label className="form-label">Subir Foto de Perfil</label>
+                        <input
+                            type="file"
+                            className="form-control"
+                            onChange={handleImageChange}
+                        />
+                        {photoUrl && (
+                            <div className="mt-2">
+                                <img src={photoUrl} alt="Profile" className="img-thumbnail" style={{ maxWidth: "200px" }} />
+                            </div>
+                        )}
+                    </div>
                 <select value={educationID} className="form-select form-select-lg mb-3 w-50 offset-3" aria-label=".form-select-lg example" onChange={(e) => setEducationID(e.target.value)}>
                     {educationID == 0 && <option defaultValue>Select your education</option>}
                     {store.education.map((element, index) => (
@@ -152,17 +238,17 @@ export const UpdateCoach = () => {
                     ))}
                 </select>
                 <div>
-                    <div className="input-group mb-3">
-                        <input 
-                        type="text"
-                        value={address} 
-                        onChange={(e) => setAddress(e.target.value)}
-                        className="form-control" 
-                        placeholder="Enter address" 
-                        aria-label="Adress" 
-                        aria-describedby="geocode"/>
-                        <button className="btn btn-outline-secondary" type="button" id="geocode" onClick={handleGeocode} >Geocode</button>
-                    </div>
+                        <div className="input-group mb-3">
+                            <input 
+                            type="text"
+                            value={address} 
+                            onChange={(e) => setAddress(e.target.value)}
+                            className="form-control" 
+                            placeholder="Enter address" 
+                            aria-label="Adress" 
+                            aria-describedby="geocode"/>
+                            <button className="btn btn-outline-secondary" type="button" id="geocode" onClick={handleGeocode} >Geocode</button>
+                        </div>
                     {(coordinates.lat && coordinates.lng) && (
                         <div className="">
                             <MapComponent 
@@ -172,19 +258,21 @@ export const UpdateCoach = () => {
                         </div>
                     )}
                 </div>
-                {store.errorForm &&                 
-                <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
-                    {store.errorForm}
-                </div>
-                }
+                {store.errorForm && (
+                        <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
+                            {store.errorForm}
+                        </div>
+                    )}
                 </div>
                 <div className="d-flex justify-content-center">
-                    <button type="submit" className="btn btn-warning fw-bold mt-2" onClick={updateCoach}>Save changes</button>
+                    <button type="submit" className="btn btn-warning fw-bold mt-2">
+                        Save changes
+                    </button>
                     <Link to={`/coach/${coachID}`}>
-                        <button className="btn btn-primary ms-3 fw-bold mt-2" >Back to your information</button>
+                        <button className="btn btn-primary ms-3 fw-bold mt-2">Back to your information</button>
                     </Link>
                 </div>
             </form>
-		</div>
+        </div>
 	);
 };

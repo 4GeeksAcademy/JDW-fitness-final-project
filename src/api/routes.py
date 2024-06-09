@@ -4,7 +4,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 import os
 import requests
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Availability, Goals, Diseases, Experience, Education, ActivityFrequency, Coach, Client, Availability_client, Likes, Match
+from api.models import db, User, Availability, Goals, Diseases, Experience, Education, ActivityFrequency, Coach, Client, Availability_client,AvailabilityCoach, Likes, Match
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -692,6 +692,32 @@ def get_coach_likes(coach_id):
         "matches": matches_clients_list
     })
     return response, 200
+
+
+    # GET AVAILABILITYCOACH 
+@api.route('/availability_coach', methods=['GET'])
+def get_availability_coach():
+    all_availability_coach = AvailabilityCoach.query.all()
+    results = list(map(lambda availability_coach: availability_coach.serialize(), all_availability_coach))
+    return jsonify(results), 200
+
+    # GET ID AVAILABILITYCOACH 
+@api.route('/availability_coach/<int:coach_id>', methods=['GET'])
+def get_coach_availabilities(coach_id):
+    # Obtener todas las entradas de AvailabilityCoach asociadas con el coach_id
+    availability_coaches = AvailabilityCoach.query.filter_by(coach_id=coach_id).all()
+    
+    if not availability_coaches:
+        return jsonify({'message': 'No availabilities found for the given coach_id'}), 404
+    
+    # Serializar cada entrada de AvailabilityCoach
+    results = [availability_coach.serialize() for availability_coach in availability_coaches]
+    
+    return jsonify(results), 200
+
+
+
+
 
 @api.route('/like', methods=['POST'])
 def add_like():

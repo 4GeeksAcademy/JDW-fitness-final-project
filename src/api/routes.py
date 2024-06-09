@@ -388,6 +388,7 @@ def get_clients():
 @api.route('/client/<int:client_id>', methods=['GET'])
 def get_client(client_id):
     client = Client.query.filter_by(id=client_id).first()
+    if not client: return jsonify({"error": f"The ID '{client_id}' was not found in Clients"}), 404
     return jsonify(client.serialize()), 200
   
 @api.route('/client/signup', methods=['POST'])

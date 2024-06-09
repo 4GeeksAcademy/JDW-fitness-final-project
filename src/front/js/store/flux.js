@@ -3,6 +3,7 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			availabilityCoach: [],
 			availabilityClient: [],
 			clients: [],
 			singleClient: {},
@@ -35,6 +36,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 		  singleActivityFrequency:{},
 		  error: null
 		},
+		availabilityCoach:[],
+		  singleAvailabilityCoach:[],
+		  noAvailabilityMessage: false,
+		  
+		  coachDetails: {
+			coach_id: null,
+			email: ""
+		  },
 
 		actions: {
 			
@@ -766,6 +775,91 @@ updateCoachAPI: async (
 				.then( setStore({ singleActivityFrequency: {} }))
 				.then(() => getActions().getActivityFrequency())
 			},
+
+			// getavailavilitycoach
+			getAvailabilityCoach: () => {
+				fetch(`${process.env.BACKEND_URL}/api/availability_coach`)
+					.then((response) => response.json())
+					.then((data) => {
+						console.log("Coach Availability Data:", data);
+						setStore({ availabilityCoach: data });
+					})
+					.catch((error) => console.error("Error fetching coach availability:", error));
+			},
+
+			// getavailabilitycoach 
+			getSingleAvailabilityCoach: async (coach_id) => {
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/availability_coach/${coach_id}`);
+					if (!response.ok) {
+						throw new Error(`Error fetching coach data: ${response.statusText}`);
+					}
+					const data = await response.json();
+			
+					// Verificar si se encontraron disponibilidades
+					if (data.availabilities.length === 0) {
+						setStore({
+							singleAvailabilityCoach: [], // No hay disponibilidades
+							noAvailabilityMessage: true, // Indicar que no hay disponibilidades
+							coachDetails: {
+								coach_id: data.coach_id,
+								email: data.coach_email // Obtener el email del coach de la respuesta
+							}
+						});
+					} else {
+						// Guardar detalles del coach y sus disponibilidades
+						setStore({
+							singleAvailabilityCoach: data.availabilities,
+							noAvailabilityMessage: false,
+							coachDetails: {
+								coach_id: data.coach_id,
+								email: data.coach_email
+							}
+						});
+					}
+			
+					console.log(`Fetched availability for coach (ID: ${coach_id}):`, data);
+				} catch (error) {
+					console.error("Error fetching availability coach:", error);
+					// Manejar el error y posiblemente actualizar el store para reflejar el error
+					setStore({
+						singleAvailabilityCoach: [],
+						noAvailabilityMessage: true,
+						coachDetails: {
+							coach_id: coach_id,
+							email: "unknown@example.com" // Placeholder hasta obtener el email real
+						}
+					});
+				}
+			},
+
+			// deleteavailabilitycoach
+
+			deleteAvailabilityCoach: async (availabilityId, coachId) => {
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/availability_coach/day/${availabilityId}`, {
+						method: 'DELETE',
+						headers: {
+							'Content-Type': 'application/json'
+						}
+					});
+			
+					if (!response.ok) {
+						throw new Error(`Error deleting availability: ${response.statusText}`);
+					}
+			
+					const data = await response.json();
+					console.log(`Deleted availability (ID: ${availabilityId}):`, data);
+			
+					// Volver a cargar las disponibilidades después de borrar
+					await getActions().getSingleAvailabilityCoach(coachId);
+				} catch (error) {
+					console.error("Error deleting availability:", error);
+				}
+			},
+			
+			
+			
       loadBeginning: () => {
 			getActions().checkAuth()
 		  },    

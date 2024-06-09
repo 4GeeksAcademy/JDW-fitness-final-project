@@ -57,6 +57,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             console.error("Error fetching single client:", error);
         }
     },
+
 	clientSignUp: async (username, email, password) => {
 		const requestOptions = {
 			method: 'POST',
@@ -85,65 +86,74 @@ const getState = ({ getStore, getActions, setStore }) => {
 		fetch(process.env.BACKEND_URL + `/api/client/${clientID}`, { method: 'DELETE' })
 		.then( () => getActions().getClients())
 	},
-	updateClientAPI: (username, email, password, firstName, lastName, age, height, weight, gender, physicalHabits, activityFrequencyID, latitude, longitude, city, clientID) => {
-		const requestBody = {
-			"username": username,
-			"email": email,
-			"password": password,
-		};
+  updateClientAPI: async (
+      username,
+      email,
+      password,
+      firstName,
+      lastName,
+      age,
+      height,
+      weight,
+      gender,
+      physicalHabits,
+      photoUrl,
+      activityFrequencyID,
+      latitude, 
+      longitude, 
+      city,
+      clientID
+    ) => {
+      // Construcción dinámica del cuerpo de la solicitud
+      const requestBody = {
+        "username": username,
+        "email": email,
+        "password": password
+      };
+
+      if (firstName) requestBody["first_name"] = firstName;
+      if (lastName) requestBody["last_name"] = lastName;
+      if (age) requestBody["age"] = age;
+      if (height) requestBody["height"] = height;
+      if (weight) requestBody["weight"] = weight;
+      if (gender) requestBody["gender"] = gender;
+      if (physicalHabits) requestBody["physical_habits"] = physicalHabits;
+      if (photoUrl) requestBody["client_photo_url"] = photoUrl;
+      if (latitude) requestBody["latitude"] = latitude;
+      if (longitude) requestBody["longitude"] = longitude;
+      if (city) requestBody["city"] = city;
+      if (activityFrequencyID !== 0) requestBody["activity_frequency_id"] = activityFrequencyID;
+
+      const token = localStorage.getItem("token_client");
+
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // Asegúrate de usar el token correcto
+        },
+        body: JSON.stringify(requestBody)
+      };
+
+      try {
+        // Realizar la solicitud al backend para actualizar el perfil del cliente
+        const response = await fetch(process.env.BACKEND_URL + `/api/client/${clientID}`, requestOptions);
+        const data = await response.json();
+
+        if (response.status === 200) {
+          setStore({ errorForm: null, singleClient: data });
+          console.log("Perfil del cliente actualizado con éxito:", data);
+        } else {
+          setStore({ errorForm: data.error });
+        }
+      } catch (error) {
+        console.error("Error updating client profile:", error);
+        setStore({ errorForm: error.message });
+      }
+    },
 	
-		if (firstName) {
-			requestBody["first_name"] = firstName;
-		}
-		if (lastName) {
-			requestBody["last_name"] = lastName;
-		}
-		if (age) {
-			requestBody["age"] = age;
-		}
-		if (height) {
-			requestBody["height"] = height;
-		}
-		if (weight) {
-			requestBody["weight"] = weight;
-		}
-		if (gender) {
-			requestBody["gender"] = gender;
-		}
-		if (physicalHabits) {
-			requestBody["physical_habits"] = physicalHabits;
-		}
-		if (activityFrequencyID !== 0) {
-			requestBody["activity_frequency_id"] = activityFrequencyID;
-		}
-		if (latitude) {
-			requestBody["latitude"] = latitude;
-		}
-		if (longitude) {
-			requestBody["longitude"] = longitude;
-		}
-		if (city) {
-			requestBody["city"] = city;
-		}
 	
-		const requestOptions = {
-			method: 'PUT',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(requestBody)
-		};
-		fetch(process.env.BACKEND_URL + `/api/client/${clientID}`, requestOptions)
-		.then(response => {
-			if(response.status == 200) {
-				setStore({ errorForm: null })
-			}
-			return response.json()
-		})
-		.then(data => {
-			if(data.error) {
-				setStore({ errorForm: data.error })
-			}
-		})
-	},
+	
 
       // COACH
 			getCoaches: () => {
@@ -215,52 +225,62 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, { method: 'DELETE' })
 				.then( () => getActions().getCoaches())
 			},
-			updateCoachAPI: (username, email, password, firstName, lastName, educationID, experienceID, latitude, longitude, city, coachID) => {
+updateCoachAPI: async (
+				username,
+				email,
+				password,
+				firstName,
+				lastName,
+				educationID, 
+        experienceID,
+				photoUrl,
+				latitude, 
+				longitude, 
+				city,
+				coachID
+			) => {
+				// Construcción dinámica del cuerpo de la solicitud
 				const requestBody = {
 					"username": username,
 					"email": email,
-					"password": password,
+					"password": password
 				};
 			
-				if (firstName) {
-					requestBody["first_name"] = firstName;
-				}
-				if (lastName) {
-					requestBody["last_name"] = lastName;
-				}
-				if (educationID !== 0) {
-					requestBody["education_id"] = educationID;
-				}
-				if (experienceID !== 0) {
-					requestBody["experience_id"] = experienceID;
-				}
-				if (latitude) {
-					requestBody["latitude"] = latitude;
-				}
-				if (longitude) {
-					requestBody["longitude"] = longitude;
-				}
-				if (city) {
-					requestBody["city"] = city;
-				}
+				if (firstName) requestBody["first_name"] = firstName;
+				if (lastName) requestBody["last_name"] = lastName;
+				if (educationID !== 0) requestBody["education_id"] = educationID;
+				if (experienceID !== 0) requestBody["experience_id"] = experienceID;
+				if (photoUrl) requestBody["coach_photo_url"] = photoUrl;
+				if (latitude) requestBody["latitude"] = latitude;
+				if (longitude) requestBody["longitude"] = longitude;
+				if (city) requestBody["city"] = city;
+			
+				const token = localStorage.getItem("token_coach");
 			
 				const requestOptions = {
 					method: 'PUT',
-					headers: { 'Content-Type': 'application/json' },
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${token}` // Asegúrate de usar el token correcto
+					},
 					body: JSON.stringify(requestBody)
 				};
-				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, requestOptions)
-				.then(response => {
-					if(response.status == 200) {
-						setStore({ errorForm: null })
+			
+				try {
+					// Realizar la solicitud al backend para actualizar el perfil del cliente
+					const response = await fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, requestOptions);
+					const data = await response.json();
+			
+					if (response.status === 200) {
+						setStore({ errorForm: null, singleCoach: data });
+						console.log("Perfil del coach actualizado con éxito:", data);
+					} else {
+						setStore({ errorForm: data.error });
 					}
-					return response.json()
-				})
-				.then(data => {
-					if(data.error) {
-						setStore({ errorForm: data.error })
-					}
-				})
+				} catch (error) {
+					console.error("Error updating coach profile:", error);
+					setStore({ errorForm: error.message });
+				}
 			},
         
        	// LIKES

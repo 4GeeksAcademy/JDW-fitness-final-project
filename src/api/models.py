@@ -86,12 +86,13 @@ class Client(db.Model):
     gender = db.Column(db.String(120), unique=False, nullable=True)
     # Cambiar a valor unique = True de momento dejarlo así
     physical_habits = db.Column(db.String(120), unique=False, nullable=True)
-    # Cambiar a valor unique true como el anterior
-    activity_frequency_id = db.Column(db.Integer, db.ForeignKey('activity_frequency.id'))
-    activity_frequency = db.relationship('ActivityFrequency') 
+    client_photo_url=db.Column(db.String(255), nullable=True)
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
     city = db.Column(db.String(120), unique=False, nullable=True)
+    # Cambiar a valor unique true como el anterior
+    activity_frequency_id = db.Column(db.Integer, db.ForeignKey('activity_frequency.id'))
+    activity_frequency = db.relationship('ActivityFrequency') 
     
     def __repr__(self):
         return f'<Client {self.email}>'  
@@ -107,10 +108,11 @@ class Client(db.Model):
             "weight": self.weight,
             "gender": self.gender,
             "physical_habits": self.physical_habits,
-            "activity_frequency_id": self.activity_frequency_id,
+            "client_photo_url": self.client_photo_url,
             "latitude": self.latitude,
             "longitude": self.longitude, 
-            "city": self.city
+            "city": self.city,
+            "activity_frequency_id": self.activity_frequency_id,
           }
 
 class Availability_client(db.Model):
@@ -162,13 +164,14 @@ class Coach(db.Model):
     password = db.Column(db.String(80), unique=False, nullable=False)
     first_name = db.Column(db.String(120), unique=False, nullable=True)
     last_name = db.Column(db.String(120), unique=False, nullable=True)
+    coach_photo_url=db.Column(db.String(255), nullable=True)
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
+    city = db.Column(db.String(120), unique=False, nullable=True)
     education_id = db.Column(db.Integer, db.ForeignKey('education.id'), nullable=True)
     experience_id = db.Column(db.Integer, db.ForeignKey('experience.id'), nullable=True)
     education = db.relationship(Education)
     experience = db.relationship(Experience)
-    latitude = db.Column(db.Float, nullable=True)
-    longitude = db.Column(db.Float, nullable=True)
-    city = db.Column(db.String(120), unique=False, nullable=True)
     
     def __repr__(self):
         return f"<Coach {self.id}>"
@@ -179,11 +182,12 @@ class Coach(db.Model):
             "username": self.username,
             "first_name": self.first_name,
             "last_name": self.last_name,
-            "education_id": self.education_id,
-            "experience_id": self.experience_id,
+            "coach_photo_url": self.coach_photo_url,
             "latitude": self.latitude,
             "longitude": self.longitude, 
-            "city": self.city
+            "city": self.city,
+            "education_id": self.education_id,
+            "experience_id": self.experience_id,
             # do not serialize the password, its a security breach
         }
       

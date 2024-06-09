@@ -47,6 +47,9 @@ import { SingleCoach } from "./pages/singleCoach";
 import { AddCoach } from "./pages/addCoach";
 import { UpdateCoach } from "./pages/updateCoach";
 
+import injectContext from "./store/appContext";
+import { AvailabilityClient } from "./pages/availabilityClient";
+
 import { Likes } from "./pages/likes";
 import { GivenLikesClient } from "./pages/givenLikesClient";
 import { ReceivedLikesClient } from "./pages/receivedLikesClient";
@@ -91,7 +94,7 @@ const Layout = () => {
                         <Route element={<AddGoal />} path="/goals/form" />
                         <Route element={<UpdateGoal />} path="/goals/update/:goalID" />
                         {/* AVAILABILITY_CLIENT ROUTES */}
-                        {/* <Route element={<AvailabilityClient />} path="/availability-client" /> */}
+                        <Route element={<AvailabilityClient />} path="/availability-client/:client_id" />
                         {/* DISEASES ROUTES */}
                         <Route element={<Diseases />} path="/diseases" />
                         <Route element={<SingleDiseases />}  path="/diseases/:diseasesID" />

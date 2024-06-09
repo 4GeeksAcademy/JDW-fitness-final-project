@@ -754,6 +754,22 @@ def add_availability_coach():
         db.session.rollback()
         return jsonify({'message': 'An error occurred while creating the availability', 'error': str(e)}), 500
 
+       # DELETE AVAILABILITYCOACH 
+@api.route('/availability_coach/<int:id>', methods=['DELETE'])
+def delete_availability_coach(id):
+    availability_coach = AvailabilityCoach.query.get(id)
+    
+    if availability_coach is None:
+        return jsonify({'message': 'Availability coach entry not found'}), 404
+    
+    try:
+        db.session.delete(availability_coach)
+        db.session.commit()
+        return jsonify({'message': 'Availability coach entry deleted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': 'An error occurred while deleting the availability', 'error': str(e)}), 500 
+
 
 
 @api.route('/like', methods=['POST'])

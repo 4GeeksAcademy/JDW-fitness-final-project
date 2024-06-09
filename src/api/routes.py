@@ -1,8 +1,10 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
+import os
+import requests
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Availability, Goals, Diseases, Experience, Education, ActivityFrequency, Coach, Client, Availability_client
+from api.models import db, User, Availability, Goals, Diseases, Experience, Education, ActivityFrequency, Coach, Client, Availability_client, Likes, Match
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -14,6 +16,38 @@ api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api)
+
+# Obtener la clave de API de Google desde las variables de entorno
+GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+
+# Endpoint para geocodificación (dirección a coordenadas)
+@api.route('/geocode', methods=['GET'])
+def geocode_address():
+    address = request.args.get('address')
+    if not address:
+        return jsonify({'error': 'Address parameter is required'}), 400
+
+    url = f'https://maps.googleapis.com/maps/api/geocode/json?address={address}&key={GOOGLE_API_KEY}'
+    response = requests.get(url)
+    if response.status_code == 200:
+        return jsonify(response.json())
+    else:
+        return jsonify({'error': 'Failed to get geocoding data'}), 500
+
+# Endpoint para geocodificación inversa (coordenadas a dirección)
+@api.route('/reverse-geocode', methods=['GET'])
+def reverse_geocode():
+    lat = request.args.get('lat')
+    lng = request.args.get('lng')
+    if not lat or not lng:
+        return jsonify({'error': 'Latitude and longitude parameters are required'}), 400
+
+    url = f'https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&key={GOOGLE_API_KEY}'
+    response = requests.get(url)
+    if response.status_code == 200:
+        return jsonify(response.json())
+    else:
+        return jsonify({'error': 'Failed to get reverse geocoding data'}), 500
 
 # AVAILABILITY ENDPOINTS
 @api.route('/availability', methods=['GET'])
@@ -43,7 +77,7 @@ def add_availability():
     db.session.add(availability_to_add)
     db.session.commit()
 
-    return jsonify(availability_to_add.serialize()), 200
+    return jsonify(availability_to_add.serialize()), 201
 
 @api.route('/availability/<int:availability_id>', methods=['PUT'])
 def update_availability(availability_id):
@@ -59,7 +93,7 @@ def update_availability(availability_id):
     availability = Availability.query.get(availability_id)
 
     if availability is None:
-        return jsonify({"error": f"The ID '{availability_id}' was not found in Availability"}), 400
+        return jsonify({"error": f"The ID '{availability_id}' was not found in Availability"}), 404
 
     for prop in data:
         setattr(availability, prop, data[prop])
@@ -71,7 +105,7 @@ def update_availability(availability_id):
 @api.route('/availability/<int:availability_id>', methods=['DELETE'])
 def del_availability(availability_id):
     availability = Availability.query.get(availability_id)
-    if not availability: return jsonify({"error": f"The ID '{availability_id}' was not found in Availability"}), 400
+    if not availability: return jsonify({"error": f"The ID '{availability_id}' was not found in Availability"}), 404
     db.session.delete(availability)
     db.session.commit()
     
@@ -105,7 +139,7 @@ def update_goal(goal_id):
     goal_data = request.json
     goal = Goals.query.get(goal_id)
     if not goal:
-        return jsonify({"Error": f"The goal id was not found"}), 400
+        return jsonify({"Error": f"The goal id was not found"}), 404
     
     goal.kind = goal_data["kind"]
     goal.description = goal_data["description"]
@@ -214,7 +248,7 @@ def add_experience():
     db.session.add(experience_to_add)
     db.session.commit()
 
-    return jsonify(experience_to_add.serialize()), 200
+    return jsonify(experience_to_add.serialize()), 201
 
 @api.route('/experience/<int:experience_id>', methods=['PUT'])
 def update_experience(experience_id):
@@ -228,7 +262,7 @@ def update_experience(experience_id):
     experience = Experience.query.get(experience_id)
 
     if experience is None:
-        return jsonify({"error": f"The ID '{experience_id}' was not found in experience"}), 400
+        return jsonify({"error": f"The ID '{experience_id}' was not found in experience"}), 404
 
     experience.time = new_time
     db.session.commit()
@@ -238,7 +272,7 @@ def update_experience(experience_id):
 @api.route('/experience/<int:experience_id>', methods=['DELETE'])
 def del_experience(experience_id):
     experience = Experience.query.get(experience_id)
-    if not experience: return jsonify({"error": f"The ID '{experience_id}' was not found in experience"}), 400
+    if not experience: return jsonify({"error": f"The ID '{experience_id}' was not found in experience"}), 404
     db.session.delete(experience)
     db.session.commit()
 
@@ -269,7 +303,7 @@ def add_education():
     db.session.add(education_to_add)
     db.session.commit()
 
-    return jsonify(education_to_add.serialize()), 200
+    return jsonify(education_to_add.serialize()), 201
 
 @api.route('/education/<int:education_id>', methods=['PUT'])
 def update_education(education_id):
@@ -283,7 +317,7 @@ def update_education(education_id):
     education = Education.query.get(education_id)
 
     if education is None:
-        return jsonify({"error": f"The ID '{education_id}' was not found in education"}), 400
+        return jsonify({"error": f"The ID '{education_id}' was not found in education"}), 404
 
     education.rank = new_rank
     db.session.commit()
@@ -293,7 +327,7 @@ def update_education(education_id):
 @api.route('/education/<int:education_id>', methods=['DELETE'])
 def del_education(education_id):
     education = Education.query.get(education_id)
-    if not education: return jsonify({"error": f"The ID '{education_id}' was not found in education"}), 400
+    if not education: return jsonify({"error": f"The ID '{education_id}' was not found in education"}), 404
     db.session.delete(education)
     db.session.commit()
 
@@ -327,7 +361,7 @@ def updateActivityFrequency(activity_id):
     activity_data = request.json
     activity = ActivityFrequency.query.get(activity_id)
     if not activity:
-        return jsonify({"Error": f"The activity id was not found"}), 400
+        return jsonify({"Error": f"The activity id was not found"}), 404
     
     activity.mode = activity_data["mode"]
     db.session.commit()
@@ -379,42 +413,93 @@ def signup_client():
     db.session.add(client_to_add)
     db.session.commit()
 
-    return jsonify(client_to_add.serialize()), 200
+    return jsonify(client_to_add.serialize()), 201
+
+# @api.route('/client/<int:client_id>', methods=['PUT'])
+# def update_client(client_id):
+#     client_data = request.json
+#     required_properties = ["username", "email", "password"]
+
+#     for prop in required_properties:
+#         if prop not in client_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
+    
+#     for key in required_properties:
+#         if client_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+    
+#     existing_username = Client.query.filter(Client.username == client_data["username"], Client.id != client_id).first()
+#     if existing_username:
+#         return jsonify({"error": f"The username '{client_data['username']}' already exists in the database"}), 400
+
+#     existing_email = Client.query.filter(Client.email == client_data["email"], Client.id != client_id).first()
+#     if existing_email:
+#         return jsonify({"error": f"The email '{client_data['email']}' already exists in the database"}), 400
+      
+#     client = Client.query.get(client_id)
+#     if client is None:
+#         return jsonify({"error": f"The ID '{client_id}' was not found in Clients"}), 404
+
+#     for prop in client_data:
+#         setattr(client, prop, client_data[prop])
+
+#     db.session.commit()
+#     return jsonify(client.serialize()), 200
 
 @api.route('/client/<int:client_id>', methods=['PUT'])
+@jwt_required()
 def update_client(client_id):
-    client_data = request.json
-    required_properties = ["username", "email", "password"]
+    try:
+        # Obtener la identidad del JWT y extraer el client_id
+        identity = get_jwt_identity()
+        print(f"Identidad obtenida del JWT: {identity}")  # Esto mostrará el diccionario completo
+        
+        # Extraer el client_id del diccionario de identidad
+        client_id = identity.get('id')
+        print(f"Client ID extraído: {client_id}")
 
-    for prop in required_properties:
-        if prop not in client_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
-    
-    for key in required_properties:
-        if client_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
-    
-    existing_username = Client.query.filter_by(username=client_data["username"]).first()
-    if existing_username:
-        return jsonify({"error": f"The username '{client_data['username']}' already exists in the database"}), 400
-      
-    existing_email = Client.query.filter_by(email=client_data["email"]).first()
-    if existing_email:
-        return jsonify({"error": f"The email '{client_data['email']}' already exists in the database"}), 400
-      
-    client = Client.query.get(client_id)
-    if client is None:
-        return jsonify({"error": f"The ID '{client_id}' was not found in Clientes"}), 400
+        if client_id is None:
+            return jsonify({"error": "Client ID not found in token"}), 400
 
-    for prop in client_data:
-        setattr(client, prop, client_data[prop])
+        # Buscar el cliente en la base de datos usando el client_id
+        client = Client.query.get(client_id)
+        if client is None:
+            return jsonify({"error": "Client not found"}), 404
 
-    db.session.commit()
+        body = request.get_json()
+        if body is None:
+            raise APIException("Request body is missing", status_code=400)
 
-    return jsonify(client.serialize()), 200
+        # Actualizar campos del usuario
+        client.username = body.get("username", client.username)
+        client.email = body.get("email", client.email)
+        client.password = body.get("password", client.password)
+        client.first_name = body.get("first_name", client.first_name)
+        client.last_name = body.get("last_name", client.last_name)
+        client.age = body.get("age", client.age)
+        client.height = body.get("height", client.height)
+        client.weight = body.get("weight", client.weight)
+        client.gender = body.get("gender", client.gender)
+        client.physical_habits = body.get("physical_habits", client.physical_habits)
+        client.client_photo_url = body.get("client_photo_url", client.client_photo_url)
+        client.latitude = body.get("latitude", client.latitude)
+        client.longitude = body.get("longitude", client.longitude)
+        client.city = body.get("city", client.city)
+        client.activity_frequency_id = body.get("activity_frequency_id", client.activity_frequency_id)
+
+        required_properties = ["username", "email", "password"]
+        for key in required_properties:
+            if request.json[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+
+        db.session.commit()
+
+        return jsonify({"msg": "Perfil de usuario actualizado con éxito"}), 200
+    except Exception as e:
+        print(f"Error actualizando el perfil: {e}")
+        return jsonify({"error": str(e)}), 500
   
 @api.route('/client/<int:client_id>', methods=['DELETE'])
 def del_client(client_id):
     client = Client.query.get(client_id)
-    if not client: return jsonify({"error": f"The ID '{client_id}' was not found in client"}), 400
+    if not client: return jsonify({"error": f"The ID '{client_id}' was not found in Clients"}), 404
     db.session.delete(client)
     db.session.commit()
 
@@ -431,6 +516,7 @@ def get_coaches():
 @api.route('/coach/<int:coach_id>', methods=['GET'])
 def get_coach(coach_id):
     coach = Coach.query.filter_by(id=coach_id).first()
+    if not coach: return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 404
     return jsonify(coach.serialize()), 200
 
 @api.route('/coach/signup', methods=['POST'])
@@ -444,11 +530,11 @@ def add_coach():
     for key in required_properties:
         if coach_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
 
-    existing_username = Coach.query.filter(Coach.username == coach_data["username"], Coach.id != coach_id).first()
+    existing_username = Coach.query.filter_by(username=coach_data["username"]).first()
     if existing_username:
         return jsonify({"error": f"The username '{coach_data['username']}' already exists in the database"}), 400
 
-    existing_email = Coach.query.filter(Coach.email == coach_data["email"], Coach.id != coach_id).first()
+    existing_email = Coach.query.filter_by(email=coach_data["email"]).first()
     if existing_email:
         return jsonify({"error": f"The email '{coach_data['email']}' already exists in the database"}), 400
 
@@ -456,72 +542,240 @@ def add_coach():
     db.session.add(coach_to_add)
     db.session.commit()
 
-    return jsonify(coach_to_add.serialize()), 200
+    return jsonify(coach_to_add.serialize()), 201
 
 @api.route('/coach/<int:coach_id>', methods=['PUT'])
-# @jwt_required()
+@jwt_required()
 def update_coach(coach_id):
-    coach_data = request.json
-    required_properties = ["username", "email", "password"]
+    try:
+        # Obtener la identidad del JWT
+        identity = get_jwt_identity()
+        print(f"Identidad obtenida del JWT: {identity}")  # Esto mostrará el diccionario completo
+        
+        # Extraer el coach_id del diccionario de identidad
+        token_coach_id = identity.get('id')
+        print(f"Coach ID extraído del token: {token_coach_id}")
 
-    for prop in required_properties:
-        if prop not in coach_data: return jsonify({"error": f"The property '{prop}' was not properly written"}), 400 
-    
-    for key in required_properties:
-        if coach_data[key] == "": return jsonify({"error": f"The '{key}' must not be empty"}), 400 
+        if token_coach_id is None:
+            return jsonify({"error": "Coach ID not found in token"}), 400
 
-    existing_username = Coach.query.filter(Coach.username == coach_data["username"], Coach.id != coach_id).first()
-    if existing_username:
-        return jsonify({"error": f"The username '{coach_data['username']}' already exists in the database"}), 400
+        if token_coach_id != coach_id:
+            return jsonify({"error": "Unauthorized access to this coach"}), 403
 
-    existing_email = Coach.query.filter(Coach.email == coach_data["email"], Coach.id != coach_id).first()
-    if existing_email:
-        return jsonify({"error": f"The email '{coach_data['email']}' already exists in the database"}), 400
+        # Buscar el coache en la base de datos usando el coach_id de la URL
+        coach = Coach.query.get(coach_id)
+        if coach is None:
+            return jsonify({"error": "Coach not found"}), 404
 
-    coach = Coach.query.get(coach_id)
-    if coach is None:
-        return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 400
-    
-    # current_coach = get_jwt_identity()
+        body = request.get_json()
+        if body is None:
+            raise APIException("Request body is missing", status_code=400)
 
-    # if coach.email != current_coach:
-    #     return jsonify({"unauthorized": "You are not authorized to access here"}), 401
+        # Actualizar campos del usuario
+        coach.username = body.get("username", coach.username)
+        coach.email = body.get("email", coach.email)
+        coach.password = body.get("password", coach.password)
+        coach.first_name = body.get("first_name", coach.first_name)
+        coach.last_name = body.get("last_name", coach.last_name)
+        coach.coach_photo_url = body.get("coach_photo_url", coach.coach_photo_url)
+        coach.latitude = body.get("latitude", coach.latitude)
+        coach.longitude = body.get("longitude", coach.longitude)
+        coach.city = body.get("city", coach.city)
+        coach.education_id = body.get("education_id", coach.education_id)
+        coach.experience_id = body.get("experience_id", coach.experience_id)
 
-    for prop in coach_data:
-        setattr(coach, prop, coach_data[prop])
+        db.session.commit()
 
-    db.session.commit()
+        return jsonify({"msg": "Perfil de usuario actualizado con éxito"}), 200
+    except Exception as e:
+        print(f"Error actualizando el perfil: {e}")
+        return jsonify({"error": str(e)}), 500
 
-    return jsonify(coach.serialize()), 200
   
 @api.route('/coach/<int:coach_id>', methods=['DELETE'])
 def del_coach(coach_id):
     coach = Coach.query.get(coach_id)
-    if not coach: return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 400
+    if not coach: return jsonify({"error": f"The ID '{coach_id}' was not found in Coaches"}), 404
     db.session.delete(coach)
     db.session.commit()
     
     return jsonify({"deleted": f"Coach '{coach.username}' with email '{coach.email}' was deleted successfully"}), 200
 
-@api.route("/coach/login", methods=["POST"])
-def coach_login():
-    coach_data = request.json
+@api.route("/login", methods=["POST"])
+def login():
+    data = request.json
     required_properties = ["email", "password"]
 
     for prop in required_properties:
-        if prop not in coach_data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
+        if prop not in data: return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
 
-    coach = Coach.query.filter_by(email=coach_data["email"]).first()
-    if coach is None or coach.email != coach_data["email"] or coach.password != coach_data["password"]:
-        return jsonify({"error": "Bad username or password"}), 401
-      
-    access_coach_token = create_access_token(identity=coach.email)
-    return jsonify(access_coach_token=access_coach_token)
+    coach = Coach.query.filter_by(email=data["email"]).first()
+    if coach and coach.password == data["password"]:
+        access_coach_token = create_access_token(identity={"id": coach.id,"email": coach.email, "role": "coach"})#añadir coach id like client
+        return jsonify(access_coach_token=access_coach_token), 201
 
- 
+    client = Client.query.filter_by(email=data["email"]).first()
+    if client and client.password == data["password"]:
+        access_client_token = create_access_token(identity={"id": client.id,"email": client.email, "role": "client"})
+        return jsonify(access_client_token=access_client_token), 201
+
+    return jsonify({"error": "Bad username or password"}), 401
+  
+  # LIKES ENDPOINTS
+@api.route('/like', methods=['GET'])
+def get_likes():
+    likes = Likes.query.all()
+    likes_list = list(map(lambda likes: likes.serialize(),likes))
+
+    return jsonify(likes_list), 200
+
+@api.route('/like/<int:like_id>', methods=['GET'])
+def get_like(like_id):
+    like = Likes.query.filter_by(id=like_id).first()
+    if not like: return jsonify({"error": f"The ID '{like_id}' was not found in Clients"}), 404
+    return jsonify(like.serialize()), 200
+
+@api.route('/client_likes/<int:client_id>', methods=['GET'])
+def get_client_likes(client_id):
+    given_likes = Likes.query.filter_by(client_id=client_id, source="client").all()
+    received_likes = Likes.query.filter_by(client_id=client_id, source="coach").all()
+    matches = Match.query.filter_by(client_id=client_id).all()
+
+    given_like_coach_ids = [like.coach_id for like in given_likes]
+    received_like_coach_ids = [like.coach_id for like in received_likes]
+    match_coach_ids = [match.coach_id for match in matches]
+
+    all_coach_ids = set(given_like_coach_ids + received_like_coach_ids + match_coach_ids)
+    coaches = Coach.query.filter(Coach.id.in_(all_coach_ids)).all()
+    coaches_dict = {coach.id: coach.serialize() for coach in coaches}
+
+    given_likes_coaches_list = [coaches_dict.get(coach_id) for coach_id in given_like_coach_ids]
+    received_likes_coaches_list = [coaches_dict.get(coach_id) for coach_id in received_like_coach_ids]
+    matches_coaches_list = [coaches_dict.get(coach_id) for coach_id in match_coach_ids]
+
+    no_given_likes = Coach.query.filter(Coach.id.notin_(given_like_coach_ids)).all()
+    no_given_likes_list = list(map(lambda coach: coach.serialize(), no_given_likes))
+
+    response = jsonify({
+        "given_likes": given_likes_coaches_list,
+        "received_likes": received_likes_coaches_list,
+        "no_given_likes": no_given_likes_list,
+        "matches": matches_coaches_list
+    })
+    return response, 200
+
+@api.route('/coach_likes/<int:coach_id>', methods=['GET'])
+def get_coach_likes(coach_id):
+    given_likes = Likes.query.filter_by(coach_id=coach_id, source="coach").all()
+    received_likes = Likes.query.filter_by(coach_id=coach_id, source="client").all()
+    matches = Match.query.filter_by(coach_id=coach_id).all()
+
+    given_like_client_ids = [like.client_id for like in given_likes]
+    received_like_client_ids = [like.client_id for like in received_likes]
+    match_client_ids = [match.client_id for match in matches]
+
+    all_client_ids = set(given_like_client_ids + received_like_client_ids + match_client_ids)
+    clients = Client.query.filter(Client.id.in_(all_client_ids)).all()
+    clients_dict = {client.id: client.serialize() for client in clients}
+
+    given_likes_clients_list = [clients_dict.get(client_id) for client_id in given_like_client_ids]
+    received_likes_clients_list = [clients_dict.get(client_id) for client_id in received_like_client_ids]
+    matches_clients_list = [clients_dict.get(client_id) for client_id in match_client_ids]
+
+    no_given_likes = Client.query.filter(Client.id.notin_(given_like_client_ids)).all()
+    no_given_likes_list = list(map(lambda client: client.serialize(), no_given_likes))
+
+    response = jsonify({
+        "given_likes": given_likes_clients_list,
+        "received_likes": received_likes_clients_list,
+        "no_given_likes": no_given_likes_list,
+        "matches": matches_clients_list
+    })
+    return response, 200
+
+@api.route('/like', methods=['POST'])
+def add_like():
+    like_data = request.json
+    required_properties = ["client_id", "coach_id", "source"]
+
+    for prop in required_properties:
+        if prop not in like_data:
+            return jsonify({"error": f"The '{prop}' property of the user is not or is not properly written"}), 400
+        if like_data[prop] == "" or like_data[prop] == 0:
+            return jsonify({"error": f"The '{prop}' must not be empty or zero"}), 400
+
+    client = Client.query.get(like_data["client_id"])
+    if client is None:
+        return jsonify({"error": f"The client with id '{like_data['client_id']}' does not exist"}), 404
+
+    coach = Coach.query.get(like_data["coach_id"])
+    if coach is None:
+        return jsonify({"error": f"The coach with id '{like_data['coach_id']}' does not exist"}), 404
+
+    if like_data["source"] not in ["client", "coach"]:
+        return jsonify({"error": f"The 'source' property can ONLY be 'client' or 'coach'."}), 400
+
+    existing_like = Likes.query.filter_by(coach_id=like_data["coach_id"], client_id=like_data["client_id"], source=like_data["source"]).first()
+    if existing_like:
+        return jsonify({"error": f"The like with the source '{like_data['source']}' between coach '{coach.username}' and client '{client.username}' already exists in the database"}), 400
+    
+    like_to_add = Likes(**like_data)
+    db.session.add(like_to_add)
+    db.session.commit()
+    
+    if (like_data["source"] == "client"): 
+       oposite_source =  "coach"
+    else: 
+        oposite_source =  "client"
+    
+    match_to_create = Likes.query.filter_by(coach_id=like_data["coach_id"], client_id=like_data["client_id"], source=oposite_source).first()
+    if match_to_create:
+        match_to_add = Match(coach_id=like_data["coach_id"], client_id=like_data["client_id"])
+        db.session.add(match_to_add)
+        db.session.commit()
+
+    return jsonify(like_to_add.serialize()), 201
+
+@api.route('/like/<int:like_id>', methods=['DELETE'])
+def del_like(like_id):
+    like = Likes.query.get(like_id)
+    if not like: return jsonify({"error": f"The ID '{like_id}' was not found in the Likes database"}), 404
+
+    coach = Coach.query.get(like.coach_id)
+    client = Client.query.get(like.client_id)
+
+    db.session.delete(like)
+    db.session.commit()
+    
+    match_to_delete = Match.query.filter_by(coach_id=like.coach_id, client_id=like.client_id).first()
+    if match_to_delete:
+        db.session.delete(match_to_delete)
+        db.session.commit()   
+
+    if like.source == "client":
+        source_entity = "client"
+        source_name = client.username
+        target_entity = "coach"
+        target_name = coach.username
+    else:
+        source_entity = "coach"
+        source_name = coach.username
+        target_entity = "client"
+        target_name = client.username
+
+    return jsonify({"deleted": f"The like of {source_entity} '{source_name}' to {target_entity} '{target_name}' was deleted successfully"}), 200
 
 
+# MATCH ENDPOINTS
+@api.route('/match', methods=['GET'])
+def get_matches():
+    matches = Match.query.all()
+    matches_list = list(map(lambda match: match.serialize(),matches))
 
+    return jsonify(matches_list), 200
+  
+  
+  
 # Availability_client  GET ENDPOINTS
 @api.route('/availability_client', methods=['GET'])
 def get_availability_client():
@@ -662,4 +916,6 @@ def update_availability_client_day(client_id, availability_client_id):
 
     except Exception as e:
         db.session.rollback()
+
         return jsonify({'message': 'Error while updating the availability client entry', 'error': str(e)}), 500
+

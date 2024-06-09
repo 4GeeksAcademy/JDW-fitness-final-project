@@ -14,8 +14,6 @@ export const AddAvailability = () => {
         e.preventDefault()
         if (day.trim() !== "" && hour.trim() !== "") {
 			actions.addAvailabilityAPI(day, hour)
-			setDay("")
-			setHour("")
             navigate("/availability")
             setErrorMessage(false)
 		}

@@ -87,16 +87,19 @@ class Client(db.Model):
     gender = db.Column(db.String(120), unique=False, nullable=True)
     # Cambiar a valor unique = True de momento dejarlo así
     physical_habits = db.Column(db.String(120), unique=False, nullable=True)
+    client_photo_url=db.Column(db.String(255), nullable=True)
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
+    city = db.Column(db.String(120), unique=False, nullable=True)
     # Cambiar a valor unique true como el anterior
-    #activity_frequency_id = db.Column(db.Integer, db.ForeignKey('activity_frequency.id'))
-    activity_frequency = db.relationship('ActivityFrequency', backref='clients') 
     availability_client = db.relationship('Availability_client', backref='clients')
-    
+    activity_frequency_id = db.Column(db.Integer, db.ForeignKey('activity_frequency.id'))
+    activity_frequency = db.relationship('ActivityFrequency') 
     
     def __repr__(self):
         return f'<Client {self.email}>'  
     def serialize(self):
-        activity_frequency = list(map(lambda prop: prop.serialize(),self.activity_frequency))
+        #activity_frequency = list(map(lambda prop: prop.serialize(),self.activity_frequency))
         return {
             "id": self.id,
             "email": self.email,
@@ -108,7 +111,12 @@ class Client(db.Model):
             "weight": self.weight,
             "gender": self.gender,
             "physical_habits": self.physical_habits,
-            "activity_frequency_id": activity_frequency
+            #"activity_frequency_id": activity_frequency
+            "activity_frequency_id": self.activity_frequency_id,
+            "client_photo_url": self.client_photo_url,
+            "latitude": self.latitude,
+            "longitude": self.longitude, 
+            "city": self.city,            
           }
 
 class Availability_client(db.Model):
@@ -163,6 +171,10 @@ class Coach(db.Model):
     password = db.Column(db.String(80), unique=False, nullable=False)
     first_name = db.Column(db.String(120), unique=False, nullable=True)
     last_name = db.Column(db.String(120), unique=False, nullable=True)
+    coach_photo_url=db.Column(db.String(255), nullable=True)
+    latitude = db.Column(db.Float, nullable=True)
+    longitude = db.Column(db.Float, nullable=True)
+    city = db.Column(db.String(120), unique=False, nullable=True)
     education_id = db.Column(db.Integer, db.ForeignKey('education.id'), nullable=True)
     experience_id = db.Column(db.Integer, db.ForeignKey('experience.id'), nullable=True)
     education = db.relationship(Education)
@@ -177,7 +189,45 @@ class Coach(db.Model):
             "username": self.username,
             "first_name": self.first_name,
             "last_name": self.last_name,
+            "coach_photo_url": self.coach_photo_url,
+            "latitude": self.latitude,
+            "longitude": self.longitude, 
+            "city": self.city,
             "education_id": self.education_id,
-            "experience_id": self.experience_id
+            "experience_id": self.experience_id,
             # do not serialize the password, its a security breach
+        }
+      
+class Likes(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    source = db.Column(db.String(120), unique=False, nullable=True)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+    coach_id = db.Column(db.Integer, db.ForeignKey('coach.id'))
+    client = db.relationship(Client)
+    coach = db.relationship(Coach)
+    
+    def __repr__(self):
+        return f"<Likes {self.id}>"
+    def serialize(self):
+        return {
+            "id": self.id,
+            "source": self.source,
+            "client_id": self.client_id,
+            "coach_id": self.coach_id
+        }
+    
+class Match(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    coach_id = db.Column(db.Integer, db.ForeignKey('coach.id'))
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+    coach = db.relationship(Coach)
+    client = db.relationship(Client)
+    
+    def __repr__(self):
+        return f"<Match {self.id}>"
+    def serialize(self):
+        return {
+            "id": self.id,
+            "coach_id": self.coach_id,
+            "client_id": self.client_id
         }

@@ -6,13 +6,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 			availabilityClient: [],
 			clients: [],
 			singleClient: {},
-			errorClient: undefined,
 			coaches: [],
 			singleCoach: {},
-			errorCoach: undefined,
+			errorForm: null,
 			authCoach: false,
+			authClient: false,
 			availability: [],
 			singleAvailability: {}, 
+			likes: [],
+			matches: [],
+			givenLikesCoach: [],
+			receivedLikesCoach: [],
+			noGivenLikesCoach: [],
+			matchesCoach: [],
+			givenLikesClient: [],
+			receivedLikesClient: [],
+			noGivenLikesClient: [],
+			matchesClient: [],
       goals: [],
 			singleGoal:{},
       diseases: [],
@@ -23,6 +33,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			singleEducation: {},   
 	    activities: [],
 		  singleActivityFrequency:{},
+		  error: null
 		},
 		availabilityClient:[],
 		  singleAvailabilityClient:[],
@@ -34,127 +45,124 @@ const getState = ({ getStore, getActions, setStore }) => {
 		  },
 
 		actions: {
-			// Use getActions to call a function within a fuction
+			
 	// CLIENT
-	getClients: () => {
-		fetch(process.env.BACKEND_URL + "/api/client")
-		.then( (response) => response.json())
-		.then( data => setStore({ clients: data }))	
-	  },
-	  getSingleClient: async (clientID) => {
+	getClients: async () => {
 		try {
-			const response = await fetch(process.env.BACKEND_URL + `api/client/${clientID}`);
-			const data = await response.json();
-			setStore({ singleClient: data });
+			const resp = await fetch(process.env.BACKEND_URL + "/api/client");
+			const data = await resp.json();
+			setStore({ clients: data });
 		} catch (error) {
-			console.error("Error fetching single client:", error);
+			console.error("Error fetching clients:", error);
 		}
 	},
-	clientSignUp: (username, email, password, firstName,lastName,age,height,weight,gender,physicalHabits,activityFrequencyID) => {
-		const requestBody = {
-			"username": username,
-			"email": email,
-			"password": password,
-		};
-	
-		if (firstName) {
-			requestBody["first_name"] = firstName;
-		}
-		if (lastName) {
-			requestBody["last_name"] = lastName;
-		}
-		if (age) {
-			requestBody["age"] = age;
-		}
-		if (height) {
-			requestBody["height"] = height;
-		}
-		if (weight) {
-			requestBody["weight"] = weight;
-		}
-		if (gender) {
-			requestBody["gender"] = gender;
-		}
-		if (physicalHabits) {
-			requestBody["physical_habits"] = physicalHabits;
-		}
-		if (activityFrequencyID !== 0) {
-			requestBody["activity_frequency_id"] = activityFrequencyID;
-		}
-	
+	  getSingleClient: async (clientID) => {
+        try {
+            const response = await fetch(process.env.BACKEND_URL + `/api/client/${clientID}`);
+            const data = await response.json();
+            setStore({ singleClient: data });
+        } catch (error) {
+            console.error("Error fetching single client:", error);
+        }
+    },
+
+	clientSignUp: async (username, email, password) => {
 		const requestOptions = {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(requestBody)
+			body: JSON.stringify({
+				"username": username,
+				"email": email,
+				"password": password,
+			})
 		};
-		fetch(process.env.BACKEND_URL + "/api/client/signup", requestOptions)
-		.then(response => {
-			if(response.status == 200) {
-				setStore({ errorClient: undefined })
+		try {
+			const response = await fetch(process.env.BACKEND_URL + "/api/client/signup", requestOptions);
+			const data = await response.json();
+			if (response.ok) {
+				setStore({ errorForm: null })
+				await getActions().getClients()
+			} else {
+				setStore({ errorForm: data.error })
+				return
 			}
-			return response.json()
-		})
-		.then(data => {
-			if(data.error) {
-				setStore({ errorClient: data.error })
-			}
-		})
+		} catch(error) {
+			console.error("Error during client sign up:", error);
+		}
 	},
 	deleteClient: (clientID) => {
 		fetch(process.env.BACKEND_URL + `/api/client/${clientID}`, { method: 'DELETE' })
 		.then( () => getActions().getClients())
 	},
-	updateClientAPI: (username, email, password, firstName,lastName,age,height,weight,gender,physicalHabits,activityFrequencyID,clientID) => {
-		const requestBody = {
-			"username": username,
-			"email": email,
-			"password": password,
-		};
+  updateClientAPI: async (
+      username,
+      email,
+      password,
+      firstName,
+      lastName,
+      age,
+      height,
+      weight,
+      gender,
+      physicalHabits,
+      photoUrl,
+      activityFrequencyID,
+      latitude, 
+      longitude, 
+      city,
+      clientID
+    ) => {
+      // Construcción dinámica del cuerpo de la solicitud
+      const requestBody = {
+        "username": username,
+        "email": email,
+        "password": password
+      };
+
+      if (firstName) requestBody["first_name"] = firstName;
+      if (lastName) requestBody["last_name"] = lastName;
+      if (age) requestBody["age"] = age;
+      if (height) requestBody["height"] = height;
+      if (weight) requestBody["weight"] = weight;
+      if (gender) requestBody["gender"] = gender;
+      if (physicalHabits) requestBody["physical_habits"] = physicalHabits;
+      if (photoUrl) requestBody["client_photo_url"] = photoUrl;
+      if (latitude) requestBody["latitude"] = latitude;
+      if (longitude) requestBody["longitude"] = longitude;
+      if (city) requestBody["city"] = city;
+      if (activityFrequencyID !== 0) requestBody["activity_frequency_id"] = activityFrequencyID;
+
+      const token = localStorage.getItem("token_client");
+
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // Asegúrate de usar el token correcto
+        },
+        body: JSON.stringify(requestBody)
+      };
+
+      try {
+        // Realizar la solicitud al backend para actualizar el perfil del cliente
+        const response = await fetch(process.env.BACKEND_URL + `/api/client/${clientID}`, requestOptions);
+        const data = await response.json();
+
+        if (response.status === 200) {
+          setStore({ errorForm: null, singleClient: data });
+          console.log("Perfil del cliente actualizado con éxito:", data);
+        } else {
+          setStore({ errorForm: data.error });
+        }
+      } catch (error) {
+        console.error("Error updating client profile:", error);
+        setStore({ errorForm: error.message });
+      }
+    },
 	
-		if (firstName) {
-			requestBody["first_name"] = firstName;
-		}
-		if (lastName) {
-			requestBody["last_name"] = lastName;
-		}
-		if (age) {
-			requestBody["age"] = age;
-		}
-		if (height) {
-			requestBody["height"] = height;
-		}
-		if (weight) {
-			requestBody["weight"] = weight;
-		}
-		if (gender) {
-			requestBody["gender"] = gender;
-		}
-		if (physicalHabits) {
-			requestBody["physical_habits"] = physicalHabits;
-		}
-		if (activityFrequencyID !== 0) {
-			requestBody["activity_frequency_id"] = activityFrequencyID;
-		}
 	
-		const requestOptions = {
-			method: 'PUT',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(requestBody)
-		};
-		fetch(process.env.BACKEND_URL + `api/client/${clientID}`, requestOptions)
-		.then(response => {
-			if(response.status == 200) {
-				setStore({ errorClient: undefined })
-			}
-			return response.json()
-		})
-		.then(data => {
-			if(data.error) {
-				setStore({ errorClient: data.error })
-			}
-		})
-	},
-      
+	
+
       // COACH
 			getCoaches: () => {
 				fetch(process.env.BACKEND_URL + "/api/coach")
@@ -168,129 +176,272 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ singleCoach: data })
 				})
 			},
-			coachSignUp: (username, email, password, firstName, lastName, educationID, experienceID) => {
-				const requestBody = {
-					"username": username,
-					"email": email,
-					"password": password,
-				};
-			
-				if (firstName) {
-					requestBody["first_name"] = firstName;
-				}
-				if (lastName) {
-					requestBody["last_name"] = lastName;
-				}
-				if (educationID !== 0) {
-					requestBody["education_id"] = educationID;
-				}
-				if (experienceID !== 0) {
-					requestBody["experience_id"] = experienceID;
-				}
-			
-				const requestOptions = {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(requestBody)
-				};
-				fetch(process.env.BACKEND_URL + "/api/coach/signup", requestOptions)
-				.then(response => {
-					if(response.status == 200) {
-						setStore({ errorCoach: undefined })
-					}
-					return response.json()
-				})
-				.then(data => {
-					if(data.error) {
-						setStore({ errorCoach: data.error })
-					}
-				})
+			setSingleCoach: () => {
+				setStore({ singleCoach: currentCoach })
 			},
-			coachLogin: (email, password) => {
+			coachSignUp: async (username, email, password) => {
 				const requestOptions = {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ 
+					body: JSON.stringify({
+						"username": username,
 						"email": email,
-						"password": password 
+						"password": password,
 					})
 				};
-				fetch(process.env.BACKEND_URL + "/api/coach/login", requestOptions)
-					.then(response => {
-						if(response.status == 200) {
-							setStore({ authCoach: true })
-							setStore({ errorCoach: undefined })
-							getActions().getCoaches()
-							const loggedCoach = getStore().coaches.find((coach) => coach.email == email)
-							localStorage.setItem("loggedCoach", loggedCoach.username)
-						}
-						return response.json()
-					})
-					.then(data => {
-						if(data.error) {
-							setStore({ errorCoach: data.error })
-						}
-						if(data.access_coach_token) {
-							localStorage.setItem("token_coach", data.access_coach_token)
-						}
-					});
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/coach/signup", requestOptions);
+					const data = await response.json();
+					if (response.ok) {
+						setStore({ errorForm: null })
+						await getActions().getCoaches()
+					} else {
+						setStore({ errorForm: data.error })
+						return
+					}
+				} catch(error) {
+					console.error("Error during coach sign up:", error);
+				}
 			},
-			logoutCoach: () => {
-				localStorage.removeItem("token_coach");
-				localStorage.removeItem("loggedCoach");
-				setStore({ authCoach: false })
+			logout: () => {
+				if (getStore().authCoach) {
+					localStorage.removeItem("token_coach");
+					localStorage.removeItem("loggedCoach");
+					setStore({ authCoach: false })
+				}
+				else if (getStore().authClient) {
+					localStorage.removeItem("token_client");
+					localStorage.removeItem("loggedClient");
+					setStore({ authClient: false })
+				}
 			},
 			checkAuth: () => {
                 const tokenCoach = localStorage.getItem("token_coach");
                 if (tokenCoach) {
                     setStore({ authCoach: true });
-                }
+                } else setStore({ authCoach: false });
+				const tokenClient = localStorage.getItem("token_client");
+                if (tokenClient) {
+                    setStore({ authClient: true });
+                } else setStore({ authClient: false });
             },
+			setAuth: (rol, bool) => {
+				if (rol === "coach") setStore({ authCoach: bool });
+				else if (rol === "client") setStore({ authClient: bool });
+			},
 			deleteCoach: (coachID) => {
 				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, { method: 'DELETE' })
 				.then( () => getActions().getCoaches())
 			},
-			updateCoachAPI: (username, email, password, firstName, lastName, educationID, experienceID, coachID) => {
+updateCoachAPI: async (
+				username,
+				email,
+				password,
+				firstName,
+				lastName,
+				educationID, 
+        experienceID,
+				photoUrl,
+				latitude, 
+				longitude, 
+				city,
+				coachID
+			) => {
+				// Construcción dinámica del cuerpo de la solicitud
 				const requestBody = {
 					"username": username,
 					"email": email,
-					"password": password,
+					"password": password
 				};
 			
-				if (firstName) {
-					requestBody["first_name"] = firstName;
-				}
-				if (lastName) {
-					requestBody["last_name"] = lastName;
-				}
-				if (educationID !== 0) {
-					requestBody["education_id"] = educationID;
-				}
-				if (experienceID !== 0) {
-					requestBody["experience_id"] = experienceID;
-				}
+				if (firstName) requestBody["first_name"] = firstName;
+				if (lastName) requestBody["last_name"] = lastName;
+				if (educationID !== 0) requestBody["education_id"] = educationID;
+				if (experienceID !== 0) requestBody["experience_id"] = experienceID;
+				if (photoUrl) requestBody["coach_photo_url"] = photoUrl;
+				if (latitude) requestBody["latitude"] = latitude;
+				if (longitude) requestBody["longitude"] = longitude;
+				if (city) requestBody["city"] = city;
+			
+				const token = localStorage.getItem("token_coach");
 			
 				const requestOptions = {
 					method: 'PUT',
-					headers: { 'Content-Type': 'application/json' },
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${token}` // Asegúrate de usar el token correcto
+					},
 					body: JSON.stringify(requestBody)
 				};
-				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, requestOptions)
-				.then(response => {
-					if(response.status == 200) {
-						setStore({ errorCoach: undefined })
+			
+				try {
+					// Realizar la solicitud al backend para actualizar el perfil del cliente
+					const response = await fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, requestOptions);
+					const data = await response.json();
+			
+					if (response.status === 200) {
+						setStore({ errorForm: null, singleCoach: data });
+						console.log("Perfil del coach actualizado con éxito:", data);
+					} else {
+						setStore({ errorForm: data.error });
 					}
-					return response.json()
-				})
-				.then(data => {
-					if(data.error) {
-						setStore({ errorCoach: data.error })
-					}
-				})
+				} catch (error) {
+					console.error("Error updating coach profile:", error);
+					setStore({ errorForm: error.message });
+				}
 			},
         
+       	// LIKES
+	  getLikes: async () => {
+			try {
+				const resp = await fetch(process.env.BACKEND_URL + "/api/like");
+				const data = await resp.json();
+				setStore({ likes: data });
+			} catch (error) {
+				console.error("Error fetching likes:", error);
+			}
+		},
+		addLikeAPI: (source, clientID, coachID) => {
+			const requestOptions = {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					"source": source,
+					"client_id": clientID,
+					"coach_id": coachID
+				})
+			};
+			fetch(process.env.BACKEND_URL + "/api/like", requestOptions)
+			.then( () => getActions().checkAuth())
+			.then( () => {
+				if(getStore().authCoach){
+					getActions().getLikes()
+					getActions().getNoGivenLikes(coachID)
+					getActions().getReceivedLikes(coachID)
+				} else {
+					getActions().getLikes()
+					getActions().getNoGivenLikes(clientID)
+					getActions().getReceivedLikes(clientID)
+				}
+				
+			})
+		},
+		deleteLike: async (likeID, loggedUserID) => {
+			await fetch(process.env.BACKEND_URL + `/api/like/${likeID}`, { method: 'DELETE' })
+			await getActions().getGivenLikes(loggedUserID)
+			await getActions().getLikes()
+		},
+		getGivenLikes: async (loggedUserID) => {
+			try {
+				await getActions().checkAuth()
+				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
+
+				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
+				const data = await resp.json();
+				if(getStore().authCoach){
+					setStore({ givenLikesCoach: data.given_likes });
+				} else {
+					setStore({ givenLikesClient: data.given_likes });
+				}
+			} catch (error) {
+				console.error("Error fetching given likes:", error);
+			}
+		},
+		getNoGivenLikes: async (loggedUserID) => {
+			try {
+				await getActions().checkAuth()
+				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
+
+				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
+				const data = await resp.json();
+				if(getStore().authCoach){
+					setStore({ noGivenLikesCoach: data.no_given_likes });
+				} else {
+					setStore({ noGivenLikesClient: data.no_given_likes });
+				}
+			} catch (error) {
+				console.error("Error fetching no given likes:", error);
+			}
+		},
+		getReceivedLikes: async (loggedUserID) => {
+			try {
+				await getActions().checkAuth()
+				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
+
+				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
+				const data = await resp.json();
+				if(getStore().authCoach){
+					setStore({ receivedLikesCoach: data.received_likes });
+				} else {
+					setStore({ receivedLikesClient: data.received_likes });
+				}
+			} catch (error) {
+				console.error("Error fetching received likes:", error);
+			}
+		},
+		getUserMatches: async (loggedUserID) => {
+			try {
+				await getActions().checkAuth()
+				const pathLike = getStore().authCoach ? "coach_likes" : "client_likes";
+
+				const resp = await fetch(process.env.BACKEND_URL + `/api/${pathLike}/${loggedUserID}`);
+				const data = await resp.json();
+				if(getStore().authCoach){
+					setStore({ matchesCoach: data.matches });
+				} else {
+					setStore({ matchesClient: data.matches });
+				}
+			} catch (error) {
+				console.error("Error fetching received likes:", error);
+			}
+		},
+            // MATCH
+      		getMatches: async () => {
+				try {
+					const resp = await fetch(process.env.BACKEND_URL + "/api/match");
+					const data = await resp.json();
+					setStore({ matches: data });
+				} catch (error) {
+					console.error("Error fetching likes:", error);
+				}
+	  		},
+			getCoachMatches: async (coachID) => {
+				try {
+					await getActions().getMatches()
+					await getActions().getClients();
+
+					const allClients = getStore().clients;
+					const coachMatches = await getStore().matches.filter((match) => match.coach_id === coachID)
+					const coachMatchesClientIDs = coachMatches.map(like => like.client_id);
+					const usersMatched = allClients.filter(client => coachMatchesClientIDs.includes(client.id));
+		
+					setStore({ userMatches: usersMatched })
+				} catch (error) {
+					console.log("Error getting received likes", error);
+				}
+			},
+			deleteMatch: async (clientID, coachID) => {
+				try {
+					const { matches } = getStore();
+					const matchToDelete = matches.find(match => match.coach_id === coachID && match.client_id === clientID);
+			
+					if (matchToDelete) {
+						const resp = await fetch(process.env.BACKEND_URL + `/api/match/${matchToDelete.id}`, { method: 'DELETE' });
+						if (resp.ok) {
+							const updatedUserMatches = getStore().userMatches.filter(match => match.id !== matchToDelete.id);
+							setStore({ userMatches: updatedUserMatches });
+						} else {
+							console.error("Error deleting match:", resp.statusText);
+						}
+					} else {
+						console.error("Match not found for deletion");
+					}
+				} catch (error) {
+					console.error("Error deleting match:", error);
+				}
+			},
       		// AVAILABILITY
-      getAvailability: () => {
+      		getAvailability: () => {
 				fetch(process.env.BACKEND_URL + "/api/availability")
 				.then( (response) => response.json())
 				.then( data => setStore({ availability: data }))	
@@ -444,9 +595,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then( (response) => response.json())
 				.then( data => setStore({ experience: data }))	
 			},
-
-			// ENDPOINT GETAVAILABILITYCLIENT
-
 			getSingleExperience: (experienceID) => {
 				fetch(process.env.BACKEND_URL + `/api/experience/${experienceID}`)
 				.then( (response) => response.json())
@@ -457,7 +605,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ 
-            	"time": time,
+            		"time": time,
 					})
 				};
 				fetch(process.env.BACKEND_URL + "/api/experience", requestOptions)
@@ -539,7 +687,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			getSingleActivityFrequency: async (activityFrequencyID) => {
 				try {
-					const response = await fetch(process.env.BACKEND_URL + `api/activities/${activityFrequencyID}`);
+					const response = await fetch(process.env.BACKEND_URL + `/api/activities/${activityFrequencyID}`);
 					const data = await response.json();
 					setStore({ singleActivityFrequency: data });
 				} catch (error) {
@@ -558,14 +706,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.then(response => response.json())
 				.then(()=>getActions().getActivityFrequency())
 			},
+			
 			deleteActivityFrequency: (idToDelete) => {
 				fetch(`${process.env.BACKEND_URL}/api/activities/${idToDelete}`, { method: 'DELETE' })
 				.then(()=>getActions().getActivityFrequency())
 			},
+			
 			updateActivityFrequency: (iDSelected) => {
 				const activityFrequencySelected = getStore().activities.find(activityFrequency => activityFrequency.id === iDSelected)
 				setStore({ singleActivityFrequency: activityFrequencySelected })
 			},
+			
 			updateActivityFrequencyAPI: (mode, idToEdit) => {
 				const requestOptions = {
 					method: 'PUT',

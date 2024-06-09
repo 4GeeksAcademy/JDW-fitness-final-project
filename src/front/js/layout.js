@@ -4,6 +4,8 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Home } from "./pages/home";
+import { SignUp } from "./pages/signUp";
+import { Login } from "./pages/login";
 
 import { Availability } from "./pages/availability";
 import { AddAvailability } from "./pages/addAvailability";
@@ -44,18 +46,25 @@ import { Coach } from "./pages/coach";
 import { SingleCoach } from "./pages/singleCoach";
 import { AddCoach } from "./pages/addCoach";
 import { UpdateCoach } from "./pages/updateCoach";
-import { LoginCoach } from "./pages/loginCoach";
 
 import injectContext from "./store/appContext";
 import { AvailabilityClient } from "./pages/availabilityClient";
-import { AddAvailabilityClient } from "./pages/addAvailabilityClient";
 
+import { Likes } from "./pages/likes";
+import { GivenLikesClient } from "./pages/givenLikesClient";
+import { ReceivedLikesClient } from "./pages/receivedLikesClient";
+import { NoGivenLikesClient } from "./pages/noGivenLikes";
+import { MatchClient } from "./pages/matchClient";
+import { GivenLikesCoach } from "./pages/givenLikesCoach";
+import { NoGivenLikesCoach } from "./pages/noGivenLikesCoach";
+import { ReceivedLikesCoach } from "./pages/receivedLikesCoach";
+import { MatchCoach } from "./pages/matchCoach";
 
+import injectContext from "./store/appContext";
+// import { AvailabilityClient } from "./pages/availabilityClient";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
-
-
 
 //create your first component
 const Layout = () => {
@@ -72,6 +81,8 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
+                        <Route element={<SignUp />} path="/signup" />
+                        <Route element={<Login />} path="/login" />
                         {/* AVAILABILITY ROUTES */}  
                         <Route element={<Availability />} path="/availability" />
                         <Route element={<SingleAvailability />} path="/availability/:availabilityID" />
@@ -83,10 +94,7 @@ const Layout = () => {
                         <Route element={<AddGoal />} path="/goals/form" />
                         <Route element={<UpdateGoal />} path="/goals/update/:goalID" />
                         {/* AVAILABILITY_CLIENT ROUTES */}
-                       <Route element={<AvailabilityClient />} path="/availability-client/:client_id" />
-                       <Route element={<AddAvailabilityClient />} path="/availability-client/:id" />
-                       
-
+                        <Route element={<AvailabilityClient />} path="/availability-client/:client_id" />
                         {/* DISEASES ROUTES */}
                         <Route element={<Diseases />} path="/diseases" />
                         <Route element={<SingleDiseases />}  path="/diseases/:diseasesID" />
@@ -109,15 +117,24 @@ const Layout = () => {
                         <Route element={<SingleActivity />} path="/activities/:activityID" />
                         {/* COACH PATH */}
                         <Route element={<Coach />} path="/coach" />
+                        <Route element={<SingleCoach />} path="/coach/:coachID" />
                         <Route element={<AddCoach />} path="/coach/signup" />
                         <Route element={<UpdateCoach />} path="/coach/update/:coachID" />
-                        <Route element={<SingleCoach />} path="/coach/:coachID" />
-                        <Route element={<LoginCoach />} path="/coach/login" />
                         {/* CLIENT PATH */}
                         <Route element={<Client />} path="/client" />
                         <Route element={<SingleClient />} path="/client/:clientID" />
                         <Route element={<AddClient />} path="/client/signup" />
                         <Route element={<UpdateClient />} path="/client/update/:clientID" />
+                        {/* LIKES AND MATCH PATH */}
+                        <Route element={<Likes />} path="/likes" />
+                        <Route element={<GivenLikesClient />} path="client/likes/given" />  
+                        <Route element={<NoGivenLikesClient />} path="client/likes/nogiven" />
+                        <Route element={<ReceivedLikesClient />} path="client/likes/received" />
+                        <Route element={<MatchClient />} path="/client/match" />
+                        <Route element={<GivenLikesCoach />} path="/coach/likes/given" /> 
+                        <Route element={<NoGivenLikesCoach />} path="/coach/likes/nogiven" /> 
+                        <Route element={<ReceivedLikesCoach />} path="/coach/likes/received" /> 
+                        <Route element={<MatchCoach />} path="/coach/match" />
                         {/* NOT FOUND */}
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>

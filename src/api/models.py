@@ -20,7 +20,7 @@ class User(db.Model):
 class Availability(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     day = db.Column(db.String(120), unique=True, nullable=False)
-    hour = db.Column(db.String(80), unique=False, nullable=False)
+    hour = db.Column(db.String(80), unique=False, nullable=True)
     availability_client = db.relationship('Availability_client', backref='availability')
 
     def __repr__(self):
@@ -29,7 +29,6 @@ class Availability(db.Model):
         return {
             "id": self.id,            
             "day": self.day,
-            "hour": self.hour, 
         } 
       
 class Goals(db.Model):
@@ -154,7 +153,6 @@ class Education(db.Model):
 class ActivityFrequency(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     mode = db.Column(db.String(120), unique=True)
-    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
 
     def __repr__(self):
         return f'<ActivityFrequency {self.mode}>'  

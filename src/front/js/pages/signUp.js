@@ -62,9 +62,10 @@ export const SignUp = () => {
             signUpResult = { error: "Please select a role (Client or Coach)." };
         }
 
-        if (store.errorForm || signUpResult.error) {
-            setError(store.errorForm || signUpResult.error);
-        } else {
+        // if (store.errorForm || signUpResult.error) {
+        //     setError(store.errorForm || signUpResult.error);
+        // } 
+        if (!store.errorForm) {
             login(email, password);
         }
     };

@@ -47,7 +47,6 @@ import { SingleCoach } from "./pages/singleCoach";
 import { AddCoach } from "./pages/addCoach";
 import { UpdateCoach } from "./pages/updateCoach";
 
-import injectContext from "./store/appContext";
 import { AvailabilityClient } from "./pages/availabilityClient";
 
 import { Likes } from "./pages/likes";

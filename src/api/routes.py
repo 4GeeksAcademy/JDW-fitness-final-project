@@ -698,87 +698,96 @@ def get_coach_likes(coach_id):
 @api.route('/availability_coach', methods=['GET'])
 def get_availability_coach():
     all_availability_coach = AvailabilityCoach.query.all()
-    results = list(map(lambda availability_coach: availability_coach.serialize(), all_availability_coach))
+    results = [availability_coach.serialize() for availability_coach in all_availability_coach]
     return jsonify(results), 200
 
     # GET ID AVAILABILITYCOACH 
 @api.route('/availability_coach/<int:coach_id>', methods=['GET'])
 def get_coach_availabilities(coach_id):
-    # Obtener todas las entradas de AvailabilityCoach asociadas con el coach_id
+    
+    coach = Coach.query.get(coach_id)
+    if not coach:
+        return jsonify({'message': 'Coach not found'}), 404
+
+    # Consultar las disponibilidades asociadas
     availability_coaches = AvailabilityCoach.query.filter_by(coach_id=coach_id).all()
-    
-    if not availability_coaches:
-        return jsonify({'message': 'No availabilities found for the given coach_id'}), 404
-    
-    # Serializar cada entrada de AvailabilityCoach
-    results = [availability_coach.serialize() for availability_coach in availability_coaches]
-    
-    return jsonify(results), 200
+
+    # Serializar las disponibilidades si existen
+    availabilities = [availability_coach.serialize() for availability_coach in availability_coaches]
+
+    # Crear la respuesta incluyendo los datos básicos del coach
+    result = {
+        "coach_id": coach.id,
+        "coach_email": coach.email,
+        "availabilities": availabilities
+    }
+
+    return jsonify(result), 200
+
+
+
+
+   
+
 
     # POST AVAILABILITYCOACH 
 
 @api.route('/availability_coach', methods=['POST'])
-def add_availability_coach():
-    data = request.get_json()
-    
-    if not data or not data.get('coach_email') or not data.get('availability_day'):
-        return jsonify({'message': 'Missing required fields'}), 400
-    
-    # Buscar el coach por email
-    coach = Coach.query.filter_by(email=data['coach_email']).first()
-    if not coach:
-        return jsonify({'message': 'Coach not found'}), 404
-    
-    # Buscar la disponibilidad por día
-    availability = Availability.query.filter_by(day=data['availability_day']).first()
-    if not availability:
-        return jsonify({'message': 'Availability not found'}), 404
-    
-    # Verificar si ya existe una disponibilidad para ese coach en ese día
-    existing_availability = AvailabilityCoach.query.filter_by(coach_id=coach.id, availability_id=availability.id).first()
-    if existing_availability:
-        return jsonify({'message': 'This availability is already assigned to the coach'}), 409
-    
-    # Crear una nueva instancia de AvailabilityCoach
-    new_availability_coach = AvailabilityCoach(
-        availability_id=availability.id,
-        coach_id=coach.id
-    )
-    
+def create_availability_coach():
+    data = request.json
+    if not data:
+        return jsonify({'message': 'No input data provided'}), 400
+
+    coach_email = data.get('coach_email')
+    availability_day = data.get('availability_day')
+    if not coach_email or not availability_day:
+        return jsonify({'message': 'Coach email and availability day must be provided'}), 400
+
     try:
+        # Buscar el coach por correo electrónico
+        coach = Coach.query.filter_by(email=coach_email).first()
+        if not coach:
+            return jsonify({'message': 'Coach not found'}), 404
+
+        # Buscar la disponibilidad por día
+        availability = Availability.query.filter_by(day=availability_day).first()
+        if not availability:
+            return jsonify({'message': 'The specified availability day does not exist'}), 404
+
+        # Verificar si la disponibilidad ya está ocupada por el coach
+        existing_entry = AvailabilityCoach.query.filter_by(coach_id=coach.id, availability_id=availability.id).first()
+        if existing_entry:
+            return jsonify({'message': 'The availability is already occupied by the coach'}), 400
+
+        # Crear una nueva entrada de disponibilidad para el coach
+        new_availability_coach = AvailabilityCoach(coach_id=coach.id, availability_id=availability.id)
         db.session.add(new_availability_coach)
         db.session.commit()
-        
-        return jsonify(new_availability_coach.serialize()), 201
+
+        return jsonify({'message': 'Availability coach entry created successfully'}), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({'message': 'An error occurred while creating the availability', 'error': str(e)}), 500
+        return jsonify({'message': 'Error while creating the availability coach entry', 'error': str(e)}), 500
 
-       # DELETE AVAILABILITYCOACH 
-@api.route('/availability_coach/<int:id>', methods=['DELETE'])
+        #DELETE AVAILABILITYCOACH
+@api.route('/availability_coach/day/<int:id>', methods=['DELETE'])
 def delete_availability_coach(id):
     availability_coach = AvailabilityCoach.query.get(id)
     
     if availability_coach is None:
         return jsonify({'message': 'Availability coach entry not found'}), 404
     
-    try:
-        db.session.delete(availability_coach)
-        db.session.commit()
-        return jsonify({'message': 'Availability coach entry deleted successfully'}), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'message': 'An error occurred while deleting the availability', 'error': str(e)}), 500 
+    db.session.delete(availability_coach)
+    db.session.commit()
+    
+    return jsonify({'message': 'Availability coach entry deleted successfully'}), 200
+
 
 
 # PUT AVAILABILITYCOACH
 
-@api.route('/availability_coach/<int:id>', methods=['PUT'])
-def update_availability_coach_day(id):
-    availability_coach = AvailabilityCoach.query.get(id)
-    if not availability_coach:
-        return jsonify({'message': 'Availability coach entry not found'}), 404
-
+@api.route('/availability_coach/<int:coach_id>/availability/<int:availability_coach_id>', methods=['PUT'])
+def update_availability_coach_day(coach_id, availability_coach_id):
     data = request.json
     if not data:
         return jsonify({'message': 'No input data provided'}), 400
@@ -788,23 +797,32 @@ def update_availability_coach_day(id):
         return jsonify({'message': 'New availability day not provided'}), 400
 
     try:
-        # Find the new availability_id by the provided day
+        # Verificar que la entrada de disponibilidad del coach especificada existe y pertenece al coach
+        availability_coach = AvailabilityCoach.query.filter_by(id=availability_coach_id, coach_id=coach_id).first()
+        if not availability_coach:
+            return jsonify({'message': 'Availability coach entry not found for the given coach_id and availability_coach_id'}), 404
+
+        # Encuentra la nueva disponibilidad por día
         new_availability = Availability.query.filter_by(day=new_day).first()
         if not new_availability:
-            return jsonify({'message': 'The specified availability day does not exist'}), 404
+            return jsonify({'message': f'The specified availability day {new_day} does not exist'}), 404
 
-        # Check if the new availability_id is already occupied by the coach
-        existing_entry = AvailabilityCoach.query.filter_by(coach_id=availability_coach.coach_id, availability_id=new_availability.id).first()
+        # Verificar si el coach ya tiene asignada esta nueva disponibilidad (día específico)
+        existing_entry = AvailabilityCoach.query.filter_by(coach_id=coach_id, availability_id=new_availability.id).first()
         if existing_entry:
-            return jsonify({'message': 'The new availability is already occupied by the coach'}), 400
+            return jsonify({'message': f'The new availability {new_day} is already occupied by the coach'}), 400
 
+        # Actualizar el availability_id de la entrada específica del coach
         availability_coach.availability_id = new_availability.id
-
         db.session.commit()
+
         return jsonify({'message': 'Availability coach entry updated successfully'}), 200
+
     except Exception as e:
         db.session.rollback()
+
         return jsonify({'message': 'Error while updating the availability coach entry', 'error': str(e)}), 500
+
 
 
 

@@ -209,7 +209,7 @@ class AvailabilityCoach(db.Model):
      def serialize(self):
         return {
             "id": self.id,
-            "coach_email": self.coach.email if self.coach else None,
+            "username": Coach.query.get(self.coach_id).username,
             "availability_day": self.availability.day if self.availability else None
         }
       

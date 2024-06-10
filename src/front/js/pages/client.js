@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
+import ProfileImage from "../component/profileImage"
 
 import { Context } from "../store/appContext";
 
@@ -40,35 +41,40 @@ export const Client = () => {
 		}
     }
 
-	return (
-		<div className="container">
-            <h1 className="text-center mt-3">Client List</h1>
-			<ul>
-				{store.clients.map((client, index) => 
-					<div key={index} className="">
-						<li className="list-group-item my-2 border-3">
-							<div className="d-flex justify-content-between">
-								<div>
-								<span className="fw-bold">Username: </span>
-								{client.username}
-								</div>
-								{like[client.id] ?
-								<button className="btn btn-warning py-0 px-1 fw-semibold" onClick={() => handleLike(client.id)}>
-									 Request to train
-								</button>
-								:	
-								<button className="btn btn-danger py-0 px-1 fw-semibold" onClick={() => handleLike(client.id)}>
-									Cancel your request
-								</button>					
-								}
-							</div>
-							<Link to={`/client/${client.id}`} className="btn btn-info mt-2 fw-bold">
-                    			<span>Show more information</span>
-                			</Link>
-						</li>
-					</div>
-				)}
-			</ul>
-		</div>		
-	);
+    return (
+        <div className="container">
+            <div className="row d-flex justify-content-center">
+                <div className="col-10 col-xl-10">
+                    <div className="d-flex flex-row align-items-center card card-ui-default-1 bg-secondary p-4 col-12">
+                        <i className="fa-solid fa-users fs-2"></i>
+                        <h1 className="ms-3">Client List</h1>
+                    </div>
+                </div>
+                {store.clients.map((client, index) => 
+                    <div key={index} className="col-10 col-xl-10">
+                        <div className="card card-ui-default-1 bg-secondary col-12">
+                            <div className="card-body mb-0 d-flex justify-content-between align-items-center">
+                                <div className="d-flex">
+                                    <ProfileImage photoUrl={client.client_photo_url} />
+                                    <div className="d-flex flex-column justify-content-center ms-3">
+                                        <h5 className="card-title mb-3">{client.username}</h5>
+                                        <Link to={`/client/${client.id}`} className="btn btn-card rounded-5">
+                                            <span>Show more information</span>
+                                        </Link>
+                                    </div>
+                                </div>
+                                {like[client.id] ?
+                                    <button type="button" className="btn btn-secondary btn-request fw-semibold" onClick={() => handleLike(client.id)}>Request to train<span className="btn-icon-right ms-3"><i className="fa fa-envelope"></i></span>
+                                    </button>
+                                    :   
+                                    <button type="button" className="btn btn-secondary btn-cancel fw-semibold" onClick={() => handleLike(client.id)}>Cancel request<span className="btn-icon-right ms-3"><i className="fas fa-times"></i></span>
+                                    </button>                
+                                }
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>      
+    );
 };

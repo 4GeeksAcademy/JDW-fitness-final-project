@@ -34,12 +34,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			singleEducation: {},   
 	    activities: [],
 		  singleActivityFrequency:{},
-		  error: null
-		
+		  error: null,
 		availabilityCoach:[],
 		  singleAvailabilityCoach:[],
 		  noAvailabilityMessage: false,
-		  
 		  coachDetails: {
 			coach_id: null,
        email: ""
@@ -47,7 +45,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 		availabilityClient:[],
 		  singleAvailabilityClient:[],
 		  noAvailabilityMessage: false,
-		  
 		  clientDetails: {
 			client_id: null,
 			email: ""

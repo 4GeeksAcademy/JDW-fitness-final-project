@@ -61,7 +61,7 @@ import { MatchCoach } from "./pages/matchCoach";
 
 import { AvailabilityCoach } from "./pages/availabilityCoach";
 
-
+import { NavbarTest } from "./component/navbarTest";
 
 
 import injectContext from "./store/appContext";
@@ -79,10 +79,11 @@ const Layout = () => {
     if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/ >;
 
     return (
-        <div>
+        <div className="app-wrapper"> 
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                    <Navbar />
+                    <NavbarTest />
+                    <div className="main-wrapper">
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<SignUp />} path="/signup" />
@@ -146,6 +147,7 @@ const Layout = () => {
                         {/* NOT FOUND */}
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
+                    </div>
                     <Footer />
                 </ScrollToTop>
             </BrowserRouter>

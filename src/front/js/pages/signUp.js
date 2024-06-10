@@ -12,6 +12,7 @@ export const SignUp = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [selectedOption, setSelectedOption] = useState("");
     const [error, setError] = useState(null);
+    const [errorState, setErrorState] = useState(false)
 
 
     const login = async (email, password) => {
@@ -37,12 +38,13 @@ export const SignUp = () => {
                 navigate("/client")  
             }
             if (data.access_client_token) {
+                await actions.getClients()
                 const loggedClient = await store.clients.find(client => client.email === email);
                 localStorage.setItem("loggedClient", JSON.stringify({ "id": loggedClient.id, "username": loggedClient.username }));
                 await actions.setAuth("client", true)  
                 localStorage.setItem("token_client", data.access_client_token); 
                 navigate("/coach")   
-            }
+            } 
             return data
         }  
         catch (error) {
@@ -52,20 +54,20 @@ export const SignUp = () => {
 
     const signUp = async (e) => {
         e.preventDefault();
-        let signUpResult;
-
         if (selectedOption === "client") {
-            signUpResult = await actions.clientSignUp(username, email, password);
+            await actions.clientSignUp(username, email, password);
         } else if (selectedOption === "coach") {
-            signUpResult = await actions.coachSignUp(username, email, password);
+            await actions.coachSignUp(username, email, password);
         } else {
-            signUpResult = { error: "Please select a role (Client or Coach)." };
+            setErrorState(true)
+            setError("Please select a role (Client or Coach)")
         }
-
-        // if (store.errorForm || signUpResult.error) {
-        //     setError(store.errorForm || signUpResult.error);
-        // } 
-        if (!store.errorForm) {
+        
+        if(store.errorForm) {
+            setErrorState(false)
+            setError(store.errorForm)
+        }
+        if (!store.errorForm && !errorState) {
             login(email, password);
         }
     };

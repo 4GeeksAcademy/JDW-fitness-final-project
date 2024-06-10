@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const AvailabilityClient = () => {
@@ -23,7 +23,7 @@ export const AvailabilityClient = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: store.clientDetails.username || "usernameunknow",
+          username: store.clientDetails.username || "client@example.com",
           availability_day: newDay,
         }),
       });
@@ -31,8 +31,8 @@ export const AvailabilityClient = () => {
       if (response.ok) {
         // Vuelve a cargar las disponibilidades
         actions.getSingleAvailabilityClient(client_id);
-        setModalIsOpen(false);  
-        setNewDay("");  
+        setModalIsOpen(false);  // Cerrar modal después de agregar disponibilidad
+        setNewDay("");  // Limpiar el campo de entrada
       } else {
         console.error("Error adding new availability");
       }
@@ -59,22 +59,28 @@ export const AvailabilityClient = () => {
 
   return (
     <div className="container mt-5">
-      <h1 className="text-center mb-4">Availability for Client: {store.clientDetails?.username}</h1>
-      
+      <div style={{
+        backgroundColor: '#a02cfa',
+        borderRadius: '10px',
+        color: 'white'
+      }} className="text-center mb-4">
+        <h1>Availability for Client: {store.clientDetails?.username}</h1>
+      </div>
+      <div className="bg-purple text-white p-4 rounded mb-4">
+        <p className="mb-0">Manage your availability below:</p>
+      </div>
+
       {store.noAvailabilityMessage ? (
         <div className="text-center">
           <p>Aún no has agregado ningún día de disponibilidad, por favor agrega uno:</p>
-          <button className="btn btn-primary" onClick={openModal}>
-            Add New Availability
-          </button>
         </div>
       ) : (
         Array.isArray(store.singleAvailabilityClient) && store.singleAvailabilityClient.length > 0 ? (
           <ul className="list-group">
             {store.singleAvailabilityClient.map((availability, index) => (
-              <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+              <li key={index} className="list-group-item d-flex justify-content-between align-items-center rounded mb-3 shadow-sm">
                 <div>
-                  Day: {availability.availability_day} 
+                  Day: {availability.availability_day}
                 </div>
                 <div>
                   <button className="btn btn-secondary btn-sm ml-2" onClick={() => handleDeleteAvailability(availability.id)}>
@@ -94,20 +100,15 @@ export const AvailabilityClient = () => {
       <button className="btn btn-secondary mt-4" onClick={openModal}>
         Add New Availability
       </button>
-      <Link to={`/client/${client_id}`} >
-        <button className="btn btn-secondary mt-4 ms-3" >
-          Back to single information
-        </button>
-			</Link>
 
       {/* Modal de Bootstrap */}
       {modalIsOpen && (
         <div className="modal show" style={{ display: "block" }} tabIndex="-1" role="dialog">
           <div className="modal-dialog" role="document">
-            <div className="modal-content">
+            <div className="modal-content rounded-3 shadow-lg">
               <div className="modal-header bg-light">
-                <h5 className="modal-title text-purple">Add New Availability</h5>
-                <button type="button" className="close" onClick={closeModal}>
+                <h5 className="modal-title text-secondary">Add New Availability</h5>
+                <button type="btn btn-secondary mt-4" className="close" onClick={closeModal}>
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
@@ -131,7 +132,7 @@ export const AvailabilityClient = () => {
                   </div>
                 </form>
               </div>
-              <div className="modal-footer bg-light">
+              <div className="modal-footer bg-light justify-content-between">
                 <button type="button" className="btn btn-secondary" onClick={closeModal}>Cancel</button>
                 <button type="button" className="btn btn-secondary" onClick={handleAddNewAvailability}>Add Availability</button>
               </div>

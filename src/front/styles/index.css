@@ -203,4 +203,36 @@ input::placeholder {
 .accordion-body {
     padding: 1rem; /* Ajusta el padding según sea necesario */
 }
+/*UPDATE*/
+.form-control[type="file"]:not(:disabled):not([readonly]) {
+    cursor: pointer;
+}
 
+.form-control[type="file"] {
+    line-height: 44px;
+    padding-left: 12px;
+}
+.form-control[type="file"] {
+    overflow: hidden;
+}
+input.form-control {
+    position: relative;
+}
+.input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+}
+.alert-secondary {
+    background: #f1dffe;
+    border-color: #f1dffe;
+    color: #A02CFA;
+}
+.eye-update {
+    position: absolute;
+    right: 2.2rem;
+    /* bottom: 16px; */
+    top: 7.2rem;
+}

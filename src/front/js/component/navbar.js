@@ -15,13 +15,14 @@ export const Navbar = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const navigate = useNavigate()
 
+	const fetchSingleClient = async (id) => {
+		await actions.getSingleClient(id);
+	};
+	const fetchSingleCoach = async (id) => {
+		await actions.getSingleCoach(id);
+	};
+
 	useEffect(() => {
-		const fetchSingleClient = async (id) => {
-			await actions.getSingleClient(id);
-		};
-		const fetchSingleCoach = async (id) => {
-			await actions.getSingleCoach(id);
-		};
 		if (loggedCoach) {
 			fetchSingleCoach(loggedCoach.id)
 			setUsername(loggedCoach.username);
@@ -37,6 +38,15 @@ export const Navbar = () => {
 			setCurrentUserList("coach")
 		}
 	}, [actions.logout]);
+
+	useEffect(() => {
+		if (loggedCoach) {
+			fetchSingleCoach(loggedCoach.id)
+		}
+		else if (loggedClient) {
+			fetchSingleClient(loggedClient.id)
+		}
+	}, [store.singleCoach.coach_photo_url, store.singleClient.client_photo_url]);
 
 	const toggleSidebar = () => {
 		setIsSidebarOpen(!isSidebarOpen);

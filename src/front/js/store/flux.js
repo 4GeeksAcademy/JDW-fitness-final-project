@@ -34,12 +34,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			singleEducation: {},   
 	    activities: [],
 		  singleActivityFrequency:{},
-		  error: null
-		
+		  error: null,
 		availabilityCoach:[],
 		  singleAvailabilityCoach:[],
 		  noAvailabilityMessage: false,
-		  
 		  coachDetails: {
 			coach_id: null,
        email: ""
@@ -47,7 +45,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 		availabilityClient:[],
 		  singleAvailabilityClient:[],
 		  noAvailabilityMessage: false,
-		  
 		  clientDetails: {
 			client_id: null,
 			email: ""
@@ -185,9 +182,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ singleCoach: data })
 				})
 			},
-			setSingleCoach: () => {
-				setStore({ singleCoach: currentCoach })
-			},
 			coachSignUp: async (username, email, password) => {
 				const requestOptions = {
 					method: 'POST',
@@ -242,20 +236,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 				fetch(process.env.BACKEND_URL + `/api/coach/${coachID}`, { method: 'DELETE' })
 				.then( () => getActions().getCoaches())
 			},
-updateCoachAPI: async (
+			updateCoachAPI: async (
 				username,
 				email,
 				password,
 				firstName,
 				lastName,
 				educationID, 
-        experienceID,
+        		experienceID,
 				photoUrl,
 				latitude, 
 				longitude, 
 				city,
 				coachID
-			) => {
+				) => {
 				// Construcción dinámica del cuerpo de la solicitud
 				const requestBody = {
 					"username": username,
@@ -299,7 +293,7 @@ updateCoachAPI: async (
 					setStore({ errorForm: error.message });
 				}
 			},
-        
+
        	// LIKES
 	  getLikes: async () => {
 			try {
@@ -742,165 +736,166 @@ updateCoachAPI: async (
 
       
       // AVAILABILITY COACH
-			getAvailabilityCoach: () => {
-				fetch(`${process.env.BACKEND_URL}/api/availability_coach`)
-					.then((response) => response.json())
-					.then((data) => {
-						console.log("Coach Availability Data:", data);
-						setStore({ availabilityCoach: data });
-					})
-					.catch((error) => console.error("Error fetching coach availability:", error));
-			},
+	  getAvailabilityCoach: () => {
+		fetch(`${process.env.BACKEND_URL}/api/availability_coach`)
+			.then((response) => response.json())
+			.then((data) => {
+				console.log("Coach Availability Data:", data);
+				setStore({ availabilityCoach: data });
+			})
+			.catch((error) => console.error("Error fetching coach availability:", error));
+	},
 
-			getSingleAvailabilityCoach: async (coach_id) => {
-				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/availability_coach/${coach_id}`);
-					if (!response.ok) {
-						throw new Error(`Error fetching coach data: ${response.statusText}`);
+	getSingleAvailabilityCoach: async (coach_id) => {
+		try {
+			const response = await fetch(`${process.env.BACKEND_URL}/api/availability_coach/${coach_id}`);
+			if (!response.ok) {
+				throw new Error(`Error fetching coach data: ${response.statusText}`);
+			}
+			const data = await response.json();
+	
+			// Verificar si se encontraron disponibilidades
+			if (data.availabilities.length === 0) {
+				setStore({
+					singleAvailabilityCoach: [], // No hay disponibilidades
+					noAvailabilityMessage: true, // Indicar que no hay disponibilidades
+					coachDetails: {
+						coach_id: data.coach_id,
+						username: data.username // Obtener el email del coach de la respuesta
 					}
-					const data = await response.json();
-			
-					// Verificar si se encontraron disponibilidades
-					if (data.availabilities.length === 0) {
-						setStore({
-							singleAvailabilityCoach: [], // No hay disponibilidades
-							noAvailabilityMessage: true, // Indicar que no hay disponibilidades
-							coachDetails: {
-								coach_id: data.coach_id,
-								email: data.coach_email // Obtener el email del coach de la respuesta
-							}
-						});
-					} else {
-						// Guardar detalles del coach y sus disponibilidades
-						setStore({
-							singleAvailabilityCoach: data.availabilities,
-							noAvailabilityMessage: false,
-							coachDetails: {
-								coach_id: data.coach_id,
-								email: data.coach_email
-							}
-						});
+				});
+			} else {
+				// Guardar detalles del coach y sus disponibilidades
+				setStore({
+					singleAvailabilityCoach: data.availabilities,
+					noAvailabilityMessage: false,
+					coachDetails: {
+						coach_id: data.coach_id,
+						username: data.username
 					}
-			
-					console.log(`Fetched availability for coach (ID: ${coach_id}):`, data);
-				} catch (error) {
-					console.error("Error fetching availability coach:", error);
-					// Manejar el error y posiblemente actualizar el store para reflejar el error
-					setStore({
-						singleAvailabilityCoach: [],
-						noAvailabilityMessage: true,
-						coachDetails: {
-							coach_id: coach_id,
-							email: "unknown@example.com" // Placeholder hasta obtener el email real
-						}
-					});
+				});
+			}
+	
+			console.log(`Fetched availability for coach (ID: ${coach_id}):`, data);
+		} catch (error) {
+			console.error("Error fetching availability coach:", error);
+			// Manejar el error y posiblemente actualizar el store para reflejar el error
+			setStore({
+				singleAvailabilityCoach: [],
+				noAvailabilityMessage: true,
+				coachDetails: {
+					coach_id: coach_id,
+					username: "unknown" // Placeholder hasta obtener el email real
 				}
-			},
+			});
+		}
+	},
 
-			deleteAvailabilityCoach: async (availabilityId, coachId) => {
-				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/availability_coach/day/${availabilityId}`, {
-						method: 'DELETE',
-						headers: {
-							'Content-Type': 'application/json'
-						}
-					});
-			
-					if (!response.ok) {
-						throw new Error(`Error deleting availability: ${response.statusText}`);
-					}
-			
-					const data = await response.json();
-					console.log(`Deleted availability (ID: ${availabilityId}):`, data);
-			
-					// Volver a cargar las disponibilidades después de borrar
-					await getActions().getSingleAvailabilityCoach(coachId);
-				} catch (error) {
-					console.error("Error deleting availability:", error);
+	deleteAvailabilityCoach: async (availabilityId, coachId) => {
+		try {
+			const response = await fetch(`${process.env.BACKEND_URL}/api/availability_coach/day/${availabilityId}`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
 				}
-			},
-			
-			
-			
-      // AVAILABILITY CLIENT
-			getAvailabilityClient: () => {
-				fetch(process.env.BACKEND_URL + "/api/availability_client")
-				  .then((response) => response.json())
-				  .then((data) => {
-					console.log("Availability Client Data:", data); 
-					setStore({ availabilityClient: data });
-				  })
-				  .catch((error) => console.error("Error fetching availability client:", error)); 
-			  },
-			  getSingleAvailabilityClient: async (client_id) => {
-				try {
-				  const response = await fetch(`${process.env.BACKEND_URL}/api/availability_client/client/${client_id}`);
-				  if (!response.ok) {
-					throw new Error(`Error fetching client data: ${response.statusText}`);
-				  }
-				  const data = await response.json();
-			  
-				  // Verificar si se encontraron disponibilidades
-				  if (data.availabilities.length === 0) {
-					setStore({
-					  singleAvailabilityClient: [], // No hay disponibilidades
-					  noAvailabilityMessage: true,  // Indicar que no hay disponibilidades
-					  clientDetails: {
-						client_id: data.client_id,
-						email: data.client_email // Obtener el email del cliente de la respuesta
-					  }
-					});
-				  } else {
-					// Guardar detalles del cliente y sus disponibilidades
-					setStore({
-					  singleAvailabilityClient: data.availabilities,
-					  noAvailabilityMessage: false,
-					  clientDetails: {
-						client_id: data.client_id,
-						email: data.client_email
-					  }
-					});
-				  }
-			  
-				  console.log(`Fetched availability for client (ID: ${client_id}):`, data);
-				} catch (error) {
-				  console.error("Error fetching availability client:", error);
-				  // Manejar el error y posiblemente actualizar el store para reflejar el error
-				  setStore({
-					singleAvailabilityClient: [],
-					noAvailabilityMessage: true,
-					clientDetails: {
-					  client_id: client_id,
-					  email: "unknown@example.com" // Placeholder hasta obtener el email real
-					}
-				  });
-				}
-			  },
-			  
-			  // DELETE AVAILABILITYCLIENT 
+			});
+	
+			if (!response.ok) {
+				throw new Error(`Error deleting availability: ${response.statusText}`);
+			}
+	
+			const data = await response.json();
+			console.log(`Deleted availability (ID: ${availabilityId}):`, data);
+	
+			// Volver a cargar las disponibilidades después de borrar
+			await getActions().getSingleAvailabilityCoach(coachId);
+		} catch (error) {
+			console.error("Error deleting availability:", error);
+		}
+	},
+	
+	
+	
+// AVAILABILITY CLIENT
+	getAvailabilityClient: () => {
+		fetch(process.env.BACKEND_URL + "/api/availability_client")
+		  .then((response) => response.json())
+		  .then((data) => {
+			console.log("Availability Client Data:", data); 
+			setStore({ availabilityClient: data });
+		  })
+		  .catch((error) => console.error("Error fetching availability client:", error)); 
+	  },
+	  getSingleAvailabilityClient: async (client_id) => {
+		try {
+		  const response = await fetch(`${process.env.BACKEND_URL}/api/availability_client/client/${client_id}`);
+		  if (!response.ok) {
+			throw new Error(`Error fetching client data: ${response.statusText}`);
+		  }
+		  const data = await response.json();
+	  
+		  // Verificar si se encontraron disponibilidades
+		  if (data.availabilities.length === 0) {
+			setStore({
+			  singleAvailabilityClient: [], // No hay disponibilidades
+			  noAvailabilityMessage: true,  // Indicar que no hay disponibilidades
+			  clientDetails: {
+				client_id: data.client_id,
+				username: data.username // Obtener el email del cliente de la respuesta
+			  }
+			});
+		  } else {
+			// Guardar detalles del cliente y sus disponibilidades
+			setStore({
+			  singleAvailabilityClient: data.availabilities,
+			  noAvailabilityMessage: false,
+			  clientDetails: {
+				client_id: data.client_id,
+				username: data.username
+			  }
+			});
+		  }
+	  
+		  console.log(`Fetched availability for client (ID: ${client_id}):`, data);
+		} catch (error) {
+		  console.error("Error fetching availability client:", error);
+		  // Manejar el error y posiblemente actualizar el store para reflejar el error
+		  setStore({
+			singleAvailabilityClient: [],
+			noAvailabilityMessage: true,
+			clientDetails: {
+			  client_id: client_id,
+			  username: "unknown" // Placeholder hasta obtener el email real
+			}
+		  });
+		}
+	  },
+	  
+	  // DELETE AVAILABILITYCLIENT 
 
-			  deleteAvailabilityClient: async (availabilityId, clientId) => {
-				try {
-				  const response = await fetch(`${process.env.BACKEND_URL}/api/availability_client/day/${availabilityId}`, {
-					method: 'DELETE',
-					headers: {
-					  'Content-Type': 'application/json'
-					}
-				  });
-			  
-				  if (!response.ok) {
-					throw new Error(`Error deleting availability: ${response.statusText}`);
-				  }
-			  
-				  const data = await response.json();
-				  console.log(`Deleted availability (ID: ${availabilityId}):`, data);
-			  
-				  // Volver a cargar las disponibilidades después de borrar
-				  await getActions().getSingleAvailabilityClient(clientId);
-				} catch (error) {
-				  console.error("Error deleting availability:", error);
-				}
-			  },
+	  deleteAvailabilityClient: async (availabilityId, clientId) => {
+		try {
+		  const response = await fetch(`${process.env.BACKEND_URL}/api/availability_client/day/${availabilityId}`, {
+			method: 'DELETE',
+			headers: {
+			  'Content-Type': 'application/json'
+			}
+		  });
+	  
+		  if (!response.ok) {
+			throw new Error(`Error deleting availability: ${response.statusText}`);
+		  }
+	  
+		  const data = await response.json();
+		  console.log(`Deleted availability (ID: ${availabilityId}):`, data);
+	  
+		  // Volver a cargar las disponibilidades después de borrar
+		  await getActions().getSingleAvailabilityClient(clientId);
+		} catch (error) {
+		  console.error("Error deleting availability:", error);
+		}
+	  },
+	  
 			  
 						  
 			  			  

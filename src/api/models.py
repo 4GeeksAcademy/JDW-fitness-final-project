@@ -76,7 +76,7 @@ class Experience(db.Model):
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    username = db.Column(db.String(120), unique=True, nullable=True)
+    username = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     first_name = db.Column(db.String(120), unique=False, nullable=True)
     last_name = db.Column(db.String(120), unique=False, nullable=True)
@@ -132,10 +132,8 @@ class Availability_client(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "client_email": Client.query.get(self.client_id).email,
-            "availability_day": Availability.query.get(self.availability_id).day
-            
-            
+            "client_username": Client.query.get(self.client_id).username,
+            "availability_day": Availability.query.get(self.availability_id).day   
         }
 
 class Education(db.Model):

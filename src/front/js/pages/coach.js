@@ -42,33 +42,38 @@ export const Coach = () => {
 
 	return (
 		<div className="container">
-            <h1 className="text-center mt-3">Coach List</h1>
-			<ul>
-				{store.coaches.map((coach, index) => 
-					<div key={index} className="">
-						<li className="list-group-item my-2 border-3">
-							<div className="d-flex justify-content-between">
-								<div>
-								<span className="fw-bold">Username: </span>
-								{coach.username}
+		<div className="row d-flex justify-content-center">
+			<div className="col-10 col-xl-10">
+				<div className="d-flex flex-row align-items-center card card-ui-default-1 bg-secondary p-4 col-12">
+					<i class="fa-solid fa-dumbbell fs-2"></i>
+					<h1 className="ms-3">Coach List</h1>
+				</div>
+			</div>
+			{store.coaches.map((coach, index) => 
+				<div key={index} className="col-10 col-xl-10">
+					<div className="card card-ui-default-1 bg-secondary col-12">
+						<div className="card-body mb-0 d-flex justify-content-between align-items-center">
+							<div className="d-flex">
+							<ProfileImage photoUrl={coach.coach_photo_url} sizeClass="client-profile-image" />
+								<div className="d-flex flex-column justify-content-center ms-3">
+									<h5 className="card-title mb-3">{coach.username}</h5>
+									<Link to={`/coach/${coach.id}`} className="btn btn-card rounded-5">
+										<span>Show more information</span>
+									</Link>
 								</div>
-								{like[coach.id] ?
-								<button className="btn btn-warning py-0 px-1 fw-semibold" onClick={() => handleLike(coach.id)}>
-									 Request to train
-								</button>
-								:	
-								<button className="btn btn-danger py-0 px-1 fw-semibold" onClick={() => handleLike(coach.id)}>
-									Cancel your request
-								</button>					
-								}
 							</div>
-							<Link to={`/coach/${coach.id}`} className="btn btn-info mt-2 fw-bold">
-                    			<span>Show more information</span>
-                			</Link>
-						</li>
+							{like[coach.id] ?
+								<button type="button" className="btn btn-secondary btn-request fw-semibold" onClick={() => handleLike(coach.id)}>Request to train<span className="btn-icon-right ms-3"><i className="fa fa-envelope"></i></span>
+								</button>
+								:   
+								<button type="button" className="btn btn-secondary btn-cancel fw-semibold" onClick={() => handleLike(coach.id)}>Cancel request<span className="btn-icon-right ms-3"><i className="fas fa-times"></i></span>
+								</button>                
+							}
+						</div>
 					</div>
-				)}
-			</ul>
-		</div>		
+				</div>
+			)}
+		</div>
+	</div>      	
 	);
 };

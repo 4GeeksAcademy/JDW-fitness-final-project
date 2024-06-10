@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
+import ProfileImage from "../component/profileImage"
+import "../../styles/navbar.css";
 
 export const Navbar = () => {
 	const { store, actions } = useContext(Context);
@@ -10,81 +12,137 @@ export const Navbar = () => {
 	const [currentUserList, setCurrentUserList] = useState("");
 	const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
 	const loggedClient = JSON.parse(localStorage.getItem("loggedClient"));
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const navigate = useNavigate()
+
+
+	// useEffect(() => {
+	// 	if (loggedCoach) {
+	// 		setUsername(loggedCoach.username);
+	// 		setCurrentUser("coach")
+	// 		setCurrentUserID(loggedCoach.id)
+	// 		setCurrentUserList("client")
+	// 	}
+	// 	else if (loggedClient) {
+	// 		setUsername(loggedClient.username);
+	// 		setCurrentUser("client")
+	// 		setCurrentUserID(loggedClient.id)
+	// 		setCurrentUserList("coach")
+	// 	}
+	// }, [actions]);
 
 	useEffect(() => {
+		const fetchSingleClient = async (id) => {
+			await actions.getSingleClient(id);
+		};
+		const fetchSingleCoach = async (id) => {
+			await actions.getSingleCoach(id);
+		};
 		if (loggedCoach) {
+			fetchSingleCoach(loggedCoach.id)
 			setUsername(loggedCoach.username);
 			setCurrentUser("coach")
 			setCurrentUserID(loggedCoach.id)
 			setCurrentUserList("client")
 		}
 		else if (loggedClient) {
+			fetchSingleClient(loggedClient.id)
 			setUsername(loggedClient.username);
 			setCurrentUser("client")
 			setCurrentUserID(loggedClient.id)
 			setCurrentUserList("coach")
 		}
-	}, [actions]);
+	}, [actions.logout]);
+
+	const toggleSidebar = () => {
+		setIsSidebarOpen(!isSidebarOpen);
+	  };
 
 	return (
-		<nav className="navbar navbar-expand-lg bg-body-tertiary">
+		<div className="App">
+		  <nav className="navbar bg-body-light">
 			<div className="container-fluid">
-				<Link to="/">
-					<span className="navbar-brand mb-0 h1">Home</span>
-				</Link>
-				{(store.authCoach || store.authClient) &&				
-					<div className="ms-auto" >
-						<ul className="navbar-nav me-auto mb-2 mb-lg-0 title">
-							<li className="nav-item my-auto fw-bold">
-								<Link to={`/${currentUserList}`} className="nav-link active">
-									{currentUserList === "client" ? "Client List" : "Coach List"}
-								</Link>
-							</li>
-							<li className="nav-item my-auto fw-bold">
-								<Link to={`/${currentUser}/likes/given`} className="nav-link active">
-									Given Likes
-								</Link>
-							</li>
-							<li className="nav-item my-auto fw-bold">
-								<Link to={`/${currentUser}/likes/nogiven`}  className="nav-link active">
-									No Given Likes
-								</Link>
-							</li>
-							<li className="nav-item my-auto fw-bold">
-								<Link to={`/${currentUser}/likes/received`}  className="nav-link active">
-									Received Likes
-								</Link>
-							</li>
-							<li className="nav-item my-auto fw-bold">
-								<Link to={`/${currentUser}/match`}  className="nav-link active">
-									Matches
-								</Link>
-							</li>
-						</ul>					
+			  <a className="navbar-brand" href="#">
+				<h5 className="mb-0 text-secondary">JDW</h5>
+			  </a>
+			  <button className="btn fa-solid fa-bars-staggered ms-3 me-auto fs-2 text-secondary" type="button" onClick={toggleSidebar}></button>
+				<div className="d-flex align-items-center ms-auto me-4">
+					{loggedCoach ? 
+                    <ProfileImage photoUrl={store.singleCoach.coach_photo_url} sizeClass="navbar-profile-image" />
+					:
+                    <ProfileImage photoUrl={store.singleClient.client_photo_url} sizeClass="navbar-profile-image" />
+					}
+					<div className="nav-item dropdown header-profile">
+						<a className="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<div className="header-info">
+								<span className="text-black"><strong>{username}</strong></span>
+								<p className="fs-12 mb-0 first-letter-uppercase">{currentUser}</p>
+							</div>
+						</a>
+						<div className="dropdown-menu dropdown-menu-end">
+							<Link to={`/${currentUser}/${currentUserID}`} className="dropdown-item ai-icon">
+								<svg id="icon-user1" xmlns="http://www.w3.org/2000/svg" className="text-primary" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+								<span className="ms-2">Profile </span>
+							</Link>
+							<Link to="/" className="dropdown-item ai-icon" onClick={() => {actions.logout}}>
+								<svg id="icon-logout" xmlns="http://www.w3.org/2000/svg" className="text-danger" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+								<span className="ms-2">Logout </span>
+							</Link>
+						</div>
 					</div>
-				}
-				{ (store.authCoach || store.authClient) ? 				
-				<div className="d-flex align-items-center ms-auto">
-					<i className="fa-solid fa-user fs-3 me-3"></i>
-					<Link to={`/${currentUser}/${currentUserID}`} className="nav-link active">
-						<button className="btn btn-dark fw-bold me-2">{username}</button>
-					</Link>
-					<Link to="/" onClick={actions.logout}>
-						Log out
-					</Link>
 				</div>
-				:
-				<div>
-				<Link to="/signup" className="me-1">
-					Sign Up
-				</Link>
-				/	
-				<Link to="/login" className="ms-1">
-					Login
-				</Link>	
-				</div>
-				}
 			</div>
-		</nav>
-	);
+		  </nav>
+	
+		  <div className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
+			<div className="sidebar-header">
+			  <h5 className="text-secondary">Logo JDW</h5>
+			  {isSidebarOpen && <button type="button" className="btn-close" onClick={toggleSidebar}></button>}
+			</div>
+			<div className="sidebar-body">
+			  <ul className="navbar-nav">
+				<li className="nav-item my-auto fw-bold ps-2">
+				  	<Link to={`/${currentUserList}`} className="nav-link active">
+				  	{currentUserList === "client" ? 
+				  	<i className="fa-regular fa-user fs-2"></i>
+				  	:
+				  	<i className="fa-solid fa-dumbbell fs-2"></i> 
+				  	}
+					{(isSidebarOpen && currentUserList === "client") &&
+					<span className="ms-2">Client List</span>
+					}
+					{(isSidebarOpen && currentUserList === "coach") &&
+					<span className="ms-2">Coach List</span>
+					}
+				  </Link>
+				</li>
+				<li className="nav-item my-auto fw-bold">
+				  <Link to={`/${currentUser}/likes/given`} className="nav-link active">
+					<i className="bi bi-hand-thumbs-up-fill"></i>
+					{isSidebarOpen && <span>Given Likes</span>}
+				  </Link>
+				</li>
+				<li className="nav-item my-auto fw-bold">
+				  <Link to={`/${currentUser}/likes/nogiven`} className="nav-link active">
+					<i className="bi bi-hand-thumbs-down-fill"></i>
+					{isSidebarOpen && <span>No Given Likes</span>}
+				  </Link>
+				</li>
+				<li className="nav-item my-auto fw-bold">
+				  <Link to={`/${currentUser}/likes/received`} className="nav-link active">
+					<i className="bi bi-envelope-fill"></i>
+					{isSidebarOpen && <span>Received Likes</span>}
+				  </Link>
+				</li>
+				<li className="nav-item my-auto fw-bold">
+				  <Link to={`/${currentUser}/match`} className="nav-link active">
+					<i className="bi bi-heart-fill"></i>
+					{isSidebarOpen && <span>Matches</span>}
+				  </Link>
+				</li>
+			  </ul>
+			</div>
+		  </div>
+		</div>
+	  );
 };

@@ -9,6 +9,7 @@ export const UpdateCoach = () => {
     const navigate = useNavigate();
     const { coachID } = useParams();
     const initialLoad = useRef(true);
+    const initialized = useRef(false); // Nueva referencia para inicialización de valores
 
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
@@ -32,7 +33,7 @@ export const UpdateCoach = () => {
         }
     }, [tokenCoach, navigate]);
 
-    // Obtener datos del Coache y frecuencias de actividad al montar el componente
+    // Obtener datos del Coach y frecuencias de actividad al montar el componente
     useEffect(() => {
         if (initialLoad.current) {
             actions.getEducation()
@@ -42,17 +43,17 @@ export const UpdateCoach = () => {
         }
     }, [actions, coachID]);
 
-    // Establecer los datos del coache en el estado local cuando estén disponibles
+    // Establecer los datos del coach en el estado local cuando estén disponibles
     useEffect(() => {
-        if (store.singleCoach) {
+        if (store.singleCoach && !initialized.current) {
             setUsername(store.singleCoach.username || "");
             setEmail(store.singleCoach.email || "");
-            setPassword(store.singleCoach.password || "");
             setFirstName(store.singleCoach.first_name || "");
             setLastName(store.singleCoach.last_name || "");
             setEducationID(store.singleCoach.education_id || 0);
             setExperienceID(store.singleCoach.experience_id || 0);
             setPhotoUrl(store.singleCoach.coach_photo_url || "");
+            initialized.current = true; // Marcar como inicializado
         }
     }, [store.singleCoach]);
 
@@ -116,9 +117,8 @@ export const UpdateCoach = () => {
             coachID
         );
         setHandleButton(true);
-        // Obtener los datos actualizados del coache
-        actions.getSingleCoach(coachID);
     };
+
     const handleGeocode = async () => {
         try {
             const response = await axios.get(process.env.BACKEND_URL + '/api/geocode', {
@@ -152,63 +152,64 @@ export const UpdateCoach = () => {
             console.error('Error config:', error.config);
         }
     };
-	return (
-		<div className="container mt-3">
+
+    return (
+        <div className="container mt-3">
             <h3 className="text-center mb-2">Actualizar Perfil del Coach</h3>
             <form onSubmit={updateCoach}>
                 <div className="row">
-                <div className="mb-3 col-6 offset-3">
-                    <input 
-                    type="text" 
-                    className="form-control" 
-                    value={username} 
-                    onChange={(e) => setUsername(e.target.value)} 
-                    placeholder="Username"
-                    />
-                </div>
-                <div className="mb-3 col-6 offset-3">
-                    <input 
-                    type="email" 
-                    className="form-control" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
-                    placeholder="Email"
-                    />
-                </div>
-                <div className="mb-3 col-6 offset-3">
-                    <input 
-                    type={showPassword ? "text" : "password"}  
-                    className="form-control" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    placeholder="Password"
-                    />
-                    <button 
-                    onClick={() => setShowPassword(!showPassword)} 
-                    className={`btn fa-solid ${showPassword ? "fa-eye" : "fa-eye-slash"}`} 
-                    type="button"
-                    >
-                    </button>
-                </div>
-                <div className="mb-3 col-3 offset-3">
-                    <input 
-                    type="text" 
-                    className="form-control" 
-                    value={firstName} 
-                    onChange={(e) => setFirstName(e.target.value)} 
-                    placeholder="First Name"
-                    />
-                </div>
-                <div className="mb-3 col-3">
-                    <input 
-                    type="text" 
-                    className="form-control" 
-                    value={lastName} 
-                    onChange={(e) => setLastName(e.target.value)} 
-                    placeholder="Last Name"
-                    />
-                </div>
-                <div className="mb-3 col-6 offset-3">
+                    <div className="mb-3 col-6 offset-3">
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            value={username} 
+                            onChange={(e) => setUsername(e.target.value)} 
+                            placeholder="Username"
+                        />
+                    </div>
+                    <div className="mb-3 col-6 offset-3">
+                        <input 
+                            type="email" 
+                            className="form-control" 
+                            value={email} 
+                            onChange={(e) => setEmail(e.target.value)} 
+                            placeholder="Email"
+                        />
+                    </div>
+                    <div className="mb-3 col-6 offset-3">
+                        <input 
+                            type={showPassword ? "text" : "password"}  
+                            className="form-control" 
+                            value={password} 
+                            onChange={(e) => setPassword(e.target.value)} 
+                            placeholder="Password"
+                        />
+                        <button 
+                            onClick={() => setShowPassword(!showPassword)} 
+                            className={`btn fa-solid ${showPassword ? "fa-eye" : "fa-eye-slash"}`} 
+                            type="button"
+                        >
+                        </button>
+                    </div>
+                    <div className="mb-3 col-3 offset-3">
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            value={firstName} 
+                            onChange={(e) => setFirstName(e.target.value)} 
+                            placeholder="First Name"
+                        />
+                    </div>
+                    <div className="mb-3 col-3">
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            value={lastName} 
+                            onChange={(e) => setLastName(e.target.value)} 
+                            placeholder="Last Name"
+                        />
+                    </div>
+                    <div className="mb-3 col-6 offset-3">
                         <label className="form-label">Subir Foto de Perfil</label>
                         <input
                             type="file"
@@ -217,48 +218,49 @@ export const UpdateCoach = () => {
                         />
                         {photoUrl && (
                             <div className="mt-2">
-                                <img src={photoUrl} alt="Profile" className="img-thumbnail" style={{ maxWidth: "200px" }} />
+                                <img src={photoUrl} alt="Profile" className="img-thumbnail" />
                             </div>
                         )}
                     </div>
-                <select value={educationID} className="form-select form-select-lg mb-3 w-50 offset-3" aria-label=".form-select-lg example" onChange={(e) => setEducationID(e.target.value)}>
-                    {educationID == 0 && <option defaultValue>Select your education</option>}
-                    {store.education.map((element, index) => (
-                            <option key={index} value={element.id}>
-                                    {element.rank}
-                            </option>          
-                    ))}
-                </select>
-                <select value={experienceID} className="form-select form-select-lg mb-3 w-50 offset-3" aria-label=".form-select-lg example" onChange={(e) => setExperienceID(e.target.value)}>
-                    {experienceID == 0 && <option defaultValue>Select your experience</option>}  
-                    {store.experience.map((element, index) => (
-                            <option key={index} value={element.id}>
-                                    {element.time}
-                            </option>          
-                    ))}
-                </select>
-                <div>
+                    <select value={educationID} className="form-select form-select-lg mb-3 w-50 offset-3" aria-label=".form-select-lg example" onChange={(e) => setEducationID(e.target.value)}>
+                        {educationID == 0 && <option defaultValue>Select your education</option>}
+                        {store.education.map((element, index) => (
+                                <option key={index} value={element.id}>
+                                        {element.rank}
+                                </option>          
+                        ))}
+                    </select>
+                    <select value={experienceID} className="form-select form-select-lg mb-3 w-50 offset-3" aria-label=".form-select-lg example" onChange={(e) => setExperienceID(e.target.value)}>
+                        {experienceID == 0 && <option defaultValue>Select your experience</option>}  
+                        {store.experience.map((element, index) => (
+                                <option key={index} value={element.id}>
+                                        {element.time}
+                                </option>          
+                        ))}
+                    </select>
+                    <div>
                         <div className="input-group mb-3">
                             <input 
-                            type="text"
-                            value={address} 
-                            onChange={(e) => setAddress(e.target.value)}
-                            className="form-control" 
-                            placeholder="Enter address" 
-                            aria-label="Adress" 
-                            aria-describedby="geocode"/>
+                                type="text"
+                                value={address} 
+                                onChange={(e) => setAddress(e.target.value)}
+                                className="form-control" 
+                                placeholder="Enter address" 
+                                aria-label="Adress" 
+                                aria-describedby="geocode"
+                            />
                             <button className="btn btn-outline-secondary" type="button" id="geocode" onClick={handleGeocode} >Geocode</button>
                         </div>
-                    {(coordinates.lat && coordinates.lng) && (
-                        <div className="">
-                            <MapComponent 
-                            lat = {coordinates.lat}
-                            lng = {coordinates.lng} 
-                            />
-                        </div>
-                    )}
-                </div>
-                {store.errorForm && (
+                        {(coordinates.lat && coordinates.lng) && (
+                            <div className="">
+                                <MapComponent 
+                                    lat={coordinates.lat}
+                                    lng={coordinates.lng} 
+                                />
+                            </div>
+                        )}
+                    </div>
+                    {store.errorForm && (
                         <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
                             {store.errorForm}
                         </div>
@@ -274,5 +276,5 @@ export const UpdateCoach = () => {
                 </div>
             </form>
         </div>
-	);
+    );
 };

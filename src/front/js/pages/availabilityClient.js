@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const AvailabilityClient = () => {
@@ -94,6 +94,11 @@ export const AvailabilityClient = () => {
       <button className="btn btn-secondary mt-4" onClick={openModal}>
         Add New Availability
       </button>
+      <Link to={`/client/${client_id}`} >
+        <button className="btn btn-secondary mt-4 ms-3" >
+          Back to single information
+        </button>
+			</Link>
 
       {/* Modal de Bootstrap */}
       {modalIsOpen && (

@@ -719,7 +719,6 @@ def get_coach_likes(coach_id):
     return response, 200
 
 
-    # GET AVAILABILITYCOACH 
 @api.route('/availability_coach', methods=['GET'])
 def get_availability_coach():
     all_availability_coach = AvailabilityCoach.query.all()
@@ -743,7 +742,7 @@ def get_coach_availabilities(coach_id):
     # Crear la respuesta incluyendo los datos básicos del coach
     result = {
         "coach_id": coach.id,
-        "coach_email": coach.email,
+        "username": coach.username,
         "availabilities": availabilities
     }
 
@@ -763,14 +762,14 @@ def create_availability_coach():
     if not data:
         return jsonify({'message': 'No input data provided'}), 400
 
-    coach_email = data.get('coach_email')
+    username = data.get('username')
     availability_day = data.get('availability_day')
-    if not coach_email or not availability_day:
+    if not username or not availability_day:
         return jsonify({'message': 'Coach email and availability day must be provided'}), 400
 
     try:
         # Buscar el coach por correo electrónico
-        coach = Coach.query.filter_by(email=coach_email).first()
+        coach = Coach.query.filter_by(username=username).first()
         if not coach:
             return jsonify({'message': 'Coach not found'}), 404
 
@@ -956,7 +955,7 @@ def get_client_availabilities(client_id):
     # Crear la respuesta incluyendo los datos básicos del cliente
     result = {
         "client_id": client.id,
-        "client_username": client.username,
+        "username": client.username,
         "availabilities": availabilities
     }
 
@@ -970,14 +969,14 @@ def create_availability_client():
     if not data:
         return jsonify({'message': 'No input data provided'}), 400
 
-    client_username = data.get('client_username')
+    username = data.get('username')
     availability_day = data.get('availability_day')
-    if not client_username or not availability_day:
+    if not username or not availability_day:
         return jsonify({'message': 'Client username and availability day must be provided'}), 400
 
     try:
-        # Find the client by email
-        client = Client.query.filter_by(username=client_username).first()
+        # Find the client by username
+        client = Client.query.filter_by(username=username).first()
         if not client:
             return jsonify({'message': 'Client not found'}), 404
 
@@ -986,10 +985,10 @@ def create_availability_client():
         if not availability:
             return jsonify({'message': 'The specified availability day does not exist'}), 404
 
-        # Check if the availability is already occupied by the client
+        # Check if the client already has this availability
         existing_entry = Availability_client.query.filter_by(client_id=client.id, availability_id=availability.id).first()
         if existing_entry:
-            return jsonify({'message': 'The availability is already occupied by the client'}), 400
+            return jsonify({'message': 'The client already has this availability'}), 400
 
         # Create a new availability_client entry
         new_availability_client = Availability_client(client_id=client.id, availability_id=availability.id)
@@ -1000,6 +999,7 @@ def create_availability_client():
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': 'Error while creating the availability client entry', 'error': str(e)}), 500
+
 
 
 
@@ -1057,4 +1057,3 @@ def update_availability_client_day(client_id, availability_client_id):
         db.session.rollback()
 
         return jsonify({'message': 'Error while updating the availability client entry', 'error': str(e)}), 500
-

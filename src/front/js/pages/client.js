@@ -46,7 +46,7 @@ export const Client = () => {
             <div className="row d-flex justify-content-center">
                 <div className="col-10 col-xl-10">
                     <div className="d-flex flex-row align-items-center card card-ui-default-1 bg-secondary p-4 col-12">
-                        <i className="fa-solid fa-users fs-2"></i>
+                        <i className="fa-solid fa-users fs-2 text-secondary"></i>
                         <h1 className="ms-3">Client List</h1>
                     </div>
                 </div>
@@ -67,7 +67,7 @@ export const Client = () => {
                                     <button type="button" className="btn btn-secondary btn-request fw-semibold" onClick={() => handleLike(client.id)}>Request to train<span className="btn-icon-right ms-3"><i className="fa fa-envelope"></i></span>
                                     </button>
                                     :   
-                                    <button type="button" className="btn btn-secondary btn-cancel fw-semibold" onClick={() => handleLike(client.id)}>Cancel request<span className="btn-icon-right ms-3"><i className="fas fa-times"></i></span>
+                                    <button type="button" className="btn btn-dark fw-semibold" onClick={() => handleLike(client.id)}>Cancel request<span className="btn-icon-right ms-3"><i className="fas fa-times"></i></span>
                                     </button>                
                                 }
                             </div>

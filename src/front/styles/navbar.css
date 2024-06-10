@@ -1,7 +1,7 @@
 /* Sidebar styling */
 .sidebar {
     height: 100%;
-    width: 220px;
+    width: 260px;
     position: fixed;
     z-index: 1;
     top: 0;
@@ -77,4 +77,16 @@
   }
   .first-letter-uppercase::first-letter {
     text-transform: uppercase;
+}
+/* Tamaño para la vista del cliente */
+.client-profile-image {
+  width: 130px;
+  height: 130px;
+}
+
+/* Tamaño para la navbar */
+.navbar-profile-image {
+  width: 60px;
+  height: 60px;
+  margin-right: 1rem;
 }

@@ -95,9 +95,9 @@ export const SingleClient = () => {
                         />
                     </div>
                     }
-                    {/* <Link to={`/availability-client/${clientID}`} className="ms-auto my-1">
+                    <Link to={`/availability-client/${clientID}`} className="ms-auto my-1">
                         <button className="btn btn-secondary ms-auto fw-bold" >Availability</button>					
-                    </Link> */}
+                    </Link>
                 </div>
                 <div className="mt-3">
                     {(loggedClient && store.singleClient.id === loggedClient.id) &&            

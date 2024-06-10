@@ -132,40 +132,75 @@ input::placeholder {
 .btn-request:hover .btn-icon-right {
     color: #fff; /* Color del icono blanco */
 }
-
-/* Estilos del botón de solicitud enviada */
-.btn-cancel {
-    background-color: #A02CFA; /* Color de fondo púrpura oscuro */
-    color: #fff; /* Color del texto blanco */
-    border: none; /* Sin borde */
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.btn-cancel .btn-icon-right {
-    color: #fff; /* Color del icono blanco */
-}
-
-.btn-cancel:hover {
-    background-color: #f1dffe; /* Color de fondo púrpura claro */
-    color: #A02CFA; /* Color del texto púrpura oscuro */
-}
-
-.btn-cancel:hover .btn-icon-right {
-    color: #A02CFA; /* Color del icono púrpura oscuro */
-}
 .bg-secondary {
     --bs-bg-opacity: 1;
     background-color: #fff !important;
 }
-/* Tamaño para la vista del cliente */
-.client-profile-image {
-    width: 130px;
-    height: 130px;
+.btn-dark {
+    background-color: #ced4da;
+    color: black;
+    border: none; /* Sin borde */
+    transition: background-color 0.3s, color 0.3s;
+}
+.btn-dark:hover {
+    background-color: #000000; /* Color de fondo púrpura claro */
+    color: #f1f1f1; /* Color del texto púrpura oscuro */
+}
+.btn-dark:hover .btn-icon-right {
+    color: #f1f1f1; /* Color del icono púrpura oscuro */
+}
+.btn-dark .btn-icon-right {
+    color: #000000; /* Color del icono blanco */
+}
+/* Estilos para los botones de acordeón */
+.accordion-primary .accordion-button.collapsed {
+    background: #f1dffe; /* Color púrpura claro */
+    border-color: #f1dffe;
+    color: #A02CFA; /* Color púrpura oscuro */
+    font-weight: bold; /* Texto en negrita */
+    box-shadow: none;
+    position: relative;
+    padding-right: 2rem; /* Ajusta según sea necesario */
 }
 
-/* Tamaño para la navbar */
-.navbar-profile-image {
-    width: 68px;
-    height: 68px;
-    margin-right: 0.5rem;
+.accordion-primary .accordion-button {
+    background: #A02CFA; /* Color púrpura oscuro */
+    border-color: #A02CFA;
+    color: #fff; /* Color blanco */
+    box-shadow: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding-right: 2rem; /* Ajusta según sea necesario */
 }
+
+/* Ocultar las flechas predeterminadas */
+.accordion-button::after {
+    display: none !important; /* Asegura que las flechas no se muestren */
+}
+
+.custom-accordion-button::before {
+    content: '+'; /* Signo + cuando está colapsado */
+    font-size: 1.25rem;
+    position: absolute;
+    right: 1rem; /* Ajusta según sea necesario */
+    color: #A02CFA; /* Color púrpura oscuro */
+}
+
+.accordion-primary .accordion-button:not(.collapsed)::before {
+    content: '-'; /* Cambia el contenido a '-' cuando está expandido */
+    font-size: 1.25rem;
+    position: absolute;
+    right: 1rem; /* Ajusta según sea necesario */
+    color: #fff; /* Color blanco */
+}
+
+.accordion-header {
+    margin-bottom: 0; /* Elimina el margen inferior */
+}
+
+.accordion-body {
+    padding: 1rem; /* Ajusta el padding según sea necesario */
+}
+

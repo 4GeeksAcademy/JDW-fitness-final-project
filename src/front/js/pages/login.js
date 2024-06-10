@@ -12,8 +12,7 @@ export const Login = () => {
     const [error, setError] = useState(null)
 
     useEffect(() => {
-        actions.getCoaches()
-        actions.getClients()
+
     },[]);
 
     const login = async (e) => {
@@ -38,6 +37,7 @@ export const Login = () => {
             }
             setError(null);
             if (data.access_coach_token) {
+                await actions.getCoaches()
                 const loggedCoach = await store.coaches.find(coach => coach.email === email);
                 localStorage.setItem("loggedCoach", JSON.stringify({ "id": loggedCoach.id, "username": loggedCoach.username }));
                 await actions.setAuth("coach", true)  
@@ -45,6 +45,7 @@ export const Login = () => {
                 navigate("/client")  
             }
             if (data.access_client_token) {
+                await actions.getClients()
                 const loggedClient = await store.clients.find(client => client.email === email);
                 localStorage.setItem("loggedClient", JSON.stringify({ "id": loggedClient.id, "username": loggedClient.username }));
                 await actions.setAuth("client", true)  

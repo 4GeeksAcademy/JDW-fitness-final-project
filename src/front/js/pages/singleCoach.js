@@ -91,9 +91,9 @@ export const SingleCoach = () => {
                         />
                     </div>
                     }
-                    <Link to={`/availability-coach/${coachID}`} className="ms-auto my-1">
+                    {/* <Link to={`/availability-coach/${coachID}`} className="ms-auto my-1">
                         <button className="btn btn-secondary ms-auto fw-bold" >Availability</button>					
-                    </Link>
+                    </Link> */}
                 </div>
                 <div className="mt-3">
                     {(loggedCoach && store.singleCoach.id === loggedCoach.id) &&            

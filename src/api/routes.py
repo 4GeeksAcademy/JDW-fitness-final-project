@@ -849,8 +849,6 @@ def update_availability_coach_day(coach_id, availability_coach_id):
         return jsonify({'message': 'Error while updating the availability coach entry', 'error': str(e)}), 500
 
 
-
-
 @api.route('/like', methods=['POST'])
 def add_like():
     like_data = request.json

@@ -23,7 +23,7 @@ export const AvailabilityClient = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          client_email: store.clientDetails.email || "user@example.com",
+          username: store.clientDetails.username || "usernameunknow",
           availability_day: newDay,
         }),
       });
@@ -31,8 +31,8 @@ export const AvailabilityClient = () => {
       if (response.ok) {
         // Vuelve a cargar las disponibilidades
         actions.getSingleAvailabilityClient(client_id);
-        setModalIsOpen(false);  // Cerrar modal después de agregar disponibilidad
-        setNewDay("");  // Limpiar el campo de entrada
+        setModalIsOpen(false);  
+        setNewDay("");  
       } else {
         console.error("Error adding new availability");
       }
@@ -59,7 +59,7 @@ export const AvailabilityClient = () => {
 
   return (
     <div className="container mt-5">
-      <h1 className="text-center mb-4">Availability for Client: {store.clientDetails?.email}</h1>
+      <h1 className="text-center mb-4">Availability for Client: {store.clientDetails?.username}</h1>
       
       {store.noAvailabilityMessage ? (
         <div className="text-center">
@@ -77,7 +77,7 @@ export const AvailabilityClient = () => {
                   Day: {availability.availability_day} 
                 </div>
                 <div>
-                  <button className="btn btn-danger btn-sm ml-2" onClick={() => handleDeleteAvailability(availability.id)}>
+                  <button className="btn btn-secondary btn-sm ml-2" onClick={() => handleDeleteAvailability(availability.id)}>
                     Delete
                   </button>
                 </div>
@@ -91,7 +91,7 @@ export const AvailabilityClient = () => {
         )
       )}
 
-      <button className="btn btn-primary mt-4" onClick={openModal}>
+      <button className="btn btn-secondary mt-4" onClick={openModal}>
         Add New Availability
       </button>
 
@@ -100,8 +100,8 @@ export const AvailabilityClient = () => {
         <div className="modal show" style={{ display: "block" }} tabIndex="-1" role="dialog">
           <div className="modal-dialog" role="document">
             <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Add New Availability</h5>
+              <div className="modal-header bg-light">
+                <h5 className="modal-title text-purple">Add New Availability</h5>
                 <button type="button" className="close" onClick={closeModal}>
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -126,9 +126,9 @@ export const AvailabilityClient = () => {
                   </div>
                 </form>
               </div>
-              <div className="modal-footer">
+              <div className="modal-footer bg-light">
                 <button type="button" className="btn btn-secondary" onClick={closeModal}>Cancel</button>
-                <button type="button" className="btn btn-success" onClick={handleAddNewAvailability}>Add Availability</button>
+                <button type="button" className="btn btn-secondary" onClick={handleAddNewAvailability}>Add Availability</button>
               </div>
             </div>
           </div>
@@ -137,17 +137,3 @@ export const AvailabilityClient = () => {
     </div>
   );
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-

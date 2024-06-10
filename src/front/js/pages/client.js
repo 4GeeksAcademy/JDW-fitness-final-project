@@ -55,7 +55,7 @@ export const Client = () => {
                         <div className="card card-ui-default-1 bg-secondary col-12">
                             <div className="card-body mb-0 d-flex justify-content-between align-items-center">
                                 <div className="d-flex">
-                                    <ProfileImage photoUrl={client.client_photo_url} />
+                                <ProfileImage photoUrl={client.client_photo_url} sizeClass="client-profile-image" />
                                     <div className="d-flex flex-column justify-content-center ms-3">
                                         <h5 className="card-title mb-3">{client.username}</h5>
                                         <Link to={`/client/${client.id}`} className="btn btn-card rounded-5">

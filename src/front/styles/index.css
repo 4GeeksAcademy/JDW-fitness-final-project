@@ -157,3 +157,15 @@ input::placeholder {
     --bs-bg-opacity: 1;
     background-color: #fff !important;
 }
+/* Tamaño para la vista del cliente */
+.client-profile-image {
+    width: 130px;
+    height: 130px;
+}
+
+/* Tamaño para la navbar */
+.navbar-profile-image {
+    width: 68px;
+    height: 68px;
+    margin-right: 0.5rem;
+}

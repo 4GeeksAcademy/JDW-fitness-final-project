@@ -958,7 +958,7 @@ def get_client_availabilities(client_id):
     # Crear la respuesta incluyendo los datos básicos del cliente
     result = {
         "client_id": client.id,
-        "client_email": client.email,
+        "client_username": client.username,
         "availabilities": availabilities
     }
 
@@ -972,14 +972,14 @@ def create_availability_client():
     if not data:
         return jsonify({'message': 'No input data provided'}), 400
 
-    client_email = data.get('client_email')
+    client_username = data.get('client_username')
     availability_day = data.get('availability_day')
-    if not client_email or not availability_day:
-        return jsonify({'message': 'Client email and availability day must be provided'}), 400
+    if not client_username or not availability_day:
+        return jsonify({'message': 'Client username and availability day must be provided'}), 400
 
     try:
         # Find the client by email
-        client = Client.query.filter_by(email=client_email).first()
+        client = Client.query.filter_by(username=client_username).first()
         if not client:
             return jsonify({'message': 'Client not found'}), 404
 

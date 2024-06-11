@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 import ProfileImage from "../component/profileImage"
 import "../../styles/navbar.css";
@@ -13,13 +13,12 @@ export const Navbar = () => {
 	const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
 	const loggedClient = JSON.parse(localStorage.getItem("loggedClient"));
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-	const navigate = useNavigate()
 
-	const fetchSingleClient = async (id) => {
-		await actions.getSingleClient(id);
+	const fetchSingleClient = async (client_id) => {
+		await actions.getSingleClient(client_id);
 	};
-	const fetchSingleCoach = async (id) => {
-		await actions.getSingleCoach(id);
+	const fetchSingleCoach = async (coach_id) => {
+		await actions.getSingleCoach(coach_id);
 	};
 
 	useEffect(() => {
@@ -59,7 +58,13 @@ export const Navbar = () => {
 			  <a className="navbar-brand" href="#">
 				<h5 className="mb-0 text-secondary">JDW</h5>
 			  </a>
+			  <div className="d-flex align-items-center">
 			  <button className="btn fa-solid fa-bars-staggered ms-3 me-auto fs-2 text-secondary" type="button" onClick={toggleSidebar}></button>
+			  <Link to={"/calculator"} className="dropdown-item ai-icon">
+			  <i className="fa-solid fa-calculator"></i>
+					<span className="ms-2">Calculator BMI </span>
+				</Link>
+			  </div>
 				<div className="d-flex align-items-center ms-auto me-4">
 					{loggedCoach ? 
                     <ProfileImage photoUrl={store.singleCoach.coach_photo_url} sizeClass="navbar-profile-image" />
@@ -98,40 +103,34 @@ export const Navbar = () => {
 				<li className={currentUserList === "client" ? "nav-item fw-bold my-4 ps-2" : "nav-item fw-bold my-4 ps-1"}>
 				  	<Link to={`/${currentUserList}`} className="nav-link active">
 				  	{currentUserList === "client" ? 
-				  	<i className="fa-regular fa-user fs-2"></i>
+				  	<i className="fa-regular fa-user fs-3"></i>
 				  	:
-				  	<i className="fa-solid fa-dumbbell fs-2"></i> 
+				  	<i className="fa-solid fa-dumbbell fs-3"></i> 
 				  	}
 					{(isSidebarOpen && currentUserList === "client") &&
-					<span className="ms-2 fs-4">Client List</span>
+					<span className="ms-2 fs-5">Client List</span>
 					}
 					{(isSidebarOpen && currentUserList === "coach") &&
-					<span className="ms-2 fs-4">Coach List</span>
+					<span className="ms-2 fs-5">Coach List</span>
 					}
 				  </Link>
 				</li>
 				<li className="nav-item fw-bold ps-2 my-4">
 				  <Link to={`/${currentUser}/likes/given`} className="nav-link active">
-				  <i className="fa-regular fa-share-from-square fs-2"></i>
-					{isSidebarOpen && <span className="ms-2 fs-4">Resquest sent</span>}
+				  <i className="fa-regular fa-share-from-square fs-3"></i>
+					{isSidebarOpen && <span className="ms-2 fs-5">Resquest sent</span>}
 				  </Link>
 				</li>
-				{/* <li className="nav-item my-auto fw-bold">
-				  <Link to={`/${currentUser}/likes/nogiven`} className="nav-link active">
-					<i className="bi bi-hand-thumbs-down-fill"></i>
-					{isSidebarOpen && <span>No Given Likes</span>}
-				  </Link>
-				</li> */}
 				<li className="nav-item fw-bold ps-2 my-4">
 				  <Link to={`/${currentUser}/likes/received`} className="nav-link active">
-				  <i className="fa-regular fa-envelope fs-2"></i>
-					{isSidebarOpen && <span className="ms-2 fs-4">Pending Request</span>}
+				  <i className="fa-regular fa-envelope fs-3"></i>
+					{isSidebarOpen && <span className="ms-2 fs-5">Pending Request</span>}
 				  </Link>
 				</li>
 				<li className="nav-item fw-bold ps-2 my-4">
 				  <Link to={`/${currentUser}/match`} className="nav-link active">
-				  <i className="fa-solid fa-person-running fs-2"></i>
-					{isSidebarOpen && <span className="ms-2 fs-4">Ready to Train</span>}
+				  <i className="fa-solid fa-person-running fs-3"></i>
+					{isSidebarOpen && <span className="ms-2 fs-5">Ready to Train</span>}
 				  </Link>
 				</li>
 			  </ul>

@@ -60,6 +60,8 @@ import { MatchCoach } from "./pages/matchCoach";
 import { AvailabilityCoach } from "./pages/availabilityCoach";
 import { AvailabilityClient } from "./pages/availabilityClient";
 
+import { Calculator } from "./pages/calculator";
+
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
@@ -83,6 +85,7 @@ const Layout = () => {
                         <Route element={<Home />} path="/" />
                         <Route element={<SignUp />} path="/signup" />
                         <Route element={<Login />} path="/login" />
+                        <Route element={<Calculator />} path="/calculator" />
                         {/* AVAILABILITY ROUTES */}  
                         <Route element={<Availability />} path="/availability" />
                         <Route element={<SingleAvailability />} path="/availability/:availabilityID" />

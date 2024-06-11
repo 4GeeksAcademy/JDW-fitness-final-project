@@ -506,6 +506,49 @@ def update_client(client_id):
     except Exception as e:
         print(f"Error actualizando el perfil: {e}")
         return jsonify({"error": str(e)}), 500
+    
+@api.route('/client/calculator/<int:client_id>', methods=['PUT'])
+@jwt_required()
+def update_client_calculator(client_id):
+    try:
+        # Obtener la identidad del JWT y extraer el client_id
+        identity = get_jwt_identity()
+        
+        # Extraer el client_id del diccionario de identidad
+        token_client_id = identity.get('id')
+
+        if token_client_id is None or token_client_id != client_id:
+            return jsonify({"error": "Unauthorized access"}), 403
+
+        # Buscar el cliente en la base de datos usando el client_id
+        client = Client.query.get(client_id)
+        if client is None:
+            return jsonify({"error": "Client not found"}), 404
+
+        body = request.get_json()
+        if body is None:
+            return jsonify({"error": "Request body is missing"}), 400
+
+        client.age = body.get("age", client.age)
+        client.height = body.get("height", client.height)
+        client.weight = body.get("weight", client.weight)
+        client.gender = body.get("gender", client.gender)
+        client.bmi = body.get("bmi", client.bmi)
+        client.fat = body.get("fat", client.fat)
+        client.bmr = body.get("bmr", client.bmr)
+
+        # Mantener username, email y password del cliente desde la base de datos
+        client.username = client.username
+        client.email = client.email
+        client.password = client.password
+
+        db.session.commit()
+
+        return jsonify({"msg": "Perfil de usuario actualizado con éxito"}), 200
+    except Exception as e:
+        print(f"Error actualizando el perfil: {e}")
+        return jsonify({"error": str(e)}), 500
+
   
 @api.route('/client/<int:client_id>', methods=['DELETE'])
 def del_client(client_id):

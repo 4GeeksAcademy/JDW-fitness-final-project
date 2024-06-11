@@ -255,3 +255,8 @@ input.form-control {
     justify-content: space-between;
     align-items: center;
 }
+/*CALCULATOR*/
+.table .thead-info th {
+    background-color: #A02CFA;
+    color: #fff;
+}

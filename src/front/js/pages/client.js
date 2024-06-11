@@ -46,8 +46,8 @@ export const Client = () => {
             <div className="row d-flex justify-content-center">
                 <div className="col-10 col-xl-10">
                     <div className="d-flex flex-row align-items-center card card-ui-default-1 bg-secondary p-4 col-12">
-                        <i className="fa-solid fa-users fs-2"></i>
-                        <h1 className="ms-3">Client List</h1>
+                        <i className="fa-solid fa-users fs-3 text-secondary"></i>
+                        <h4 className="ms-3 fw-semibold mb-0">Client List</h4>
                     </div>
                 </div>
                 {store.clients.map((client, index) => 
@@ -55,7 +55,7 @@ export const Client = () => {
                         <div className="card card-ui-default-1 bg-secondary col-12">
                             <div className="card-body mb-0 d-flex justify-content-between align-items-center">
                                 <div className="d-flex">
-                                <ProfileImage photoUrl={client.client_photo_url} sizeClass="client-profile-image" />
+                                <ProfileImage photoUrl={client.client_photo_url} sizeClass="user-profile-image" />
                                     <div className="d-flex flex-column justify-content-center ms-3">
                                         <h5 className="card-title mb-3">{client.username}</h5>
                                         <Link to={`/client/${client.id}`} className="btn btn-card rounded-5">
@@ -67,7 +67,7 @@ export const Client = () => {
                                     <button type="button" className="btn btn-secondary btn-request fw-semibold" onClick={() => handleLike(client.id)}>Request to train<span className="btn-icon-right ms-3"><i className="fa fa-envelope"></i></span>
                                     </button>
                                     :   
-                                    <button type="button" className="btn btn-secondary btn-cancel fw-semibold" onClick={() => handleLike(client.id)}>Cancel request<span className="btn-icon-right ms-3"><i className="fas fa-times"></i></span>
+                                    <button type="button" className="btn btn-dark fw-semibold" onClick={() => handleLike(client.id)}>Cancel request<span className="btn-icon-right ms-3"><i className="fas fa-times"></i></span>
                                     </button>                
                                 }
                             </div>

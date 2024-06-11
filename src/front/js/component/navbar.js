@@ -15,29 +15,14 @@ export const Navbar = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const navigate = useNavigate()
 
-
-	// useEffect(() => {
-	// 	if (loggedCoach) {
-	// 		setUsername(loggedCoach.username);
-	// 		setCurrentUser("coach")
-	// 		setCurrentUserID(loggedCoach.id)
-	// 		setCurrentUserList("client")
-	// 	}
-	// 	else if (loggedClient) {
-	// 		setUsername(loggedClient.username);
-	// 		setCurrentUser("client")
-	// 		setCurrentUserID(loggedClient.id)
-	// 		setCurrentUserList("coach")
-	// 	}
-	// }, [actions]);
+	const fetchSingleClient = async (id) => {
+		await actions.getSingleClient(id);
+	};
+	const fetchSingleCoach = async (id) => {
+		await actions.getSingleCoach(id);
+	};
 
 	useEffect(() => {
-		const fetchSingleClient = async (id) => {
-			await actions.getSingleClient(id);
-		};
-		const fetchSingleCoach = async (id) => {
-			await actions.getSingleCoach(id);
-		};
 		if (loggedCoach) {
 			fetchSingleCoach(loggedCoach.id)
 			setUsername(loggedCoach.username);
@@ -53,6 +38,15 @@ export const Navbar = () => {
 			setCurrentUserList("coach")
 		}
 	}, [actions.logout]);
+
+	useEffect(() => {
+		if (loggedCoach) {
+			fetchSingleCoach(loggedCoach.id)
+		}
+		else if (loggedClient) {
+			fetchSingleClient(loggedClient.id)
+		}
+	}, [store.singleCoach.coach_photo_url, store.singleClient.client_photo_url]);
 
 	const toggleSidebar = () => {
 		setIsSidebarOpen(!isSidebarOpen);
@@ -101,7 +95,7 @@ export const Navbar = () => {
 			</div>
 			<div className="sidebar-body">
 			  <ul className="navbar-nav">
-				<li className="nav-item my-auto fw-bold ps-2">
+				<li className={currentUserList === "client" ? "nav-item fw-bold my-4 ps-2" : "nav-item fw-bold my-4 ps-1"}>
 				  	<Link to={`/${currentUserList}`} className="nav-link active">
 				  	{currentUserList === "client" ? 
 				  	<i className="fa-regular fa-user fs-2"></i>
@@ -109,35 +103,35 @@ export const Navbar = () => {
 				  	<i className="fa-solid fa-dumbbell fs-2"></i> 
 				  	}
 					{(isSidebarOpen && currentUserList === "client") &&
-					<span className="ms-2">Client List</span>
+					<span className="ms-2 fs-4">Client List</span>
 					}
 					{(isSidebarOpen && currentUserList === "coach") &&
-					<span className="ms-2">Coach List</span>
+					<span className="ms-2 fs-4">Coach List</span>
 					}
 				  </Link>
 				</li>
-				<li className="nav-item my-auto fw-bold">
+				<li className="nav-item fw-bold ps-2 my-4">
 				  <Link to={`/${currentUser}/likes/given`} className="nav-link active">
-					<i className="bi bi-hand-thumbs-up-fill"></i>
-					{isSidebarOpen && <span>Given Likes</span>}
+				  <i className="fa-regular fa-share-from-square fs-2"></i>
+					{isSidebarOpen && <span className="ms-2 fs-4">Resquest sent</span>}
 				  </Link>
 				</li>
-				<li className="nav-item my-auto fw-bold">
+				{/* <li className="nav-item my-auto fw-bold">
 				  <Link to={`/${currentUser}/likes/nogiven`} className="nav-link active">
 					<i className="bi bi-hand-thumbs-down-fill"></i>
 					{isSidebarOpen && <span>No Given Likes</span>}
 				  </Link>
-				</li>
-				<li className="nav-item my-auto fw-bold">
+				</li> */}
+				<li className="nav-item fw-bold ps-2 my-4">
 				  <Link to={`/${currentUser}/likes/received`} className="nav-link active">
-					<i className="bi bi-envelope-fill"></i>
-					{isSidebarOpen && <span>Received Likes</span>}
+				  <i className="fa-regular fa-envelope fs-2"></i>
+					{isSidebarOpen && <span className="ms-2 fs-4">Pending Request</span>}
 				  </Link>
 				</li>
-				<li className="nav-item my-auto fw-bold">
+				<li className="nav-item fw-bold ps-2 my-4">
 				  <Link to={`/${currentUser}/match`} className="nav-link active">
-					<i className="bi bi-heart-fill"></i>
-					{isSidebarOpen && <span>Matches</span>}
+				  <i className="fa-solid fa-person-running fs-2"></i>
+					{isSidebarOpen && <span className="ms-2 fs-4">Ready to Train</span>}
 				  </Link>
 				</li>
 			  </ul>

@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 import ProfileImage from "../component/profileImage"
+import logoJDWName from "/workspaces/JDW-fitness-final-project/src/front/img/logo-with-name.png"
 import "../../styles/navbar.css";
 
 export const Navbar = () => {
@@ -53,18 +54,18 @@ export const Navbar = () => {
 
 	return (
 		<div className="App">
-		  <nav className="navbar bg-body-light">
+		  <nav className={`navbar bg-body-light ${isSidebarOpen ? 'navbar-main-open' : 'navbar-main-closed'}`}>
 			<div className="container-fluid">
-			  <a className="navbar-brand" href="#">
-				<h5 className="mb-0 text-secondary">JDW</h5>
-			  </a>
 			  <div className="d-flex align-items-center">
 			  <button className="btn fa-solid fa-bars-staggered ms-3 me-auto fs-2 text-secondary" type="button" onClick={toggleSidebar}></button>
-			  <Link to={"/calculator"} className="dropdown-item ai-icon">
+			  <Link to={"/calculator"} className="dropdown-item ai-icon fw-bold fs-5">
 			  <i className="fa-solid fa-calculator"></i>
-					<span className="ms-2">Calculator BMI </span>
+					<span className="ms-2">Fitness Calculator</span>
 				</Link>
 			  </div>
+			  {/* <div className="mx-auto">
+				<img src={logoJDWName} alt="logo-with-name" className="logo-name"/>
+			  </div> */}
 				<div className="d-flex align-items-center ms-auto me-4">
 					{loggedCoach ? 
                     <ProfileImage photoUrl={store.singleCoach.coach_photo_url} sizeClass="navbar-profile-image" />

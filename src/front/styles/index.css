@@ -14,7 +14,7 @@ body {
 /* Estilo del contenido principal */
 .main-wrapper {
     flex: 1;
-    background-color: #f3f3f3; /* Color de fondo gris claro */
+    background-color: #f3f3f385; /* Color de fondo gris claro */
     padding-top: 56px; /* Altura del navbar */
 }
 .footer {
@@ -260,3 +260,10 @@ input.form-control {
     background-color: #A02CFA;
     color: #fff;
 }
+/*MAP*/
+.map-container {
+    width: 100%; /* Asegura que el contenedor del mapa ocupe todo el ancho disponible */
+    height: 400px; /* Especifica la altura del mapa */
+    border-radius: 8px; /* Mantiene los bordes redondeados */
+    overflow: hidden; /* Asegura que el contenido no se desborde */
+  }

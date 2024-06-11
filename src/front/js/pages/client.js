@@ -43,7 +43,7 @@ export const Client = () => {
 
     return (
         <div className="container">
-            <div className="row d-flex justify-content-center">
+            <div className="row justify-content-center">
                 <div className="col-10 col-xl-10">
                     <div className="d-flex flex-row align-items-center card card-ui-default-1 bg-secondary p-4 col-12">
                         <i className="fa-solid fa-users fs-3 text-secondary"></i>

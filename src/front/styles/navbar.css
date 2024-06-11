@@ -1,87 +1,97 @@
 /* Sidebar styling */
 .sidebar {
-    height: 100%;
-    width: 228px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: #fff; /* Color de fondo blanco */
-    overflow-x: hidden;
-    transition: width 0.5s;
-  }
-  
-  .sidebar.closed {
-    width: 80px; /* Ancho cuando está colapsado */
-  }
-  
-  .sidebar-header {
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .sidebar-body {
-    padding-top: 20px;
-  }
-  
-  .sidebar a {
-    padding: 10px 15px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #818181;
-    display: flex;
-    align-items: center;
-    transition: color 0.3s;
-  }
-  
-  .sidebar a i {
-    margin-right: 10px;
-  }
-  .sidebar.closed a:hover {
-    background-color: #A02CFA; /* Color de fondo al hacer hover */
-    color: #fff; /* Color del texto al hacer hover */
-    border-radius: 8px;
-    margin-right: 13px;
-  }
-  
-  .sidebar.closed a:hover i {
-    color: #fff; /* Color del icono al hacer hover */
-  }
-  
-  .sidebar.open a:hover i {
-    padding-left: 20px; /* Color del icono al hacer hover */
-  }
-  .sidebar.open a{
-    margin-left: 10px; /* Color del icono al hacer hover */
-  }
-  .sidebar.open a:hover {
-    background-color: #fff; /* Mantiene el fondo blanco */
-    color: #A02CFA; /* Color del texto al hacer hover */
-  }
-  
-  .sidebar.open a:hover i {
-    color: #A02CFA; /* Color del icono al hacer hover */
-  }
+  height: 100%;
+  width: 228px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #fff; /* Color de fondo blanco */
+  overflow-x: hidden;
+  box-shadow: 0px 0px 10px rgba(120, 130, 140, 0.13);
+  transition: all .2s ease;
+}
 
-  .navbar {
-    background-color: #fff;
-  }
+.sidebar.closed {
+  width: 80px; /* Ancho cuando está colapsado */
+}
 
-  .navbar-toggler {
-    margin-left: auto;
-  }
-  .fs-12 {
-    font-size: 13px;
-  }
-  .first-letter-uppercase::first-letter {
-    text-transform: uppercase;
+.sidebar-header {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-body {
+  padding-top: 20px;
+}
+
+.sidebar a {
+  padding: 10px 15px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #818181;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s;
+}
+
+.sidebar a i {
+  margin-right: 10px;
+}
+.sidebar.closed a:hover {
+  background-color: #A02CFA; /* Color de fondo al hacer hover */
+  color: #fff; /* Color del texto al hacer hover */
+  border-radius: 8px;
+  margin-right: 13px;
+}
+
+.sidebar.closed a:hover i {
+  color: #fff; /* Color del icono al hacer hover */
+}
+
+.sidebar.open a:hover i {
+  padding-left: 20px; /* Color del icono al hacer hover */
+}
+.sidebar.open a{
+  margin-left: 10px; /* Color del icono al hacer hover */
+}
+.sidebar.open a:hover {
+  background-color: #fff; /* Mantiene el fondo blanco */
+  color: #A02CFA; /* Color del texto al hacer hover */
+}
+
+.sidebar.open a:hover i {
+  color: #A02CFA; /* Color del icono al hacer hover */
+}
+
+.navbar {
+  background-color: #fff;
+}
+
+.navbar-toggler {
+  margin-left: auto;
+}
+.fs-12 {
+  font-size: 13px;
+}
+.first-letter-uppercase::first-letter {
+  text-transform: uppercase;
 }
 
 /* Tamaño para la navbar */
 .navbar-profile-image {
-  width: 60px;
-  height: 60px;
-  margin-right: 1rem;
+width: 60px;
+height: 60px;
+margin-right: 1rem;
 }
+.logo-name {
+height: 5rem;
+}
+.navbar-main-closed {
+margin-left: 4rem;
+}
+.navbar-main-open {
+  margin-left: 9.7rem;
+  }

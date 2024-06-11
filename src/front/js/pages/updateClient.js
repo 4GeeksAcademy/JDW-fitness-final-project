@@ -259,8 +259,8 @@ export const UpdateClient = () => {
                                                 )}
                                             </div>
                                             </div>
-                                            <div className=" col-md-6">
-                                                <div className="input-group">
+                                            <div className=" col-12">
+                                                <div className="input-group col-md-6">
                                                 <input 
                                                     type="text"
                                                     value={address} 
@@ -273,7 +273,7 @@ export const UpdateClient = () => {
                                                 <button className="btn btn-btn btn-dark fw-semibold" type="button" id="geocode" onClick={handleGeocode} >Geocode</button>
                                             </div>
                                             {(coordinates.lat && coordinates.lng) && (
-                                                <div className="">
+                                                <div className="col-12 mt-3">
                                                     <MapComponent 
                                                         lat={coordinates.lat}
                                                         lng={coordinates.lng} 

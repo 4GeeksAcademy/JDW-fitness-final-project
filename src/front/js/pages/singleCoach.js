@@ -49,70 +49,78 @@ export const SingleCoach = () => {
 
 	return (
         <>
-        {loading ? 
-            <h2 className="container mt-3">Loading...</h2>
-            :
-            <div className="container mt-3">
-                <h3 className="mb-2">Coach: {store.singleCoach.username}</h3>
-                <h5>Some details about me:</h5>
-                <div className="">
-                    <ProfileImage
-                        photoUrl = {store.singleCoach.coach_photo_url}
-                    />
-                    <ul className="my-3 fs-5">
-                        <li>
-                            <span className="fw-bold">First name: </span> 
-                            {store.singleCoach.first_name}
-                        </li>
-                        <li>
-                            <span className="fw-bold">Last name: </span> 
-                            {store.singleCoach.last_name}
-                        </li>
-                        <li>
-                            <span className="fw-bold">Education: </span> 
-                            {education}
-                        </li>
-                        <li>
-                            <span className="fw-bold">Experience: </span> 
-                            {experience}
-                        </li>
-                        {store.singleCoach.city && 
-                        <li>
-                            <span className="fw-bold">City: </span> 
-                            {store.singleCoach.city}
-                        </li>
-                        }
-                    </ul>
-                    {(store.singleCoach.latitude && store.singleCoach.longitude) &&                 
-                    <div className="">
-                        <MapComponent 
-                            lat = {store.singleCoach.latitude}
-                            lng = {store.singleCoach.longitude} 
-                        />
+            {loading ? 
+                <h2 className="container mt-3">Loading...</h2>
+                :
+                <div className="container d-flex justify-content-center mt-4">
+                    <div className="card p-4 mb-5 shadow-lg" style={{ borderRadius: "15px" }}>
+                        <div className="row">
+                            <div className="col-lg-8">
+                                <div className="d-flex flex-column flex-lg-row align-items-center">
+                                    <ProfileImage 
+                                        photoUrl={store.singleCoach.coach_photo_url} 
+                                        className="img-fluid rounded mb-4 mb-lg-0" 
+                                        style={{ width: "280px", height: "300px", objectFit: "contain", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }} 
+                                    />
+                                    <div className="ms-lg-4 w-100">
+                                        <h3 className="mb-3">Coach: {store.singleCoach.username}</h3>
+                                        <h5 className="mb-4">Some details about me:</h5>
+                                        <ul className="list-group list-group-flush fs-6">
+                                            <li className="list-group-item">
+                                                <span className="fw-bold">First name: </span> 
+                                                {store.singleCoach.first_name}
+                                            </li>
+                                            <li className="list-group-item">
+                                                <span className="fw-bold">Last name: </span> 
+                                                {store.singleCoach.last_name}
+                                            </li>
+                                            <li className="list-group-item">
+                                                <span className="fw-bold">Education: </span> 
+                                                {education}
+                                            </li>
+                                            <li className="list-group-item">
+                                                <span className="fw-bold">Experience: </span> 
+                                                {experience}
+                                            </li>
+                                            {store.singleCoach.city && 
+                                            <li className="list-group-item">
+                                                <span className="fw-bold">City: </span> 
+                                                {store.singleCoach.city}
+                                            </li>
+                                            }  
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            {store.singleCoach.latitude && store.singleCoach.longitude && (
+                                <div className="col-lg-4 d-flex align-items-center">
+                                    <MapComponent 
+                                        lat={store.singleCoach.latitude}
+                                        lng={store.singleCoach.longitude} 
+                                        style={{ height: "300px", width: "100%", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                        <div className="mt-3 d-flex justify-content-end">
+                            {(loggedCoach && store.singleCoach.id === loggedCoach.id) &&            
+                            <Link to={`/coach/update/${coachID}`} className="ms-1">
+                                    <button className="btn btn-secondary ms-auto fw-bold" >Update</button>					
+                            </Link>
+                            }
+                            {loggedCoach ?                
+                            <Link to="/client">
+                                <button className="btn btn-primary ms-3 fw-bold" >Back to Client list</button>
+                            </Link>
+                            :
+                            <Link to="/coach">
+                                <button className="btn btn-primary ms-3 fw-bold" >Back to Coach list</button>
+                            </Link>
+                            }
+                        </div>
                     </div>
-                    }
-                    <Link to={`/availability-coach/${coachID}`} className="ms-auto my-1">
-                        <button className="btn btn-secondary ms-auto fw-bold" >Availability</button>					
-                    </Link>
                 </div>
-                <div className="mt-3">
-                    {(loggedCoach && store.singleCoach.id === loggedCoach.id) &&            
-                    <Link to={`/coach/update/${coachID}`} className="ms-auto my-1">
-                            <button className="btn btn-secondary ms-auto fw-bold" >Update</button>					
-                    </Link>
-                    }
-                    {loggedCoach ?                
-                    <Link to="/client">
-                        <button className="btn btn-primary ms-3 fw-bold" >Back to Client list</button>
-                    </Link>
-                    :
-                    <Link to="/coach">
-                        <button className="btn btn-primary ms-3 fw-bold" >Back to Coach list</button>
-                    </Link>
-                    }    
-                </div>
-            </div>
-        }
+            }
         </>
-	);
-};
+    );
+};    

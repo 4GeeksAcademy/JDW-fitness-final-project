@@ -1,0 +1,47 @@
+/* landing.css */
+
+.landing-page {
+    color: #A02CFA;
+    background: linear-gradient(180deg, #A02CFA, #f2e2ff, #ffffff);
+}
+
+.landing-page .bg-light {
+    background-color: #f1dffe !important;
+}
+
+.landing-page .text-primary {
+    color: #A02CFA !important;
+    border-color: #000000;
+}
+
+.landing-page .btn-primary {
+    background-color: #f1dffe !important;
+    border-color: #A02CFA !important;
+    color: #A02CFA !important;
+}
+
+.landing-page .btn-primary:hover {
+    background-color: #A02CFA !important;
+    color: #f1dffe !important;
+}
+
+.landing-page .border-primary {
+    border-color: #000000 !important;
+}
+
+.landing-page .card {
+    background-color: #ffffff !important;
+    color: black !important;
+}
+
+.landing-page .card-title {
+    color: #000000 !important;
+}
+
+.landing-page .card-text {
+    color: black !important;
+}
+
+.landing-page .label {
+    color: black !important;
+}

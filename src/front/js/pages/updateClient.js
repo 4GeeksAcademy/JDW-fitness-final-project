@@ -15,10 +15,6 @@ export const UpdateClient = () => {
     const [password, setPassword] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [age, setAge] = useState("");
-    const [height, setHeight] = useState("");
-    const [weight, setWeight] = useState("");
-    const [gender, setGender] = useState("");
     const [physicalHabits, setPhysicalHabits] = useState("");
     const [photoUrl, setPhotoUrl] = useState("");
     const [activityFrequencyID, setActivityFrequencyID] = useState(0);
@@ -54,10 +50,6 @@ export const UpdateClient = () => {
             setPassword(store.singleClient.password || "");
             setFirstName(store.singleClient.first_name || "");
             setLastName(store.singleClient.last_name || "");
-            setAge(store.singleClient.age || "");
-            setHeight(store.singleClient.height || "");
-            setWeight(store.singleClient.weight || "");
-            setGender(store.singleClient.gender || "");
             setPhysicalHabits(store.singleClient.physical_habits || "");
             setActivityFrequencyID(store.singleClient.activity_frequency_id || 0);
         }
@@ -114,10 +106,6 @@ export const UpdateClient = () => {
             password,
             firstName,
             lastName,
-            age,
-            height,
-            weight,
-            gender,
             physicalHabits,
             photoUrl,
             activityFrequencyID,
@@ -231,53 +219,18 @@ export const UpdateClient = () => {
                                                     placeholder="Last Name"/>
                                                 </div>
                                                 <div className="form-group col-md-6">
-                                                    <label>Age</label>
-                                                    <input 
-                                                    type="number" 
-                                                    className="form-control mt-1 p-3" 
-                                                    value={age}
-                                                    onChange={(e) => setAge(e.target.value)}
-                                                    placeholder="Age"/>
-                                                </div>
-                                                <div className="form-group col-md-6">
-                                                    <label>Height</label>
-                                                    <input 
-                                                    type="number" 
-                                                    className="form-control mt-1 p-3" 
-                                                    value={height}
-                                                    onChange={(e) => setHeight(e.target.value)}
-                                                    placeholder="Height"/>
-                                                </div>
-                                                <div className="form-group col-md-6">
-                                                    <label>Weight</label>
-                                                    <input 
-                                                    type="number" 
-                                                    className="form-control mt-1 p-3" 
-                                                    value={weight}
-                                                    onChange={(e) => setWeight(e.target.value)}
-                                                    placeholder="Weight"/>
-                                                </div>
-                                                <div className="form-group col-md-6">
-                                                    <label>Gender</label>
-                                                    <input 
-                                                    type="text" 
-                                                    className="form-control mt-1 p-3" 
-                                                    value={gender}
-                                                    onChange={(e) => setGender(e.target.value)}
-                                                    placeholder="Gender"/>
-                                                </div>
-                                                <div className="form-group col-md-6">
                                                 <label htmlFor="physical-habits" className="form-label">Physical Habits</label>
                                                     <textarea
                                                         className="form-control mt-1 p-3"
                                                         id="physical-habits"
-                                                        rows="5"
+                                                        rows="6"
                                                         value={physicalHabits}
                                                         onChange={(e) => setPhysicalHabits(e.target.value)}
                                                         placeholder="Write here your physical habits..."
                                                     ></textarea>
                                                 </div>
-                                                <div className="form-group col-md-3 mt-2">
+                                                <div className="form-group col-md-6 mb-0 mt-2">
+                                                <div className="form-group mt-2 mb-4">
                                                     <label>Activity Frequency</label>
                                                     <select value={activityFrequencyID} className="form-select bootstrap-select mb-3 mt-1 p-3" aria-label="activity-frequency-selector" onChange={(e) => setActivityFrequencyID(e.target.value)}>
                                                         {activityFrequencyID == 0 && <option defaultValue>Select your activity frequency</option>}  
@@ -288,7 +241,7 @@ export const UpdateClient = () => {
                                                         ))}
                                                     </select>
                                                 </div>
-                                            <div className="form-group col-md-6">
+                                            <div className="form-group">
                                                 <label htmlFor="formFile" className="mb-1">Upload a profile image</label>
                                                 <input
                                                 type="file"
@@ -305,8 +258,9 @@ export const UpdateClient = () => {
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className=" col-md-6">
-                                                <div className="input-group">
+                                            </div>
+                                            <div className=" col-12">
+                                                <div className="input-group col-md-6">
                                                 <input 
                                                     type="text"
                                                     value={address} 
@@ -319,7 +273,7 @@ export const UpdateClient = () => {
                                                 <button className="btn btn-btn btn-dark fw-semibold" type="button" id="geocode" onClick={handleGeocode} >Geocode</button>
                                             </div>
                                             {(coordinates.lat && coordinates.lng) && (
-                                                <div className="">
+                                                <div className="col-12 mt-3">
                                                     <MapComponent 
                                                         lat={coordinates.lat}
                                                         lng={coordinates.lng} 

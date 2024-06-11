@@ -84,16 +84,18 @@ class Client(db.Model):
     height = db.Column(db.Integer, unique=False, nullable=True)
     weight = db.Column(db.Integer, unique=False, nullable=True)
     gender = db.Column(db.String(120), unique=False, nullable=True)
-    # Cambiar a valor unique = True de momento dejarlo así
     physical_habits = db.Column(db.String(120), unique=False, nullable=True)
     client_photo_url=db.Column(db.String(255), nullable=True)
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
     city = db.Column(db.String(120), unique=False, nullable=True)
-    # Cambiar a valor unique true como el anterior
-    availability_client = db.relationship('Availability_client', backref='clients')
+    bmi = db.Column(db.Float, nullable=True)
+    fat = db.Column(db.Float, nullable=True)
+    bmr = db.Column(db.Float, nullable=True)
     activity_frequency_id = db.Column(db.Integer, db.ForeignKey('activity_frequency.id'))
     activity_frequency = db.relationship('ActivityFrequency') 
+    # Cambiar a valor unique true como el anterior
+    availability_client = db.relationship('Availability_client', backref='clients')
     
     def __repr__(self):
         return f'<Client {self.email}>'  
@@ -115,7 +117,10 @@ class Client(db.Model):
             "client_photo_url": self.client_photo_url,
             "latitude": self.latitude,
             "longitude": self.longitude, 
-            "city": self.city,            
+            "city": self.city,
+            "bmi": self.bmi,
+            "fat": self.fat,
+            "bmr": self.bmr        
           }
 
 class Availability_client(db.Model):

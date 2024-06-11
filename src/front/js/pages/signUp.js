@@ -156,7 +156,7 @@ export const SignUp = () => {
                                                             Coach
                                                         </label>
                                                         </div>
-                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         </div>

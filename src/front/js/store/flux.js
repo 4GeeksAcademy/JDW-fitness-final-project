@@ -62,7 +62,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			console.error("Error fetching clients:", error);
 		}
 	},
-	  getSingleClient: async (clientID) => {
+	getSingleClient: async (clientID) => {
         try {
             const response = await fetch(process.env.BACKEND_URL + `/api/client/${clientID}`);
             const data = await response.json();
@@ -106,10 +106,6 @@ const getState = ({ getStore, getActions, setStore }) => {
       password,
       firstName,
       lastName,
-      age,
-      height,
-      weight,
-      gender,
       physicalHabits,
       photoUrl,
       activityFrequencyID,
@@ -127,10 +123,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
       if (firstName) requestBody["first_name"] = firstName;
       if (lastName) requestBody["last_name"] = lastName;
-      if (age) requestBody["age"] = age;
-      if (height) requestBody["height"] = height;
-      if (weight) requestBody["weight"] = weight;
-      if (gender) requestBody["gender"] = gender;
       if (physicalHabits) requestBody["physical_habits"] = physicalHabits;
       if (photoUrl) requestBody["client_photo_url"] = photoUrl;
       if (latitude) requestBody["latitude"] = latitude;
@@ -165,7 +157,50 @@ const getState = ({ getStore, getActions, setStore }) => {
         setStore({ errorForm: error.message });
       }
     },
+	updateClientAPICalculator: async (
+		age,
+		height,
+		weight,
+		gender,
+		BMI,
+		fat,
+		BMR,
+		clientID
+	) => {
+		const token = localStorage.getItem("token_client");
+		const requestOptions = {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${token}` // Asegúrate de usar el token correcto
+			},
+			body: JSON.stringify({
+				"age": age,
+				"height": height,
+				"weight": weight,
+				"gender": gender,
+				"bmi": BMI,
+				"fat": fat,
+				"bmr": BMR
+			})
+		};
+
+		try {
+			// Realizar la solicitud al backend para actualizar el perfil del cliente
+			const response = await fetch(process.env.BACKEND_URL + `/api/client/calculator/${clientID}`, requestOptions);
+			const data = await response.json();
 	
+			if (response.status === 200) {
+				setStore({ errorForm: null, singleClient: data });
+				console.log("Perfil del cliente actualizado con éxito:", data);
+			} else {
+				setStore({ errorForm: data.error });
+			}
+		} catch (error) {
+			console.error("Error updating client profile:", error);
+			setStore({ errorForm: error.message });
+		}
+	},
 	
 	
 

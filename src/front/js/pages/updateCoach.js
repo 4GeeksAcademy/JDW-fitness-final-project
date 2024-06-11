@@ -158,7 +158,7 @@ export const UpdateCoach = () => {
             <div className="col-12">
                         <div className="card">
                             <div className="card-header">
-                                <h4 className="card-title">Update your profile</h4>
+                                <h5 className="card-title fw-semibold ps-0">Update your profile</h5>
                             </div>
                             <div className="card-body">
                                 <div className="basic-form">
@@ -256,7 +256,7 @@ export const UpdateCoach = () => {
                                                 </div>
                                             )}
                                         </div>
-                                        <div className=" col-md-6">
+                                        <div className="col-md-6">
                                             <div className="input-group">
                                             <input 
                                                 type="text"

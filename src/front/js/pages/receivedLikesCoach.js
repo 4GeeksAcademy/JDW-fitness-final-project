@@ -34,8 +34,8 @@ export const ReceivedLikesCoach = () => {
 			<div className="row d-flex justify-content-center">
 			<div className="col-10 col-xl-10">
 				<div className="d-flex flex-row align-items-center card card-ui-default-1 bg-secondary p-4 col-12">
-					<i className="fa-solid fa-users fs-2 text-secondary"></i>
-					<h1 className="ms-3">Pending Requests</h1>
+					<i className="fa-regular fa-envelope fs-3 text-secondary"></i>
+					<h4 className="ms-3 fw-semibold mb-0">Pending Requests</h4>
 				</div>
 			</div>
 			{store.receivedLikesCoach.map((user, index) => 
@@ -43,7 +43,7 @@ export const ReceivedLikesCoach = () => {
 					<div className="card card-ui-default-1 bg-secondary col-12">
 						<div className="card-body mb-0 d-flex justify-content-between align-items-center">
 							<div className="d-flex">
-							<ProfileImage photoUrl={user.client_photo_url} sizeClass="client-profile-image" />
+							<ProfileImage photoUrl={user.client_photo_url} sizeClass="user-profile-image" />
 								<div className="d-flex flex-column justify-content-center ms-3">
 									<h5 className="card-title mb-3">{user.username}</h5>
 									<Link to={`/client/${user.id}`} className="btn btn-card rounded-5">
@@ -77,6 +77,5 @@ export const ReceivedLikesCoach = () => {
 			)}
 		</div>
 		</div>
-		
 	);
 };

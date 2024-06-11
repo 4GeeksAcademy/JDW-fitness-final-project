@@ -1,30 +1,22 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import ProfileImage from "../component/profileImage"
 
 export const MatchCoach = () => {
     const { store, actions } = useContext(Context);
-    const [showEmails, setShowEmails] = useState({});
     const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
 
     useEffect(() => {
         actions.getUserMatches(loggedCoach.id);
     }, []);
 
-    const toggleShowEmail = (userId) => {
-        setShowEmails((prevShowEmails) => ({
-            ...prevShowEmails,
-            [userId]: !prevShowEmails[userId],
-        }));
-    };
-
 	return (
         <div className="container">
             <div className="row d-flex justify-content-center">
                 <div className="col-10 col-xl-10">
                     <div className="d-flex flex-row align-items-center card card-ui-default-1 bg-secondary p-4 col-12">
-                        <i className="fa-solid fa-users fs-2 text-secondary"></i>
-                        <h1 className="ms-3">Ready to train</h1>
+                        <i className="fa-solid fa-person-running fs-3 text-secondary"></i>
+                        <h4 className="ms-3 fw-semibold mb-0">Ready to train</h4>
                     </div>
                 </div>
                 {store.matchesCoach.map((user, index) => 
@@ -32,7 +24,7 @@ export const MatchCoach = () => {
                         <div className="card card-ui-default-1 bg-secondary col-12">
                             <div className="card-body mb-0 d-flex justify-content-between align-items-center">
                                 <div className="d-flex">
-                                    <ProfileImage photoUrl={user.client_photo_url} sizeClass="client-profile-image" />
+                                    <ProfileImage photoUrl={user.client_photo_url} sizeClass="user-profile-image" />
                                     <div className="d-flex flex-column justify-content-center ms-3">
                                         <h5 className="card-title mb-3">{user.username}</h5>
                                     </div>

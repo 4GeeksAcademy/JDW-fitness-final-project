@@ -28,6 +28,7 @@ export const UpdateClient = () => {
     const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
     const [city, setCity] = useState("")
     const tokenClient = localStorage.getItem("token_client");
+    const [uploadSuccess, setUploadSuccess] = useState(false);
 
     // Redirigir si no hay token
     useEffect(() => {
@@ -59,14 +60,13 @@ export const UpdateClient = () => {
             setGender(store.singleClient.gender || "");
             setPhysicalHabits(store.singleClient.physical_habits || "");
             setActivityFrequencyID(store.singleClient.activity_frequency_id || 0);
-            setPhotoUrl(store.singleClient.client_photo_url || "");
         }
     }, [store.singleClient]);
 
     // Navegar de vuelta si la actualización es exitosa
     useEffect(() => {
         if (!store.errorForm && handleButton && username && email && password) {
-            navigate("/coach");
+            setUploadSuccess(true)
         }
     }, [store.errorForm, handleButton, username, email, password, navigate]);
 
@@ -167,169 +167,191 @@ export const UpdateClient = () => {
     
 
     return (
-        <div className="container mt-3">
-            <h3 className="text-center mb-2">Actualizar Perfil del Cliente</h3>
-            <form onSubmit={updateClient}>
-                <div className="row">
-                    <div className="mb-3 col-6 offset-3">
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Username"
-                        />
-                    </div>
-                    <div className="mb-3 col-6 offset-3">
-                        <input
-                            type="email"
-                            className="form-control"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Email"
-                        />
-                    </div>
-                    <div className="mb-3 col-6 offset-3">
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            className="form-control"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Password"
-                        />
-                        <button
-                            onClick={() => setShowPassword(!showPassword)}
-                            className={`btn fa-solid ${showPassword ? "fa-eye" : "fa-eye-slash"}`}
-                            type="button"
-                        />
-                    </div>
-                    <div className="mb-3 col-3 offset-3">
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)}
-                            placeholder="First Name"
-                        />
-                    </div>
-                    <div className="mb-3 col-3">
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={lastName}
-                            onChange={(e) => setLastName(e.target.value)}
-                            placeholder="Last Name"
-                        />
-                    </div>
-                    <div className="mb-3 col-3">
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={age}
-                            onChange={(e) => setAge(e.target.value)}
-                            placeholder="Age"
-                        />
-                    </div>
-                    <div className="mb-3 col-3">
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={height}
-                            onChange={(e) => setHeight(e.target.value)}
-                            placeholder="Height"
-                        />
-                    </div>
-                    <div className="mb-3 col-3">
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={weight}
-                            onChange={(e) => setWeight(e.target.value)}
-                            placeholder="Weight"
-                        />
-                    </div>
-                    <div className="mb-3 col-3">
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={gender}
-                            onChange={(e) => setGender(e.target.value)}
-                            placeholder="Gender"
-                        />
-                    </div>
-                    <div className="mb-3 col-3">
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={physicalHabits}
-                            onChange={(e) => setPhysicalHabits(e.target.value)}
-                            placeholder="Physical Habits"
-                        />
-                    </div>
-                    <div className="mb-3 col-6 offset-3">
-                        <label className="form-label">Subir Foto de Perfil</label>
-                        <input
-                            type="file"
-                            className="form-control"
-                            onChange={handleImageChange}
-                        />
-                        {photoUrl && (
-                            <div className="mt-2">
-                                <img src={photoUrl} alt="Profile" className="img-thumbnail" style={{ maxWidth: "200px" }} />
+            <div className="container mt-3">
+                <div className="col-12">
+                            <div className="card">
+                                <div className="card-header">
+                                    <h5 className="card-title fw-semibold ps-0">Update your profile</h5>
+                                </div>
+                                <div className="card-body">
+                                    <div className="basic-form">
+                                        <form onSubmit={updateClient}>
+                                            <div className="row">
+                                                <div className="form-group col-md-4">
+                                                    <label>Username</label>
+                                                    <input 
+                                                    type="text" 
+                                                    className="form-control mt-1 p-3" 
+                                                    value={username} 
+                                                    onChange={(e) => setUsername(e.target.value)} 
+                                                    placeholder="Username"/>
+                                                </div>
+                                                <div className="form-group col-md-4">
+                                                    <label>Email</label>
+                                                    <input 
+                                                    type="email" 
+                                                    className="form-control mt-1 p-3" 
+                                                    value={email} 
+                                                    onChange={(e) => setEmail(e.target.value)} 
+                                                    placeholder="Email"/>
+                                                </div>
+                                                <div className="form-group col-md-4">
+                                                    <label>Password</label>
+                                                    <input 
+                                                    type={showPassword ? "text" : "password"}
+                                                    className="form-control mt-1 p-3" 
+                                                    placeholder="******"
+                                                    value={password} 
+                                                    onChange={(e) => setPassword(e.target.value)} 
+                                                    />
+                                                    <span className="show-pass eye-update" type="button" onClick={() => setShowPassword(!showPassword)} >
+                                                    {showPassword ? 
+                                                        <i className="fa fa-eye"></i>
+                                                        :
+                                                        <i className="fa fa-eye-slash"></i>
+                                                    }
+                                                    </span>
+                                                </div>
+                                                <div className="form-group col-md-6">
+                                                    <label>First Name</label>
+                                                    <input 
+                                                    type="text" 
+                                                    className="form-control mt-1 p-3" 
+                                                    value={firstName} 
+                                                    onChange={(e) => setFirstName(e.target.value)} 
+                                                    placeholder="First Name"/>
+                                                </div>
+                                                <div className="form-group col-md-6">
+                                                    <label>Last Name</label>
+                                                    <input 
+                                                    type="text" 
+                                                    className="form-control mt-1 p-3" 
+                                                    value={lastName} 
+                                                    onChange={(e) => setLastName(e.target.value)} 
+                                                    placeholder="Last Name"/>
+                                                </div>
+                                                <div className="form-group col-md-6">
+                                                    <label>Age</label>
+                                                    <input 
+                                                    type="number" 
+                                                    className="form-control mt-1 p-3" 
+                                                    value={age}
+                                                    onChange={(e) => setAge(e.target.value)}
+                                                    placeholder="Age"/>
+                                                </div>
+                                                <div className="form-group col-md-6">
+                                                    <label>Height</label>
+                                                    <input 
+                                                    type="number" 
+                                                    className="form-control mt-1 p-3" 
+                                                    value={height}
+                                                    onChange={(e) => setHeight(e.target.value)}
+                                                    placeholder="Height"/>
+                                                </div>
+                                                <div className="form-group col-md-6">
+                                                    <label>Weight</label>
+                                                    <input 
+                                                    type="number" 
+                                                    className="form-control mt-1 p-3" 
+                                                    value={weight}
+                                                    onChange={(e) => setWeight(e.target.value)}
+                                                    placeholder="Weight"/>
+                                                </div>
+                                                <div className="form-group col-md-6">
+                                                    <label>Gender</label>
+                                                    <input 
+                                                    type="text" 
+                                                    className="form-control mt-1 p-3" 
+                                                    value={gender}
+                                                    onChange={(e) => setGender(e.target.value)}
+                                                    placeholder="Gender"/>
+                                                </div>
+                                                <div className="form-group col-md-6">
+                                                <label htmlFor="physical-habits" className="form-label">Physical Habits</label>
+                                                    <textarea
+                                                        className="form-control mt-1 p-3"
+                                                        id="physical-habits"
+                                                        rows="5"
+                                                        value={physicalHabits}
+                                                        onChange={(e) => setPhysicalHabits(e.target.value)}
+                                                        placeholder="Write here your physical habits..."
+                                                    ></textarea>
+                                                </div>
+                                                <div className="form-group col-md-3 mt-2">
+                                                    <label>Activity Frequency</label>
+                                                    <select value={activityFrequencyID} className="form-select bootstrap-select mb-3 mt-1 p-3" aria-label="activity-frequency-selector" onChange={(e) => setActivityFrequencyID(e.target.value)}>
+                                                        {activityFrequencyID == 0 && <option defaultValue>Select your activity frequency</option>}  
+                                                        {store.activities.map((element, index) => (
+                                                            <option key={index} value={element.id}>
+                                                                {element.mode}
+                                                            </option>          
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            <div className="form-group col-md-6">
+                                                <label htmlFor="formFile" className="mb-1">Upload a profile image</label>
+                                                <input
+                                                type="file"
+                                                className="form-control "
+                                                id="formFile"
+                                                onChange={handleImageChange}
+                                                />
+                                                {photoUrl && (
+                                                    <div className="alert alert-secondary alert-dismissible fade show mt-3">
+                                                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="me-2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                                                        <strong>Done!</strong> Your profile photo updated.
+                                                        <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className=" col-md-6">
+                                                <div className="input-group">
+                                                <input 
+                                                    type="text"
+                                                    value={address} 
+                                                    onChange={(e) => setAddress(e.target.value)}
+                                                    className="form-control" 
+                                                    placeholder="Enter address" 
+                                                    aria-label="Adress" 
+                                                    aria-describedby="geocode"
+                                                />
+                                                <button className="btn btn-btn btn-dark fw-semibold" type="button" id="geocode" onClick={handleGeocode} >Geocode</button>
+                                            </div>
+                                            {(coordinates.lat && coordinates.lng) && (
+                                                <div className="">
+                                                    <MapComponent 
+                                                        lat={coordinates.lat}
+                                                        lng={coordinates.lng} 
+                                                    />
+                                                </div>
+                                            )}
+                                            </div>
+                                        </div>
+                                        {uploadSuccess &&                                     
+                                            <div className="alert alert-success alert-dismissible fade show my-4">
+                                                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="me-2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>	
+                                                <strong>Done!</strong> Your profile has been updated successfully
+                                                <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                                </button>
+                                            </div>
+                                        }
+                                        {store.errorForm &&                 
+                                            <div className="alert alert-danger alert-dismissible fade show text-center fw-semibold my-4" role="alert">
+                                                {store.errorForm}
+                                            </div>
+                                        }
+                                        <div className="d-flex justify-content-center align-items-center mt-4">
+                                            <button type="submit" className="btn btn-secondary light btn-block fw-bolder p-3">Save changes</button>
+                                            <Link to={`/client/${clientID}`} className="text-secondary text-decoration-none ms-5">
+                                                Back to your information
+                                            </Link>
+                                        </div>   
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                        )}
-                    </div>
-                    <div className="mb-3 col-6 offset-3">
-                        <select
-                            value={activityFrequencyID}
-                            className="form-select form-select-lg mb-3"
-                            aria-label="Select your activity frequency"
-                            onChange={(e) => setActivityFrequencyID(e.target.value)}
-                        >
-                            <option defaultValue>Select your activity frequency</option>
-                            {store.activities.map((element, index) => (
-                                <option key={index} value={element.id}>
-                                    {element.mode}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <div className="input-group mb-3">
-                            <input 
-                            type="text"
-                            value={address} 
-                            onChange={(e) => setAddress(e.target.value)}
-                            className="form-control" 
-                            placeholder="Enter address" 
-                            aria-label="Adress" 
-                            aria-describedby="geocode"/>
-                            <button className="btn btn-outline-secondary" type="button" id="geocode" onClick={handleGeocode} >Geocode</button>
                         </div>
-                    {(coordinates.lat && coordinates.lng) && (
-                        <div className="">
-                            <MapComponent 
-                            lat = {coordinates.lat}
-                            lng = {coordinates.lng} 
-                            />
-                        </div>
-                    )}
-                    </div>
-                    {store.errorForm && (
-                        <div className="alert alert-danger mt-4 py-2 d-flex justify-content-center col-6 offset-3" role="alert">
-                            {store.errorForm}
-                        </div>
-                    )}
-                </div>
-                <div className="d-flex justify-content-center">
-                    <button type="submit" className="btn btn-warning fw-bold mt-2">
-                        Save changes
-                    </button>
-                    <Link to={`/client/${clientID}`}>
-                        <button className="btn btn-primary ms-3 fw-bold mt-2">Back to your information</button>
-                    </Link>
-                </div>
-            </form>
-        </div>
+            </div>
     );
 };

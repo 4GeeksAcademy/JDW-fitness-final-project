@@ -95,7 +95,7 @@ export const Navbar = () => {
 			</div>
 			<div className="sidebar-body">
 			  <ul className="navbar-nav">
-				<li className="nav-item fw-bold ps-2 my-4">
+				<li className={currentUserList === "client" ? "nav-item fw-bold my-4 ps-2" : "nav-item fw-bold my-4 ps-1"}>
 				  	<Link to={`/${currentUserList}`} className="nav-link active">
 				  	{currentUserList === "client" ? 
 				  	<i className="fa-regular fa-user fs-2"></i>

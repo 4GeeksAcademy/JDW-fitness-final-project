@@ -78,11 +78,6 @@
   .first-letter-uppercase::first-letter {
     text-transform: uppercase;
 }
-/* Tamaño para la vista del cliente */
-.client-profile-image {
-  width: 130px;
-  height: 130px;
-}
 
 /* Tamaño para la navbar */
 .navbar-profile-image {

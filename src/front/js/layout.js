@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
-
+import { LandingPage } from "./pages/landingPage";
 import { Home } from "./pages/home";
 import { SignUp } from "./pages/signUp";
 import { Login } from "./pages/login";
@@ -74,15 +74,16 @@ const Layout = () => {
     const basename = process.env.BASENAME || "";
 
     if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/ >;
+    const isLogedUser = !!localStorage.getItem("token_client") || !!localStorage.getItem("token_coach");
 
     return (
         <div className="app-wrapper"> 
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                    <Navbar />
+                    {isLogedUser && <Navbar />} 
                     <div className="main-wrapper">
                     <Routes>
-                        <Route element={<Home />} path="/" />
+                        <Route path="/" element={<LandingPage />} />
                         <Route element={<SignUp />} path="/signup" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<Calculator />} path="/calculator" />
@@ -143,7 +144,7 @@ const Layout = () => {
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     </div>
-                    <Footer />
+                    {isLogedUser && <Footer />} 
                 </ScrollToTop>
             </BrowserRouter>
         </div>

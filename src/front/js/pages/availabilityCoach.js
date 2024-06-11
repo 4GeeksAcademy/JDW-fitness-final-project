@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const AvailabilityCoach = () => {
@@ -59,22 +59,28 @@ export const AvailabilityCoach = () => {
 
   return (
     <div className="container mt-5">
-      <h1 className="text-center mb-4">Availability for Coach: {store.coachDetails?.username}</h1>
-      
+      <div style={{
+        backgroundColor: '#a02cfa',
+        borderRadius: '10px',
+        color: 'white'
+      }} className="text-center mb-4">
+        <h1>Availability for Coach: {store.coachDetails?.username}</h1>
+      </div>
+      <div className="bg-purple text-white p-4 rounded mb-4">
+        <p className="mb-0">Manage your availability below:</p>
+      </div>
+
       {store.noAvailabilityMessage ? (
         <div className="text-center">
           <p>Aún no has agregado ningún día de disponibilidad, por favor agrega uno:</p>
-          <button className="btn btn-primary" onClick={openModal}>
-            Add New Availability
-          </button>
         </div>
       ) : (
         Array.isArray(store.singleAvailabilityCoach) && store.singleAvailabilityCoach.length > 0 ? (
           <ul className="list-group">
             {store.singleAvailabilityCoach.map((availability, index) => (
-              <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+              <li key={index} className="list-group-item d-flex justify-content-between align-items-center rounded mb-3 shadow-sm">
                 <div>
-                  Day: {availability.availability_day} 
+                  Day: {availability.availability_day}
                 </div>
                 <div>
                   <button className="btn btn-secondary btn-sm ml-2" onClick={() => handleDeleteAvailability(availability.id)}>
@@ -94,20 +100,15 @@ export const AvailabilityCoach = () => {
       <button className="btn btn-secondary mt-4" onClick={openModal}>
         Add New Availability
       </button>
-      <Link to={`/coach/${coach_id}`} >
-        <button className="btn btn-secondary mt-4 ms-3" >
-          Back to single information
-        </button>
-			</Link>
 
       {/* Modal de Bootstrap */}
       {modalIsOpen && (
         <div className="modal show" style={{ display: "block" }} tabIndex="-1" role="dialog">
           <div className="modal-dialog" role="document">
-            <div className="modal-content">
+            <div className="modal-content rounded-3 shadow-lg">
               <div className="modal-header bg-light">
                 <h5 className="modal-title text-secondary">Add New Availability</h5>
-                <button type="button" className="close" onClick={closeModal}>
+                <button type="btn btn-secondary mt-4" className="close" onClick={closeModal}>
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
@@ -131,7 +132,7 @@ export const AvailabilityCoach = () => {
                   </div>
                 </form>
               </div>
-              <div className="modal-footer bg-light">
+              <div className="modal-footer bg-light justify-content-between">
                 <button type="button" className="btn btn-secondary" onClick={closeModal}>Cancel</button>
                 <button type="button" className="btn btn-secondary" onClick={handleAddNewAvailability}>Add Availability</button>
               </div>

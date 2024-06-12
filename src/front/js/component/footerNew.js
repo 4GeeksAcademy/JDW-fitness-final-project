@@ -3,7 +3,7 @@ import "/workspaces/JDW-fitness-final-project/src/front/styles/footerlanding.css
 
 export const FooterDesign = () => {
   return (
-    <footer className="footer-landing">
+    <footer className="footer footer-landing">
       <div className="footer-content">
         <div className="footer-section quick-links">
           <h2 className="footer-heading fw-semibold">Quick Links</h2>
@@ -31,11 +31,19 @@ export const FooterDesign = () => {
         </div>
         <div className="footer-section social-media">
           <h2 className="footer-heading fw-semibold">Follow Us</h2>
+          <div>
+            <p className="text-dark fw-bold">JorjeAJT</p>
+          </div>
           <ul className="social-icons d-flex justify-content-center">
-            <li><a href="#"><i className="fab fa-facebook-f me-3"></i></a></li>
-            <li><a href="#"><i className="fab fa-twitter me-3"></i></a></li>
-            <li><a href="#"><i className="fab fa-instagram me-3"></i></a></li>
-            <li><a href="#"><i className="fab fa-linkedin-in"></i></a></li>
+            <li><a href="https://github.com/JorgeAJT/"><i class="fa-brands fa-github me-3"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/jorgeajt/"><i className="fab fa-linkedin-in me-3"></i></a></li>
+          </ul>
+          <div>
+            <p className="text-dark fw-bold">DaniWallaceDev</p>
+          </div>
+          <ul className="social-icons d-flex justify-content-center">
+            <li><a href="https://github.com/DaniWallaceDev/"><i class="fa-brands fa-github me-3"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/daniwallacedev/"><i className="fab fa-linkedin-in me-3"></i></a></li>
           </ul>
         </div>
         <div className="footer-section newsletter">
@@ -48,9 +56,11 @@ export const FooterDesign = () => {
         </div>
       </div>
       <div className="footer-bottom">
-        &copy; {new Date().getFullYear()} JDW Fitness. All rights reserved.
-        <br />
-        Made with <span style={{ color: 'red' }}>❤️</span> by JorgeAJT, DaniWallaceDev, Walter10x, 2024
+      <p>
+        Copyright © Made with ❤️ by
+        <a href="https://github.com/JorgeAJT" className="text-light text-decoration-none"> JorgeAJT</a> &
+        <a href="https://github.com/DaniWallaceDev" className="text-light text-decoration-none"> DaniWallaceDev</a>, 2024
+        </p>
       </div>
     </footer>
   );

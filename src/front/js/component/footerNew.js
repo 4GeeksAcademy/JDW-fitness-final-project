@@ -3,7 +3,7 @@ import "/workspaces/JDW-fitness-final-project/src/front/styles/footerlanding.css
 
 export const FooterDesign = () => {
   return (
-    <footer className="footer">
+    <footer className="footer-landing">
       <div className="footer-content">
         <div className="footer-section quick-links">
           <h2 className="footer-heading fw-semibold">Quick Links</h2>

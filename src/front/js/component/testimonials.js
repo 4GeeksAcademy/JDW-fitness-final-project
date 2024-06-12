@@ -1,5 +1,5 @@
 import React from "react";
-import "../../styles/landing.css";
+import "../../styles/testimonials.css";
 
 import feedback1 from "/workspaces/JDW-fitness-final-project/src/front/img/feedback1.jpg";
 import feedback2 from "/workspaces/JDW-fitness-final-project/src/front/img/feedback2.jpg";
@@ -7,7 +7,7 @@ import feedback3 from "/workspaces/JDW-fitness-final-project/src/front/img/feedb
 
 export const Testimonials = () => {
   return (
-    <section id="testimonials" className="py-5 bg-light">
+    <section id="testimonials" className="py-5 bg-trasparent">
       <div className="container">
         <h2 className="text-center mb-5 text-primary fw-bold">Testimonials</h2>
         <div className="row">

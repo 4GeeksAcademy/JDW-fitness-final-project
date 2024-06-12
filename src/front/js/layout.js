@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 import { LandingPage } from "./pages/landingPage";
-import { Home } from "./pages/home";
+import { Dashboard } from "./pages/dashboard";
 import { SignUp } from "./pages/signUp";
 import { Login } from "./pages/login";
 
@@ -75,6 +75,7 @@ const Layout = () => {
 
     if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/ >;
     const isLogedUser = !!localStorage.getItem("token_client") || !!localStorage.getItem("token_coach");
+    const isNotLogedUser = !isLogedUser;
 
     return (
         <div className="app-wrapper"> 
@@ -83,7 +84,8 @@ const Layout = () => {
                     {isLogedUser && <Navbar />} 
                     <div className="main-wrapper">
                     <Routes>
-                        <Route path="/" element={<LandingPage />} />
+                        {isNotLogedUser && <Route path="/" element={<LandingPage />} />}
+                        <Route element={<Dashboard />} path="/home" />
                         <Route element={<SignUp />} path="/signup" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<Calculator />} path="/calculator" />
@@ -91,7 +93,7 @@ const Layout = () => {
                         <Route element={<Availability />} path="/availability" />
                         <Route element={<SingleAvailability />} path="/availability/:availabilityID" />
                         <Route element={<AddAvailability />} path="/availability/add" />
-                        <Route element={<UpdateAvailability />} path="/availability/update/:availabilityID" />  
+                        <Route element={<UpdateAvailability />} path="/availability/update/:availabilityID" />
                         {/* GOALS ROUTES */}
                         <Route element={<Goals />} path="/goals" />
                         <Route element={<SingleGoal />} path="/goals/:goalID" />

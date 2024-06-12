@@ -41,8 +41,6 @@ export const Calculator = () => {
                 calculatedBMR,
                 loggedClient.id
             );
-        } else {
-            console.error("Client ID is undefined");
         }
     };
 
@@ -77,7 +75,7 @@ export const Calculator = () => {
                 <div className="col-lg-6">
                     <div className="card">
                         <div className="card-header">
-                            <h5 className="card-title fw-semibold ps-0">Calculate your BMI and your % fat</h5>
+                            <h5 className="card-title fw-semibold ps-0">Calculate your BMI, your % fat and your BMR</h5>
                         </div>
                         <div className="card-body">
                             <div className="basic-form">

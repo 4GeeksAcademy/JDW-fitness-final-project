@@ -1,80 +1,175 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
-import ProfileImage from "../component/profileImage"
-
+import ProfileImage from "../component/profileImage";
 import { Context } from "../store/appContext";
 
 export const Client = () => {
-	const { store, actions } = useContext(Context);
-	const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
-	const [like, setLike ] = useState({})
+    const { store, actions } = useContext(Context);
+    const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
+    const [like, setLike] = useState({});
+    const [match, setMatch] = useState({});
+    const [ loading, setLoading ] = useState(true);
+    const [pending, setPending] = useState({});
 
-	useEffect(() => {
-        actions.getClients()
-		actions.getLikes()
-    },[]);
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            await actions.getClients();
+            await actions.getLikes();
+            await actions.getMatches();
+			setLoading(false);
+		};
+		fetchData();
+    }, []);
 
-	useEffect(() => {
+    useEffect(() => {
         const likeStatus = {};
         store.clients.forEach((client) => {
-            const existingLike = store.likes.find((like) => like.source === "coach" && like.client_id === client.id && like.coach_id === loggedCoach.id);
-            likeStatus[client.id] = !existingLike;
+            const existingLike = store.likes.find(
+                (like) => like.source === "coach" && like.client_id === client.id && like.coach_id === loggedCoach.id
+            );
+            likeStatus[client.id] = !!existingLike;
         });
         setLike(likeStatus);
     }, [store.likes, store.clients]);
 
-	const handleLike= async (userID) => {
-		try {
-			const existingLike = await store.likes.find((like) => like.source === "coach" && like.client_id === userID && like.coach_id === loggedCoach.id);
-			if(existingLike) {
-				actions.deleteLike(existingLike.id, loggedCoach.id);
-			} 
-			else {
-				actions.addLikeAPI("coach", userID, loggedCoach.id);
-			}	
-			setLike((prevLike) => ({
-				...prevLike,
-				[userID]: !prevLike[userID],
-			}));
-		} catch (error) {
-			console.log("An error ocurred with like or dislike function", error);
-		}
-    }
+    useEffect(() => {
+        const matchStatus = {};
+        store.clients.forEach((client) => {
+            const existingMatch = store.matches.find(
+                (match) =>
+                    (match.client_id === client.id && match.coach_id === loggedCoach.id)
+            );
+            matchStatus[client.id] = !!existingMatch;
+        });
+        setMatch(matchStatus);
+    }, [store.matches, store.clients, store.likes]);
+
+    useEffect(() => {
+        const pendingStatus = {};
+        store.clients.forEach((client) => {
+            const clientLiked = store.likes.find(
+                (like) => like.source === "client" && like.client_id === client.id && like.coach_id === loggedCoach.id
+            );
+            const coachLiked = store.likes.find(
+                (like) => like.source === "coach" && like.client_id === client.id && like.coach_id === loggedCoach.id
+            );
+            pendingStatus[client.id] = clientLiked || coachLiked;
+        });
+        setPending(pendingStatus);
+    }, [store.likes, store.clients, store.matches]);
+
+    const handleLike = async (userID) => {
+        try {
+            const existingLike = store.likes.find(
+                (like) => like.source === "coach" && like.client_id === userID && like.coach_id === loggedCoach.id
+            );
+            if (existingLike) {
+                await actions.deleteLike(existingLike.id, loggedCoach.id);
+            } else {
+                await actions.addLikeAPI("coach", userID, loggedCoach.id);
+            }
+
+            // Refresh states
+            await actions.getLikes();
+            await actions.getMatches();
+        } catch (error) {
+            console.log("An error occurred with like or dislike function", error);
+        }
+    };
 
     return (
-        <div className="container">
-            <div className="row justify-content-center">
-                <div className="col-10 col-xl-10">
-                    <div className="d-flex flex-row align-items-center card card-ui-default-1 bg-secondary p-4 col-12">
-                        <i className="fa-solid fa-users fs-3 text-secondary"></i>
-                        <h4 className="ms-3 fw-semibold mb-0">Client List</h4>
-                    </div>
-                </div>
-                {store.clients.map((client, index) => 
-                    <div key={index} className="col-10 col-xl-10">
-                        <div className="card card-ui-default-1 bg-secondary col-12">
-                            <div className="card-body mb-0 d-flex justify-content-between align-items-center">
-                                <div className="d-flex">
-                                <ProfileImage photoUrl={client.client_photo_url} sizeClass="user-profile-image" />
-                                    <div className="d-flex flex-column justify-content-center ms-3">
-                                        <h5 className="card-title mb-3">{client.username}</h5>
-                                        <Link to={`/client/${client.id}`} className="btn btn-card rounded-5">
-                                            <span>Show more information</span>
-                                        </Link>
-                                    </div>
-                                </div>
-                                {like[client.id] ?
-                                    <button type="button" className="btn btn-secondary btn-request fw-semibold" onClick={() => handleLike(client.id)}>Request to train<span className="btn-icon-right ms-3"><i className="fa fa-envelope"></i></span>
-                                    </button>
-                                    :   
-                                    <button type="button" className="btn btn-dark fw-semibold" onClick={() => handleLike(client.id)}>Cancel request<span className="btn-icon-right ms-3"><i className="fas fa-times"></i></span>
-                                    </button>                
-                                }
+        <>
+        {loading ? 
+            <span className="loader"></span>
+            :
+        <div className="container-fluid">
+            <div className="row">
+                <div className="col-lg-12">
+                    <div className="card">
+                        <div className="card-header-list mb-5">
+                            <i className="fa-solid fa-users fs-3 text-secondary me-2"></i>
+                            <h4 className="card-title">Client List</h4>
+                        </div>
+                        <div className="card-body">
+                            <div className="table-responsive">
+                                <table className="table table-responsive-md">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Additional Info</th>
+                                            <th>Status</th>
+                                            <th className="ps-5">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {store.clients.map((client, index) => (
+                                            <tr key={index}>
+                                                <td>
+                                                    <div className="d-flex align-items-center">
+                                                        <ProfileImage
+                                                            photoUrl={client.client_photo_url}
+                                                            sizeClass="user-profile-image"
+                                                        />
+                                                        <span className="ms-3">{client.username}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <Link
+                                                        to={`/client/${client.id}`}
+                                                        className="btn btn-card rounded-5"
+                                                    >
+                                                        <span>Show more</span>
+                                                    </Link>
+                                                </td>
+                                                <td className="pe-5">
+                                                    <div className="d-flex align-items-center">
+                                                        {!match[client.id] && pending[client.id] && (
+                                                            <span className="badge light badge-warning">Pending</span>
+                                                        )}
+                                                        {match[client.id] && (
+                                                            <span className="badge light badge-success">Successful</span>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td className="ps-5">
+                                                    <div className="d-flex">
+                                                        {like[client.id] ? (
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-dark fw-semibold"
+                                                                onClick={() => handleLike(client.id)}
+                                                            >
+                                                                Cancel request
+                                                                <span className="btn-icon-right ms-3">
+                                                                    <i className="fas fa-times"></i>
+                                                                </span>
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-secondary btn-request fw-semibold"
+                                                                onClick={() => handleLike(client.id)}
+                                                            >
+                                                                Request to train
+                                                                <span className="btn-icon-right ms-3">
+                                                                    <i className="fa fa-envelope"></i>
+                                                                </span>
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                )}
+                </div>
             </div>
-        </div>      
+        </div>
+                    }
+        </>
     );
 };

@@ -8,12 +8,17 @@ export const ReceivedLikesCoach = () => {
 	const { store, actions } = useContext(Context);
     const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
 	const [matchedClients, setMatchedClients] = useState([]);
-	
+	const [ loading, setLoading ] = useState(true);
 
-    useEffect(() => {
-		actions.getReceivedLikes(loggedCoach.id)
-		actions.getMatches()
-    },[])
+	useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+			await actions.getReceivedLikes(loggedCoach.id)
+			await actions.getMatches()
+			setLoading(false);
+		};
+		fetchData();
+    }, []);
 
     useEffect(() => {
         // Actualizar la lista de clientes con match cuando store.matches cambie
@@ -30,30 +35,54 @@ export const ReceivedLikesCoach = () => {
 	}
 
 	return (
-		<div className="container">
-			<div className="row d-flex justify-content-center">
-			<div className="col-10 col-xl-10">
-				<div className="d-flex flex-row align-items-center card card-ui-default-1 bg-secondary p-4 col-12">
-					<i className="fa-regular fa-envelope fs-3 text-secondary"></i>
-					<h4 className="ms-3 fw-semibold mb-0">Pending Requests</h4>
-				</div>
-			</div>
-			{store.receivedLikesCoach.map((user, index) => 
-				<div key={index} className="col-10 col-xl-10">
-					<div className="card card-ui-default-1 bg-secondary col-12">
-						<div className="card-body mb-0 d-flex justify-content-between align-items-center">
-							<div className="d-flex">
-							<ProfileImage photoUrl={user.client_photo_url} sizeClass="user-profile-image" />
-								<div className="d-flex flex-column justify-content-center ms-3">
-									<h5 className="card-title mb-3">{user.username}</h5>
-									<Link to={`/client/${user.id}`} className="btn btn-card rounded-5">
-										<span>Show more information</span>
-									</Link>
-								</div>
-							</div>
-							{matchedClients.includes(user.id) ? (
+		<>
+        {loading ? 
+            <span className="loader"></span>
+            :
+		<div className="container-fluid">
+		 <div className="row">
+			 <div className="col-lg-12">
+				 <div className="card">
+					 <div className="card-header-list mb-5">
+					 	<i className="fa-regular fa-envelope fs-3 text-secondary me-2"></i>
+						 <h4 className="card-title">Pending Requests</h4>
+					 </div>
+					 <div className="card-body">
+						 <div className="table-responsive">
+							 <table className="table table-responsive-md">
+								 <thead>
+									 <tr>
+										 <th>User</th>
+										 <th>Additional Info</th>
+										 <th></th>
+										 <th className="ps-5">Action</th>
+									 </tr>
+								 </thead>
+								 <tbody>
+									 {store.receivedLikesCoach.map((user, index) => (
+										 <tr key={index}>
+											 <td>
+												 <div className="d-flex align-items-center">
+													 <ProfileImage
+														 photoUrl={user.client_photo_url}
+														 sizeClass="user-profile-image"
+													 />
+													 <span className="ms-3">{user.username}</span>
+												 </div>
+											 </td>
+											 <td>
+												 <Link
+													 to={`/client/${user.id}`}
+													 className="btn btn-card rounded-5"
+												 >
+													 <span>Show more</span>
+												 </Link>
+											 </td>
+											 <td className="pe-5"></td>
+											 <td className="ps-5">
+											 {matchedClients.includes(user.id) ? (
 									<div>
-                                        <div className="alert alert-success left-icon-big alert-dismissible fade show">
+                                        <div className="alert alert-success left-icon-big alert-dismissible fade show text-center w-75">
                                             <div className="media">
                                                 <div className="alert-left-icon-big">
                                                     <span><i className="mdi mdi-check-circle-outline"></i></span>
@@ -71,11 +100,18 @@ export const ReceivedLikesCoach = () => {
 										<span className="btn-icon-right ms-3"><i className="fa-regular fa-handshake"></i></span>
 									</button>
                                 )}
-						</div>
-					</div>
-				</div>
-			)}
-		</div>
-		</div>
+											 </td>
+										 </tr>
+									 ))}
+								 </tbody>
+							 </table>
+						 </div>
+					 </div>
+				 </div>
+			 </div>
+		 </div>
+	</div>
+	            }
+				</>
 	);
 };

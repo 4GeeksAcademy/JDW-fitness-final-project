@@ -4,6 +4,64 @@
 body {
     font-family: Poppins;
 }
+/*LOADER*/
+.loader {
+    width: 106px;
+    height: 56px;
+    display: block;
+    margin: 30px auto;
+    background-image: linear-gradient(#A02CFA 50px, transparent 0), 
+                      linear-gradient(#A02CFA 50px, transparent 0), 
+                      linear-gradient(#A02CFA 50px, transparent 0), 
+                      linear-gradient(#A02CFA 50px, transparent 0), 
+                      radial-gradient(circle 14px, #A02CFA 100%, transparent 0);
+    background-size: 48px 15px, 15px 35px, 15px 35px, 25px 15px, 28px 28px;
+    background-position: 25px 5px, 58px 20px, 25px 17px, 2px 37px, 76px 0px;
+    background-repeat: no-repeat;
+    position: relative;
+    transform: rotate(-45deg);
+    box-sizing: border-box;
+}
+
+.loader::after,
+.loader::before {
+    content: '';
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    border: 6px solid #A02CFA;
+    border-radius: 50%;
+    left: -45px;
+    top: -10px;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(#A02CFA 64px, transparent 0), 
+                      linear-gradient(#A02CFA 66px, transparent 0), 
+                      radial-gradient(circle 4px, #A02CFA 100%, transparent 0);
+    background-size: 40px 1px, 1px 40px, 8px 8px;
+    background-position: center center;
+    box-sizing: border-box;
+    animation: bike 0.3s linear infinite;
+}
+
+.loader::before {
+    left: 25px;
+    top: 60px;
+}
+
+@keyframes bike {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.logo-sidebar{
+    height: 4.2rem;
+    width: 7rem;
+    }
 .sidebar-open {
     margin-left: 14.7rem; /* Añade margen izquierdo cuando la sidebar está abierta */
 }  
@@ -21,7 +79,7 @@ body {
 .main-wrapper {
     flex: 1;
     background-color: #f3f3f385; /* Color de fondo gris claro */
-    padding-top: 56px; /* Altura del navbar */
+    padding-top: 40px; /* Altura del navbar */
 }
 .footer {
     background-color: #f3f3f385; /* Color de fondo gris claro */
@@ -209,6 +267,17 @@ input::placeholder {
 .accordion-body {
     padding: 1rem; /* Ajusta el padding según sea necesario */
 }
+.table-responsive {
+    overflow-x: auto
+}
+.light.badge-success {
+    background-color: #e3f9e9;
+    color: #2BC155;
+}
+.light.badge-warning {
+    background-color: #fff5dd;
+    color: #FFBC11;
+}
 /* Tamaño para la vista del cliente */
 .user-profile-image {
     width: 130px;
@@ -261,6 +330,34 @@ input.form-control {
     justify-content: space-between;
     align-items: center;
 }
+.card-header.list:first-child {
+    border-radius: var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius) 0 0;
+}
+.card-header-list {
+    border-color: #E6E6E6;
+    position: relative;
+    background: transparent;
+    padding: 1.5rem 1.875rem 1.25rem;
+    display: flex;
+    align-items: center;
+    border-bottom: var(--bs-card-border-width) solid var(--bs-card-border-color);
+}
+.card-footer {
+    border-color: #E6E6E6;
+    background: transparent;
+    padding: 1.25rem 1.875rem 1.25rem;
+}
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+li {
+    list-style: none;
+}
+.table td, .table th {
+    vertical-align: middle; /* Centra verticalmente el contenido en las celdas */
+}
 /*CALCULATOR*/
 .table .thead-info th {
     background-color: #A02CFA;
@@ -273,3 +370,10 @@ input.form-control {
     border-radius: 8px; /* Mantiene los bordes redondeados */
     overflow: hidden; /* Asegura que el contenido no se desborde */
   }
+  .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    color: var(--bs-nav-pills-link-active-color);
+    background-color: #A02CFA;
+}  
+.nav-link {
+    color: #A02CFA
+}

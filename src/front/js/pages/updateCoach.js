@@ -26,22 +26,27 @@ export const UpdateCoach = () => {
     const [city, setCity] = useState("")
     const tokenCoach = localStorage.getItem("token_coach");
     const [uploadSuccess, setUploadSuccess] = useState(false);
-    
+    const [ loading, setLoading ] = useState(true);
+
     // Redirigir si no hay token
     useEffect(() => {
         if (!tokenCoach) {
             navigate("/");
         }
     }, [tokenCoach, navigate]);
-
-    // Obtener datos del Coach y frecuencias de actividad al montar el componente
+    
     useEffect(() => {
-        if (initialLoad.current) {
-            actions.getEducation()
-            actions.getExperience()
-            actions.getSingleCoach(coachID);
-            initialLoad.current = false;
-        }
+        const fetchData = async () => {
+            setLoading(true);
+            if (initialLoad.current) {
+                await actions.getEducation()
+                await actions.getExperience()
+                await actions.getSingleCoach(coachID);
+                initialLoad.current = false;
+            }
+			setLoading(false);
+		};
+		fetchData();
     }, [actions, coachID]);
 
     // Establecer los datos del coach en el estado local cuando estén disponibles
@@ -154,6 +159,10 @@ export const UpdateCoach = () => {
     };
 
     return (
+        <>
+        {loading ? 
+            <span className="loader"></span>
+            :
         <div className="container mt-3">
             <div className="col-12">
                         <div className="card">
@@ -256,27 +265,27 @@ export const UpdateCoach = () => {
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="col-md-6">
-                                            <div className="input-group">
-                                            <input 
-                                                type="text"
-                                                value={address} 
-                                                onChange={(e) => setAddress(e.target.value)}
-                                                className="form-control" 
-                                                placeholder="Enter address" 
-                                                aria-label="Adress" 
-                                                aria-describedby="geocode"
-                                            />
-                                            <button className="btn btn-btn btn-dark fw-semibold" type="button" id="geocode" onClick={handleGeocode} >Geocode</button>
-                                        </div>
-                                        {(coordinates.lat && coordinates.lng) && (
-                                            <div className="">
-                                                <MapComponent 
-                                                    lat={coordinates.lat}
-                                                    lng={coordinates.lng} 
+                                        <div className=" col-12">
+                                                <div className="input-group col-md-6">
+                                                <input 
+                                                    type="text"
+                                                    value={address} 
+                                                    onChange={(e) => setAddress(e.target.value)}
+                                                    className="form-control" 
+                                                    placeholder="Enter address" 
+                                                    aria-label="Adress" 
+                                                    aria-describedby="geocode"
                                                 />
+                                                <button className="btn btn-btn btn-dark fw-semibold" type="button" id="geocode" onClick={handleGeocode} >Geocode</button>
                                             </div>
-                                        )}
+                                            {(coordinates.lat && coordinates.lng) && (
+                                                <div className="col-12 mt-3">
+                                                    <MapComponent 
+                                                        lat={coordinates.lat}
+                                                        lng={coordinates.lng} 
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                     {uploadSuccess &&                                     
@@ -304,5 +313,7 @@ export const UpdateCoach = () => {
                         </div>
 					</div>
         </div>
+                    }
+                    </>
     );
 };

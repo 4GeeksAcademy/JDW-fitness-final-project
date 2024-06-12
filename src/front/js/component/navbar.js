@@ -119,7 +119,7 @@ export const Navbar = () => {
 				<li className="nav-item fw-bold ps-2 my-4">
 				  <Link to={`/${currentUser}/likes/given`} className="nav-link active">
 				  <i className="fa-regular fa-share-from-square fs-3"></i>
-					{isSidebarOpen && <span className="ms-2 fs-5">Resquest sent</span>}
+					{isSidebarOpen && <span className="ms-2 fs-5">Request sent</span>}
 				  </Link>
 				</li>
 				<li className="nav-item fw-bold ps-2 my-4">

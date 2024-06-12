@@ -25,6 +25,7 @@ export const UpdateClient = () => {
     const [city, setCity] = useState("")
     const tokenClient = localStorage.getItem("token_client");
     const [uploadSuccess, setUploadSuccess] = useState(false);
+    const [ loading, setLoading ] = useState(true);
 
     // Redirigir si no hay token
     useEffect(() => {
@@ -33,13 +34,18 @@ export const UpdateClient = () => {
         }
     }, [tokenClient, navigate]);
 
-    // Obtener datos del cliente y frecuencias de actividad al montar el componente
+
     useEffect(() => {
-        if (initialLoad.current) {
-            actions.getActivityFrequency();
-            actions.getSingleClient(clientID);
-            initialLoad.current = false;
-        }
+        const fetchData = async () => {
+            setLoading(true);
+            if (initialLoad.current) {
+                await actions.getActivityFrequency();
+                await actions.getSingleClient(clientID);
+                initialLoad.current = false;
+            }
+			setLoading(false);
+		};
+		fetchData();
     }, [actions, clientID]);
 
     // Establecer los datos del cliente en el estado local cuando estén disponibles
@@ -155,6 +161,10 @@ export const UpdateClient = () => {
     
 
     return (
+        <>
+        {loading ? 
+            <span className="loader"></span>
+            :
             <div className="container mt-3">
                 <div className="col-12">
                             <div className="card">
@@ -307,5 +317,7 @@ export const UpdateClient = () => {
                             </div>
                         </div>
             </div>
+             }
+                    </>
     );
 };

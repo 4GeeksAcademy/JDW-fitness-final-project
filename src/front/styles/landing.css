@@ -1,8 +1,23 @@
 /* landing.css */
 
+.card-text {
+    color: #000000;
+    font-size: smaller;
+}
+
+.card-title {
+    color: #000000;
+    font-size: medium;
+}
+
+.card-label {
+    color: #000000;
+    font-size: large;
+}
+
 .landing-page {
     color: #A02CFA;
-    background: linear-gradient(180deg, #A02CFA, #f2e2ff, #ffffff);
+    background: linear-gradient(180deg, #ffffff,#f2e2ff,#A02CFA);
 }
 
 .landing-page .bg-light {
@@ -31,17 +46,5 @@
 
 .landing-page .card {
     background-color: #ffffff !important;
-    color: black !important;
-}
-
-.landing-page .card-title {
-    color: #000000 !important;
-}
-
-.landing-page .card-text {
-    color: black !important;
-}
-
-.landing-page .label {
     color: black !important;
 }

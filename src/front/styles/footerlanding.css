@@ -1,4 +1,4 @@
-.footer {
+.footer-landing {
     background-color: #A02CFA;
     color: #ffffff;
     padding: 40px 0;
@@ -79,7 +79,7 @@
     background-color: #f1dffe;
   }
   
-  .footer-bottom {
+  .footer-landing-bottom {
     margin-top: 40px;
     font-size: 14px;
   }

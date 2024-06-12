@@ -1,7 +1,75 @@
-/*
-    home.css: This website contains selectors only used in home.css
+.avtivity-card {
+    position: relative;
+    z-index: 1;
+    overflow: hidden
+}
 
-    All pages share the styles on index.css but you should create 
-    one more css for each page that will contain the selected used 
-    on that page only (the ones not reused in other pages).
-*/
+.avtivity-card .activity-icon {
+    height: 80px;
+    width: 80px;
+    min-width: 80px;
+    display: block;
+    -webkit-transition: all 0.5s;
+    -ms-transition: all 0.5s;
+    transition: all 0.5s;
+    border-radius: 100%;
+    line-height: 80px;
+    text-align: center
+}
+
+.avtivity-card .title {
+    font-size: 28px
+}
+
+.avtivity-card .effect {
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    transition: width .4s ease-in-out,height .4s ease-in-out;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    z-index: -1
+}
+
+.avtivity-card p,.avtivity-card .media-body span {
+    -webkit-transition: all 0.5s;
+    -ms-transition: all 0.5s;
+    transition: all 0.5s
+}
+
+.avtivity-card:hover .activity-icon {
+    background: #fff !important
+}
+
+.avtivity-card:hover .effect {
+    width: 225%;
+    height: 562px
+}
+
+.avtivity-card:hover p {
+    color: #fff
+}
+
+.avtivity-card:hover .media-body span {
+    color: #fff !important
+}
+
+@media only screen and (max-width: 767px) {
+    .avtivity-card .title {
+        font-size:20px
+    }
+
+    .avtivity-card .activity-icon {
+        height: 65px;
+        width: 65px;
+        min-width: 65px;
+        line-height: 65px
+    }
+
+    .avtivity-card .activity-icon svg {
+        width: 35px;
+        height: 35px
+    }
+}

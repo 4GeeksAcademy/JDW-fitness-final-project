@@ -20,14 +20,8 @@ export const LandingPage = () => {
                 backgroundRepeat: 'no-repeat',
                 height: '65vh' // Ajusta la altura según sea necesario
             }}>
-                <div className="container mt-5">
+                <div className="container main-title mt-5">
                     <h1 className="text-dark-center py-5">We give solutions to your training</h1>
-                    <Link to="/signup">
-				        <button className="btn btn-dark ms-3 mb-3 fw-bold" >Sign Up</button>
-			        </Link>
-                    <Link to="/login">
-				        <button className="btn btn-light ms-3 mb-3 fw-bold" >Login</button>
-			        </Link>
                 </div>
             </header>
             <section id="services" className="py-5">
@@ -37,15 +31,15 @@ export const LandingPage = () => {
                         <div className="col-md-4 d-flex">
                             <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <h3 className="card-title">Contact with personal trainers</h3>
-                                    <p className="card-text">You can find personal trainers in your city and match with them to get the best training plans</p>
+                                    <h5 className="card-title">Contact with personal trainers</h5>
+                                    <p className="card-text" >You can find personal trainers in your city and match with them to get the best training plans</p>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-4 d-flex">
                             <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <h3 className="card-title">Are u a personal trainer?</h3>
+                                    <h5 className="card-title">Are u a personal trainer?</h5>
                                     <p className="card-text">Look for clients and people who want to be trained here to get experience for your CV</p>
                                 </div>
                             </div>
@@ -53,7 +47,7 @@ export const LandingPage = () => {
                         <div className="col-md-4 d-flex">
                             <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <h3 className="card-title">Customize your gymrat profile!</h3>
+                                    <h5 className="card-title">Customize your gymrat profile!</h5>
                                     <p className="card-text">Customizing your profile going to help you to get personal trainers easier!</p>
                                 </div>
                             </div>
@@ -70,7 +64,7 @@ export const LandingPage = () => {
                             <div className="card border-primary text-center">
                                 <div className="card-body">
                                     <span className="h1 d-block text-primary fw-bold">12</span>
-                                    <span className="label fw-bold">Happy Customers</span>
+                                    <span className="label fw-semibold">Happy Customers</span>
                                 </div>
                             </div>
                         </div>
@@ -78,7 +72,7 @@ export const LandingPage = () => {
                             <div className="card border-primary text-center">
                                 <div className="card-body">
                                     <span className="h1 d-block text-primary fw-bold">3</span>
-                                    <span className="label fw-bold">Years of Experience</span>
+                                    <span className="label fw-semibold">Years of Experience</span>
                                 </div>
                             </div>
                         </div>
@@ -86,7 +80,7 @@ export const LandingPage = () => {
                             <div className="card border-primary text-center">
                                 <div className="card-body">
                                     <span className="h1 d-block text-primary fw-bold">87%</span>
-                                    <span className="label fw-bold">Satisfaction</span>
+                                    <span className="label fw-semibold">Satisfaction</span>
                                 </div>
                             </div>
                         </div>
@@ -100,21 +94,21 @@ export const LandingPage = () => {
                         <div className="col-md-4 d-flex">
                             <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <h3 className="card-title">Matching gymrats with trainers</h3>
+                                    <h5 className="card-title">Matching gymrats with trainers</h5>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-4 d-flex">
                             <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <h3 className="card-title">Giving the posibility to our clients trainers and gymrats to customize their profiles</h3>
+                                    <h5 className="card-title">Giving the posibility to our clients trainers and gymrats to customize their profiles</h5>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-4 d-flex">
                             <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <h3 className="card-title">Giving information about location, needs and availability of both users!</h3>
+                                    <h5 className="card-title">Giving information about location, needs and availability of both users!</h5>
                                 </div>
                             </div>
                         </div>

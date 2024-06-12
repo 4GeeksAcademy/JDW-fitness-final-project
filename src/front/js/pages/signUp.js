@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import sideBarLogo from "/workspaces/JDW-fitness-final-project/src/front/img/sidebar-logo.png"
 
 import { Context } from "../store/appContext";
 
@@ -81,8 +82,8 @@ export const SignUp = () => {
                                     <div className="row no-gutters">
                                         <div className="col-xl-12">
                                             <div className="p-5">
-                                                <div className="text-center mb-3">
-                                                    JDW FITNESS
+                                                <div className="text-center mb-4">
+                                                <img src={sideBarLogo} alt="logo-with-name" className="logo-sidebar"/>
                                                 </div>
                                                 <h5 className="text-center mb-4">Sign up</h5>
                                                 <form onSubmit={signUp}>

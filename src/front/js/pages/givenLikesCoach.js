@@ -7,11 +7,17 @@ export const GivenLikesCoach = () => {
 	const { store, actions } = useContext(Context);
     const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
     const [ clientID, setClientID ] = useState(0)
-    
-    useEffect(() => {
-        actions.getLikes()
-        actions.getGivenLikes(loggedCoach.id)
-    },[])
+	const [ loading, setLoading ] = useState(true);
+
+	useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+			await actions.getGivenLikes(loggedCoach.id)
+			await actions.getLikes()
+			setLoading(false);
+		};
+		fetchData();
+    }, []);
 
     const deleteSingleLike = async (clientID) => {
             const existingLike = await store.likes.find((like) => like.source === "coach" && like.client_id === clientID && like.coach_id === loggedCoach.id);
@@ -19,35 +25,74 @@ export const GivenLikesCoach = () => {
     }
 
 	return (
-	<div className="container">
-		<div className="row d-flex justify-content-center">
-			<div className="col-10 col-xl-10">
-				<div className="d-flex flex-row align-items-center card card-ui-default-1 bg-secondary p-4 col-12">
-					<i className="fa-regular fa-share-from-square fs-3 text-secondary"></i>
-					<h4 className="ms-3 fw-semibold mb-0">Request sent</h4>
-				</div>
-			</div>
-			{store.givenLikesCoach.map((user, index) => 
-				<div key={index} className="col-10 col-xl-10">
-					<div className="card card-ui-default-1 bg-secondary col-12">
-						<div className="card-body mb-0 d-flex justify-content-between align-items-center">
-							<div className="d-flex">
-							<ProfileImage photoUrl={user.client_photo_url} sizeClass="user-profile-image" />
-								<div className="d-flex flex-column justify-content-center ms-3">
-									<h5 className="card-title mb-3">{user.username}</h5>
-									<Link to={`/client/${user.id}`} className="btn btn-card rounded-5">
-										<span>Show more information</span>
-									</Link>
-								</div>
-							</div>
-							<button className="btn btn-dark fw-semibold" data-bs-toggle="modal" data-bs-target="#deleteModal" onClick={()=> setClientID(user.id)}>
-								Cancel your request
-								<span className="btn-icon-right ms-3"><i className="fas fa-times"></i></span>
-							</button>
+		<>
+        {loading ? 
+            <span className="loader"></span>
+            :
+	    <div className="container-fluid">
+		<div className="row">
+			<div className="col-lg-12">
+				<div className="card">
+					<div className="card-header-list mb-5">
+					<i className="fa-regular fa-share-from-square fs-3 text-secondary me-2"></i>
+						<h4 className="card-title">Request sent</h4>
+					</div>
+					<div className="card-body">
+						<div className="table-responsive">
+							<table className="table table-responsive-md">
+								<thead>
+									<tr>
+										<th>User</th>
+										<th>Additional Info</th>
+										<th></th>
+										<th className="ps-5">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									{store.givenLikesCoach.map((user, index) => (
+										<tr key={index}>
+											<td>
+												<div className="d-flex align-items-center">
+													<ProfileImage
+														photoUrl={user.client_photo_url}
+														sizeClass="user-profile-image"
+													/>
+													<span className="ms-3">{user.username}</span>
+												</div>
+											</td>
+											<td>
+												<Link
+													to={`/client/${user.id}`}
+													className="btn btn-card rounded-5"
+												>
+													<span>Show more</span>
+												</Link>
+											</td>
+											<td className="pe-5"></td>
+											<td className="ps-5">
+												<div className="d-flex">
+														<button
+															type="button"
+															className="btn btn-dark fw-semibold"
+															data-bs-toggle="modal" 
+															data-bs-target="#deleteModal"
+															onClick={()=> setClientID(user.id)}
+														>
+															Cancel request
+															<span className="btn-icon-right ms-3">
+																<i className="fas fa-times"></i>
+															</span>
+														</button>
+												</div>
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>
-			)}
+			</div>
 		</div>
 		<div className="modal" id="deleteModal" tabIndex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
 			<div className="modal-dialog">
@@ -67,5 +112,7 @@ export const GivenLikesCoach = () => {
 			</div>
 		</div>
 	</div>
+	            }
+        </>
 	);
 };

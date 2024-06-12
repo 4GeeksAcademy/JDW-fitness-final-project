@@ -38,95 +38,132 @@ export const SingleClient = () => {
 	return (
         <>
             {loading ? 
-                <h2 className="container mt-3">Loading...</h2>
+                <span className="loader"></span>
                 :
-                <div className="container d-flex justify-content-center mt-4">
-                    <div className="card p-4 mb-5 shadow-lg" style={{ borderRadius: "15px" }}>
-                        <div className="row">
-                            <div className="col-lg-8">
-                                <div className="d-flex flex-column flex-lg-row align-items-center">
-                                <ProfileImage 
-                                    photoUrl={store.singleClient.client_photo_url} 
-                                    className="img-fluid rounded mb-4 mb-lg-0" 
-                                    style={{ width: "280px", height: "300px", objectFit: "contain", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }} 
-                                />
-                                    <div className="ms-lg-4 w-100">
-                                        <h3 className="mb-3">Client: {store.singleClient.username}</h3>
-                                        <h5 className="mb-4">Some details about me:</h5>
-                                        <ul className="list-group list-group-flush fs-6">
-                                            <li className="list-group-item">
-                                                <span className="fw-bold">First name: </span> 
-                                                {store.singleClient.first_name}
-                                            </li>
-                                            <li className="list-group-item">
-                                                <span className="fw-bold">Last name: </span> 
-                                                {store.singleClient.last_name}
-                                            </li>
-                                            <li className="list-group-item">
-                                                <span className="fw-bold">Age: </span> 
-                                                {store.singleClient.age}
-                                            </li>
-                                            <li className="list-group-item">
-                                                <span className="fw-bold">Height: </span> 
-                                                {store.singleClient.height}
-                                            </li>
-                                            <li className="list-group-item">
-                                                <span className="fw-bold">Weight: </span> 
-                                                {store.singleClient.weight}
-                                            </li>
-                                            <li className="list-group-item">
-                                                <span className="fw-bold">Gender: </span> 
-                                                {store.singleClient.gender}
-                                            </li>
-                                            <li className="list-group-item">
-                                                <span className="fw-bold">Physical Habits: </span> 
-                                                {store.singleClient.physical_habits}
-                                            </li>
-                                            <li className="list-group-item">
-                                                <span className="fw-bold">Activity Frequency: </span> 
-                                                {activityFrequency}
-                                            </li>
+            <div className="container-fluid">
+                <div className="row justify-content-center">
+                    <div className="col-lg-10">
+                        <div className="card">
+                            <div className="card-header">
+                                <h4 className="card-title">Profile {store.singleClient.username}</h4>
+                            </div>
+                            <div className="card-body">
+                                <div className="row">
+                                    <div className="col-xl-4 d-flex flex-column justify-content-between">
+                                        <div className="nav flex-column nav-pills mb-3" role="tablist">
+                                            <a href="#v-pills-home" data-bs-toggle="pill" className="nav-link show active" aria-selected="true" role="tab">Photo</a>
+                                            <a href="#v-pills-profile" data-bs-toggle="pill" className="nav-link" aria-selected="false" role="tab" tabIndex="-1">More details</a>
+                                            <a href="#v-pills-messages" data-bs-toggle="pill" className="nav-link" aria-selected="false" role="tab" tabIndex="-1">Location</a>
+                                        </div>
+                                        <div>
+                                            {(loggedClient && store.singleClient.id === loggedClient.id) &&            
+                                            <Link to={`/client/update/${clientID}`} className="ms-1">
+                                                    <button className="btn btn-secondary ms-auto fw-bold" >Update</button>					
+                                            </Link>
+                                            }
+                                            {loggedClient ?                
+                                            <Link to="/coach">
+                                                <button className="btn btn-request ms-3 fw-bold" >Back to Coach list</button>
+                                            </Link>
+                                            :
+                                            <Link to="/client">
+                                                <button className="btn btn-request ms-3 fw-bold" >Back to Client list</button>
+                                            </Link>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div className="col-xl-8">
+                                        <div className="tab-content">
+                                            <div id="v-pills-home" className="tab-pane fade active show" role="tabpanel">
+                                                <div className="d-flex justify-content-center">
+                                            <ProfileImage 
+                                        photoUrl={store.singleClient.client_photo_url} 
+                                        className="img-fluid rounded" 
+                                            />
+                                                </div>
+                                            </div>
+                                            <div id="v-pills-profile" className="tab-pane fade" role="tabpanel">
+                                            <div className="table-responsive">
+                                    <table className="table table-responsive-md">
+                                        <tbody>
+                                            <tr>
+                                                <td className="fw-semibold">Role:</td>
+                                                <td>Client</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="fw-semibold">First name:</td>
+                                                <td>{store.singleClient.first_name}</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="fw-semibold">Last name:</td>
+                                                <td>{store.singleClient.last_name}</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="fw-semibold">Activity frequency:</td>
+                                                <td>{activityFrequency}</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="fw-semibold">Physical habits:</td>
+                                                <td>{store.singleClient.physical_habits}</td>
+                                            </tr>
+                                            {store.singleClient.age && 
+                                            <tr>
+                                                <td className="fw-semibold">Age:</td>
+                                                <td>{store.singleClient.age}</td>
+                                            </tr>
+                                            }
+                                            {store.singleClient.gender && 
+                                            <tr>
+                                                <td className="fw-semibold">Gender:</td>
+                                                <td>{store.singleClient.gender}</td>
+                                            </tr>
+                                            }
+                                            {store.singleClient.bmi && 
+                                            <tr>
+                                                <td className="fw-semibold">BMI (Body Mass Index):</td>
+                                                <td>{store.singleClient.bmi}</td>
+                                            </tr>
+                                            }    
+                                            {store.singleClient.fat && 
+                                            <tr>
+                                                <td className="fw-semibold">Body fat percentage:</td>
+                                                <td>{store.singleClient.fat} %</td>
+                                            </tr>
+                                            }
+                                            {store.singleClient.bmr && 
+                                            <tr>
+                                                <td className="fw-semibold">BMR (Basal Metabolic Rate):</td>
+                                                <td>{store.singleClient.bmr}</td>
+                                            </tr>
+                                            }        
                                             {store.singleClient.city && 
-                                            <li className="list-group-item">
-                                                <span className="fw-bold">City: </span> 
-                                                {store.singleClient.city}
-                                            </li>
+                                            <tr>
+                                                <td className="fw-semibold">City:</td>
+                                                <td>{store.singleClient.city}</td>
+                                            </tr>
                                             }  
-                                        </ul>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                            </div>
+                                            <div id="v-pills-messages" className="tab-pane fade" role="tabpanel">
+                                            {store.singleClient.latitude && store.singleClient.longitude && (
+                                            <div className="">
+                                            <MapComponent 
+                                                lat={store.singleClient.latitude}
+                                                lng={store.singleClient.longitude} 
+                                            />
+                                            </div>
+                                            )}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            {store.singleClient.latitude && store.singleClient.longitude && (
-                                <div className="col-lg-4 d-flex align-items-center">
-                                    <MapComponent 
-                                        lat={store.singleClient.latitude}
-                                        lng={store.singleClient.longitude} 
-                                        style={{ height: "300px", width: "100%", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)" }}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                        <div className="mt-3 d-flex justify-content-end">
-                            {(loggedClient && store.singleClient.id === loggedClient.id) &&            
-                            <Link to={`/client/update/${clientID}`} className="ms-1">
-                                    <button className="btn btn-secondary ms-auto fw-bold" >Update</button>					
-                            </Link>
-                            }
-                            {loggedClient ?                
-                            <Link to="/coach">
-                                <button className="btn btn-primary ms-3 fw-bold" >Back to Coach list</button>
-                            </Link>
-                            :
-                            <Link to="/client">
-                                <button className="btn btn-primary ms-3 fw-bold" >Back to Client list</button>
-                            </Link>
-                            }
-                            <Link to={`/availability-client/${clientID}`} className="ms-3">
-                                <button className="btn btn-secondary ms-auto fw-bold" >Availability</button>					
-                            </Link>
                         </div>
                     </div>
-                </div>
+                    </div>
+                    </div>
             }
         </>
     );

@@ -17,10 +17,23 @@
 }
 
 .sidebar-header {
-  padding: 10px;
+  padding-top: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.sidebar-header-close {
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.sidebar-header-open {
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 75px;
 }
 
 .sidebar-body {
@@ -86,11 +99,15 @@ width: 60px;
 height: 60px;
 margin-right: 1rem;
 }
-.logo-name {
-height: 5rem;
+.logo-sidebar-closed{
+height: 3.2rem;
+}
+.logo-sidebar-open{
+  height: 3.2rem;
+  margin-left: 75px;
 }
 .navbar-main-closed {
-margin-left: 4rem;
+margin-left: 5rem;
 }
 .navbar-main-open {
   margin-left: 9.7rem;

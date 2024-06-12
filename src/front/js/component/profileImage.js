@@ -10,7 +10,7 @@ const ProfileImage = ({ photoUrl, altText = "Profile Image", className = "img-th
     };
 
     return (
-        <div className={sizeClass}>
+        <div className={`${sizeClass}`}>
             {photoUrl ? (
                 <img src={photoUrl} alt={altText} className={`${className}`} style={{ ...defaultStyle, ...style }} />
             ) : (

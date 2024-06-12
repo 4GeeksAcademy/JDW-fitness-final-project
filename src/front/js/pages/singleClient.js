@@ -42,44 +42,28 @@ export const SingleClient = () => {
                 :
             <div className="container-fluid">
                 <div className="row justify-content-center">
-                    <div className="col-lg-10">
+                    <div className="col-lg-10 col-12">
                         <div className="card">
                             <div className="card-header">
                                 <h4 className="card-title">Profile {store.singleClient.username}</h4>
                             </div>
                             <div className="card-body">
-                                <div className="row">
+                                <div className="row p-4">
                                     <div className="col-xl-4 d-flex flex-column justify-content-between">
                                         <div className="nav flex-column nav-pills mb-3" role="tablist">
                                             <a href="#v-pills-home" data-bs-toggle="pill" className="nav-link show active" aria-selected="true" role="tab">Photo</a>
                                             <a href="#v-pills-profile" data-bs-toggle="pill" className="nav-link" aria-selected="false" role="tab" tabIndex="-1">More details</a>
                                             <a href="#v-pills-messages" data-bs-toggle="pill" className="nav-link" aria-selected="false" role="tab" tabIndex="-1">Location</a>
                                         </div>
-                                        <div>
-                                            {(loggedClient && store.singleClient.id === loggedClient.id) &&            
-                                            <Link to={`/client/update/${clientID}`} className="ms-1">
-                                                    <button className="btn btn-secondary ms-auto fw-bold" >Update</button>					
-                                            </Link>
-                                            }
-                                            {loggedClient ?                
-                                            <Link to="/coach">
-                                                <button className="btn btn-request ms-3 fw-bold" >Back to Coach list</button>
-                                            </Link>
-                                            :
-                                            <Link to="/client">
-                                                <button className="btn btn-request ms-3 fw-bold" >Back to Client list</button>
-                                            </Link>
-                                            }
-                                        </div>
                                     </div>
                                     <div className="col-xl-8">
                                         <div className="tab-content">
                                             <div id="v-pills-home" className="tab-pane fade active show" role="tabpanel">
                                                 <div className="d-flex justify-content-center">
-                                            <ProfileImage 
-                                        photoUrl={store.singleClient.client_photo_url} 
-                                        className="img-fluid rounded" 
-                                            />
+                                                <ProfileImage
+                                                    photoUrl={store.singleClient.client_photo_url}
+                                                        className="single-user-profile-image"
+                                                />
                                                 </div>
                                             </div>
                                             <div id="v-pills-profile" className="tab-pane fade" role="tabpanel">
@@ -159,6 +143,22 @@ export const SingleClient = () => {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div className="card-footer">
+                            {(loggedClient && store.singleClient.id === loggedClient.id) &&            
+                                            <Link to={`/client/update/${clientID}`} className="ms-1">
+                                                    <button className="btn btn-secondary ms-auto fw-bold" >Update</button>					
+                                            </Link>
+                                            }
+                                            {loggedClient ?                
+                                            <Link to="/coach">
+                                                <button className="btn btn-request ms-3 fw-bold" >Back to Coach list</button>
+                                            </Link>
+                                            :
+                                            <Link to="/client">
+                                                <button className="btn btn-request ms-3 fw-bold" >Back to Client list</button>
+                                            </Link>
+                                            }
                             </div>
                         </div>
                     </div>

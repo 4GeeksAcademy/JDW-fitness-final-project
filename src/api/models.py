@@ -84,7 +84,7 @@ class Client(db.Model):
     height = db.Column(db.Integer, unique=False, nullable=True)
     weight = db.Column(db.Integer, unique=False, nullable=True)
     gender = db.Column(db.String(120), unique=False, nullable=True)
-    physical_habits = db.Column(db.String(120), unique=False, nullable=True)
+    physical_habits = db.Column(db.String(200), unique=False, nullable=True)
     client_photo_url=db.Column(db.String(255), nullable=True)
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)

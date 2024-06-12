@@ -37,7 +37,7 @@ export const GivenLikesCoach = () => {
 					<i className="fa-regular fa-share-from-square fs-3 text-secondary me-2"></i>
 						<h4 className="card-title">Request sent</h4>
 					</div>
-					<div className="card-body">
+					<div className="card-body px-4">
 						<div className="table-responsive">
 							<table className="table table-responsive-md">
 								<thead>
@@ -53,10 +53,11 @@ export const GivenLikesCoach = () => {
 										<tr key={index}>
 											<td>
 												<div className="d-flex align-items-center">
-													<ProfileImage
-														photoUrl={user.client_photo_url}
-														sizeClass="user-profile-image"
-													/>
+                                                        <ProfileImage
+                                                            photoUrl={user.client_photo_url}
+                                                            className="user-profile-image"
+                                                            rounded
+                                                        />
 													<span className="ms-3">{user.username}</span>
 												</div>
 											</td>

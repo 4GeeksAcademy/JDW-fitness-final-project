@@ -68,9 +68,9 @@ export const Navbar = () => {
 			  </div>
 				<div className="d-flex align-items-center ms-auto me-4">
 					{loggedCoach ? 
-                    <ProfileImage photoUrl={store.singleCoach.coach_photo_url} sizeClass="navbar-profile-image" />
+                    <ProfileImage photoUrl={store.singleCoach.coach_photo_url} className="navbar-profile-image" rounded/>
 					:
-                    <ProfileImage photoUrl={store.singleClient.client_photo_url} sizeClass="navbar-profile-image" />
+                    <ProfileImage photoUrl={store.singleClient.client_photo_url} className="navbar-profile-image" rounded/>
 					}
 					<div className="nav-item dropdown header-profile">
 						<a className="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -96,7 +96,9 @@ export const Navbar = () => {
 	
 		  <div className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
 			<div className="sidebar-header">
+
 				<img src={sideBarLogo} alt="logo-with-name" className={`${isSidebarOpen ? 'logo-sidebar-open' : 'logo-sidebar-closed'}`}/>
+
 			  {isSidebarOpen && <button type="button" className="btn-close" onClick={toggleSidebar}></button>}
 			</div>
 			<div className="sidebar-body">

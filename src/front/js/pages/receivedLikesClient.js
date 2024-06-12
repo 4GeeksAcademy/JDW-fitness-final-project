@@ -47,7 +47,7 @@ export const ReceivedLikesClient = () => {
 						<i className="fa-regular fa-envelope fs-3 text-secondary me-2"></i>
 						<h4 className="card-title">Pending Requests</h4>
 					</div>
-					<div className="card-body">
+					<div className="card-body px-4">
 						<div className="table-responsive">
 							<table className="table table-responsive-md">
 								<thead>
@@ -64,9 +64,10 @@ export const ReceivedLikesClient = () => {
 											<td>
 												<div className="d-flex align-items-center">
 													<ProfileImage
-														photoUrl={user.coach_photo_url}
-														sizeClass="user-profile-image"
-													/>
+                                                            photoUrl={user.coach_photo_url}
+                                                            className="user-profile-image"
+                                                            rounded
+                                                        />
 													<span className="ms-3">{user.username}</span>
 												</div>
 											</td>

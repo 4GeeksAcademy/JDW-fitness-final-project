@@ -91,7 +91,7 @@ export const Coach = () => {
                             <i className="fa-solid fa-users fs-3 text-secondary me-2"></i>
                             <h4 className="card-title">Coach List</h4>
                         </div>
-                        <div className="card-body">
+                        <div className="card-body px-4">
                             <div className="table-responsive">
                                 <table className="table table-responsive-md">
                                     <thead>
@@ -108,8 +108,9 @@ export const Coach = () => {
                                                 <td>
                                                     <div className="d-flex align-items-center">
                                                         <ProfileImage
-                                                            photoUrl={coach.client_photo_url}
-                                                            sizeClass="user-profile-image"
+                                                            photoUrl={coach.coach_photo_url}
+                                                            className="user-profile-image"
+                                                            rounded
                                                         />
                                                         <span className="ms-3">{coach.username}</span>
                                                     </div>

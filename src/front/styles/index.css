@@ -9,7 +9,7 @@ body {
     width: 106px;
     height: 56px;
     display: block;
-    margin: 30px auto;
+    margin: 25rem auto;
     background-image: linear-gradient(#A02CFA 50px, transparent 0), 
                       linear-gradient(#A02CFA 50px, transparent 0), 
                       linear-gradient(#A02CFA 50px, transparent 0), 
@@ -280,9 +280,18 @@ input::placeholder {
 }
 /* Tamaño para la vista del cliente */
 .user-profile-image {
-    width: 130px;
-    height: 130px;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
   }
+  .remaining {
+    font-size: 0.9rem;
+  }
+.single-user-profile-image {
+    width: 350px;
+    height: auto;
+}
 .img-thumbnail {
     aspect-ratio: 1;
 }

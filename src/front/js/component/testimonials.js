@@ -43,7 +43,7 @@ export const Testimonials = () => {
             <div className="card border-primary text-center">
               <img src={feedback3} className="card-img-top" alt="Testimonial 3" />
               <div className="card-body">
-                <h5 className="card-title">Alice Smith</h5>
+                <h5 className="card-title">John Smith</h5>
                 <p className="card-text">"Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam."</p>
                 <div className="text-center">
                   {[...Array(5)].map((star, i) => (

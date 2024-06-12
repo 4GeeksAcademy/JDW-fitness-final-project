@@ -35,14 +35,14 @@ export const FooterDesign = () => {
             <p className="text-dark fw-bold">JorjeAJT</p>
           </div>
           <ul className="social-icons d-flex justify-content-center">
-            <li><a href="https://github.com/JorgeAJT/"><i class="fa-brands fa-github me-3"></i></a></li>
+            <li><a href="https://github.com/JorgeAJT/"><i className="fa-brands fa-github me-3"></i></a></li>
             <li><a href="https://www.linkedin.com/in/jorgeajt/"><i className="fab fa-linkedin-in me-3"></i></a></li>
           </ul>
           <div>
             <p className="text-dark fw-bold">DaniWallaceDev</p>
           </div>
           <ul className="social-icons d-flex justify-content-center">
-            <li><a href="https://github.com/DaniWallaceDev/"><i class="fa-brands fa-github me-3"></i></a></li>
+            <li><a href="https://github.com/DaniWallaceDev/"><i className="fa-brands fa-github me-3"></i></a></li>
             <li><a href="https://www.linkedin.com/in/daniwallacedev/"><i className="fab fa-linkedin-in me-3"></i></a></li>
           </ul>
         </div>

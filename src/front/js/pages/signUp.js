@@ -36,7 +36,7 @@ export const SignUp = () => {
                 localStorage.setItem("loggedCoach", JSON.stringify({ "id": loggedCoach.id, "username": loggedCoach.username }));
                 await actions.setAuth("coach", true)  
                 localStorage.setItem("token_coach", data.access_coach_token);
-                navigate("/client")  
+                navigate("/home")  
             }
             if (data.access_client_token) {
                 await actions.getClients()
@@ -44,7 +44,7 @@ export const SignUp = () => {
                 localStorage.setItem("loggedClient", JSON.stringify({ "id": loggedClient.id, "username": loggedClient.username }));
                 await actions.setAuth("client", true)  
                 localStorage.setItem("token_client", data.access_client_token); 
-                navigate("/coach")   
+                navigate("/home")   
             } 
             return data
         }  

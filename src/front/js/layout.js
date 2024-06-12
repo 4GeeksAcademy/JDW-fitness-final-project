@@ -2,10 +2,14 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
+
 import { LandingPage } from "./pages/landingPage";
+import { AboutUs } from "./pages/aboutUs";
 import { Dashboard } from "./pages/dashboard";
 import { SignUp } from "./pages/signUp";
 import { Login } from "./pages/login";
+import { WhyChooseUs } from "./pages/whyChooseUs";
+import { OurFunctionalities } from "./pages/ourFunctionalities";
 
 import { Availability } from "./pages/availability";
 import { AddAvailability } from "./pages/addAvailability";
@@ -82,13 +86,17 @@ const Layout = () => {
     const isNotLogedUser = !isLogedUser;
 
     return (
-        <div className="app-wrapper"> 
+        <div className="app-wrapper">
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
                     {isLogedUser && <Navbar />} 
-                    <div className={`main-wrapper ${store.sidebarOpen ? 'sidebar-open' : 'sidebar-close'}`}>
+                    <div className={`main-wrapper ${isLogedUser && `${store.sidebarOpen && isLogedUser ? 'sidebar-open' : 'sidebar-close'}`}`}>
                     <Routes>
+                        {/* LANDING PAGE ROUTES AS A NOT LOGUED USER */}
                         {isNotLogedUser && <Route path="/" element={<LandingPage />} />}
+                        <Route element={<AboutUs />} path="/about" />
+                        <Route element={<WhyChooseUs />} path="/why-choose-us" />
+                        <Route element={<OurFunctionalities />} path="/functionalities" />
                         <Route element={<Dashboard />} path="/home" />
                         <Route element={<SignUp />} path="/signup" />
                         <Route element={<Login />} path="/login" />

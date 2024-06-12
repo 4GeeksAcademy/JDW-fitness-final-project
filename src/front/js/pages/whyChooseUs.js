@@ -1,13 +1,13 @@
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
-import "../../styles/landing.css";
+import "../../styles/whychooseus.css";
 import { NavbarLanding } from "../component/navbarLanding";
 import { Testimonials } from "../component/testimonials";
 import { FooterDesign } from "../component/footerNew";
 import headerimg from "/workspaces/JDW-fitness-final-project/src/front/img/headerimg.webp";
 
-export const LandingPage = () => {
+export const WhyChooseUs = () => {
     const { store, actions } = useContext(Context);
 
     return (
@@ -78,34 +78,6 @@ export const LandingPage = () => {
                                 <div className="card-body">
                                     <span className="h1 d-block text-primary fw-bold">87%</span>
                                     <span className="label fw-semibold">Satisfaction</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section id="offers" className="py-5">
-                <div className="container">
-                    <h2 className="text-center mb-5 text-dark fw-bold">Our Special functionalities</h2>
-                    <div className="row">
-                        <div className="col-md-4 d-flex">
-                            <div className="card flex-fill text-center border-primary">
-                                <div className="card-body">
-                                    <h5 className="card-title">Matching gymrats with trainers</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4 d-flex">
-                            <div className="card flex-fill text-center border-primary">
-                                <div className="card-body">
-                                    <h5 className="card-title">Giving the posibility to our clients trainers and gymrats to customize their profiles</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4 d-flex">
-                            <div className="card flex-fill text-center border-primary">
-                                <div className="card-body">
-                                    <h5 className="card-title">Giving information about location, needs and availability of both users!</h5>
                                 </div>
                             </div>
                         </div>

@@ -54,13 +54,13 @@ export const SingleCoach = () => {
                 :
             <div className="container-fluid">
                 <div className="row justify-content-center">
-                    <div className="col-lg-10">
+                    <div className="col-lg-10 col-12">
                         <div className="card">
                             <div className="card-header">
                                 <h4 className="card-title">Profile {store.singleCoach.username}</h4>
                             </div>
                             <div className="card-body">
-                                <div className="row">
+                                <div className="row p-4">
                                     <div className="col-xl-4 d-flex flex-column justify-content-between">
                                         <div className="nav flex-column nav-pills mb-3" role="tablist">
                                             <a href="#v-pills-home" data-bs-toggle="pill" className="nav-link show active" aria-selected="true" role="tab">Photo</a>
@@ -88,10 +88,10 @@ export const SingleCoach = () => {
                                         <div className="tab-content">
                                             <div id="v-pills-home" className="tab-pane fade active show" role="tabpanel">
                                                 <div className="d-flex justify-content-center">
-                                            <ProfileImage 
-                                        photoUrl={store.singleCoach.coach_photo_url} 
-                                        className="img-fluid rounded" 
-                                            />
+                                                <ProfileImage
+                                                    photoUrl={store.singleClient.client_photo_url}
+                                                    className="single-user-profile-image"
+                                                />
                                                 </div>
                                             </div>
                                             <div id="v-pills-profile" className="tab-pane fade" role="tabpanel">

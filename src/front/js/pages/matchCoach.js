@@ -30,7 +30,7 @@ export const MatchCoach = () => {
                     <i className="fa-solid fa-person-running fs-3 text-secondary me-2"></i>
                         <h4 className="card-title">Ready to train</h4>
                     </div>
-                    <div className="card-body">
+                    <div className="card-body px-4">
                         <div className="table-responsive">
                             <table className="table table-responsive-md">
                                 <thead>
@@ -46,10 +46,11 @@ export const MatchCoach = () => {
                                         <tr key={index}>
                                             <td>
                                                 <div className="d-flex align-items-center">
-                                                    <ProfileImage
-                                                        photoUrl={user.client_photo_url}
-                                                        sizeClass="user-profile-image"
-                                                    />
+                                                     <ProfileImage
+                                                            photoUrl={user.client_photo_url}
+                                                            className="user-profile-image"
+                                                            rounded
+                                                        />
                                                     <span className="ms-3">{user.username}</span>
                                                 </div>
                                             </td>

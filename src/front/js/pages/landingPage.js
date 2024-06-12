@@ -31,7 +31,7 @@ export const LandingPage = () => {
                         <div className="col-md-4 d-flex">
                             <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <h5 className="card-title">Contact with personal trainers</h5>
+                                    <h5 className="card-title-landing">Contact with personal trainers</h5>
                                     <p className="card-text" >You can find personal trainers in your city and match with them to get the best training plans</p>
                                 </div>
                             </div>
@@ -39,7 +39,7 @@ export const LandingPage = () => {
                         <div className="col-md-4 d-flex">
                             <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <h5 className="card-title">Are u a personal trainer?</h5>
+                                    <h5 className="card-title-landing">Are u a personal trainer?</h5>
                                     <p className="card-text">Look for clients and people who want to be trained here to get experience for your CV</p>
                                 </div>
                             </div>
@@ -47,7 +47,7 @@ export const LandingPage = () => {
                         <div className="col-md-4 d-flex">
                             <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <h5 className="card-title">Customize your gymrat profile!</h5>
+                                    <h5 className="card-title-landing">Customize your gymrat profile!</h5>
                                     <p className="card-text">Customizing your profile going to help you to get personal trainers easier!</p>
                                 </div>
                             </div>
@@ -94,21 +94,21 @@ export const LandingPage = () => {
                         <div className="col-md-4 d-flex">
                             <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <h5 className="card-title">Matching gymrats with trainers</h5>
+                                    <h5 className="card-title-landing">Matching gymrats with trainers</h5>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-4 d-flex">
                             <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <h5 className="card-title">Giving the posibility to our clients trainers and gymrats to customize their profiles</h5>
+                                    <h5 className="card-title-landing">Giving the posibility to our clients trainers and gymrats to customize their profiles</h5>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-4 d-flex">
                             <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <h5 className="card-title">Giving information about location, needs and availability of both users!</h5>
+                                    <h5 className="card-title-landing">Giving information about location, needs and availability of both users!</h5>
                                 </div>
                             </div>
                         </div>

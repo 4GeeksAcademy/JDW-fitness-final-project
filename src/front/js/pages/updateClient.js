@@ -26,6 +26,7 @@ export const UpdateClient = () => {
     const tokenClient = localStorage.getItem("token_client");
     const [uploadSuccess, setUploadSuccess] = useState(false);
     const [ loading, setLoading ] = useState(true);
+    const maxCharacters = 200;
 
     // Redirigir si no hay token
     useEffect(() => {
@@ -228,8 +229,8 @@ export const UpdateClient = () => {
                                                     onChange={(e) => setLastName(e.target.value)} 
                                                     placeholder="Last Name"/>
                                                 </div>
-                                                <div className="form-group col-md-6">
-                                                <label htmlFor="physical-habits" className="form-label">Physical Habits</label>
+                                                <div className="form-group col-md-6 position-relative">
+                                                    <label htmlFor="physical-habits" className="form-label">Physical Habits</label>
                                                     <textarea
                                                         className="form-control mt-1 p-3"
                                                         id="physical-habits"
@@ -238,6 +239,14 @@ export const UpdateClient = () => {
                                                         onChange={(e) => setPhysicalHabits(e.target.value)}
                                                         placeholder="Write here your physical habits..."
                                                     ></textarea>
+                                                    <div
+                                                        className={`position-absolute bottom-0 end-0 mb-2 me-4 remaining ${
+                                                        physicalHabits.length > maxCharacters ? "text-danger" : "text-muted"
+                                                        }`}
+                                                        style={{ color: physicalHabits.length > maxCharacters ? "red" : "#6c757d" }}
+                                                    >
+                                                        {maxCharacters - physicalHabits.length} 
+                                                    </div>
                                                 </div>
                                                 <div className="form-group col-md-6 mb-0 mt-2">
                                                 <div className="form-group mt-2 mb-4">

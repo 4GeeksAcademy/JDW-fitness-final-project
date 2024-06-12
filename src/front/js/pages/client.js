@@ -91,7 +91,7 @@ export const Client = () => {
                             <i className="fa-solid fa-users fs-3 text-secondary me-2"></i>
                             <h4 className="card-title">Client List</h4>
                         </div>
-                        <div className="card-body">
+                        <div className="card-body px-4">
                             <div className="table-responsive">
                                 <table className="table table-responsive-md">
                                     <thead>
@@ -107,9 +107,10 @@ export const Client = () => {
                                             <tr key={index}>
                                                 <td>
                                                     <div className="d-flex align-items-center">
-                                                        <ProfileImage
+                                                    <ProfileImage
                                                             photoUrl={client.client_photo_url}
-                                                            sizeClass="user-profile-image"
+                                                            className="user-profile-image"
+                                                            rounded
                                                         />
                                                         <span className="ms-3">{client.username}</span>
                                                     </div>

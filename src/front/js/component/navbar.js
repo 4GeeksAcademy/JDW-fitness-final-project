@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 import ProfileImage from "../component/profileImage"
-import logoJDWName from "/workspaces/JDW-fitness-final-project/src/front/img/logo-with-name.png"
+import sideBarLogo from "/workspaces/JDW-fitness-final-project/src/front/img/sidebar-logo.png"
 import "../../styles/navbar.css";
 
 export const Navbar = () => {
@@ -50,6 +50,7 @@ export const Navbar = () => {
 
 	const toggleSidebar = () => {
 		setIsSidebarOpen(!isSidebarOpen);
+		actions.toggleSidebar();
 	  };
 
 	return (
@@ -57,15 +58,14 @@ export const Navbar = () => {
 		  <nav className={`navbar bg-body-light ${isSidebarOpen ? 'navbar-main-open' : 'navbar-main-closed'}`}>
 			<div className="container-fluid">
 			  <div className="d-flex align-items-center">
-			  <button className="btn fa-solid fa-bars-staggered ms-3 me-auto fs-2 text-secondary" type="button" onClick={toggleSidebar}></button>
-			  <Link to={"/calculator"} className="dropdown-item ai-icon fw-bold fs-5">
-			  <i className="fa-solid fa-calculator"></i>
-					<span className="ms-2">Fitness Calculator</span>
+			  <button className="btn fa-solid fa-bars-staggered mx-3 fs-2 text-secondary" type="button" onClick={toggleSidebar}></button>
+			  <Link to={"/calculator"} className="dropdown-item ai-icon fw-bold fs-5 d-flex">
+			  <i className="fa-solid fa-calculator fs-4"></i>
+			  {!isSidebarOpen &&
+				<h5 className="ms-2 fw-bold">Fitness Calculator</h5>
+				}
 				</Link>
 			  </div>
-			  {/* <div className="mx-auto">
-				<img src={logoJDWName} alt="logo-with-name" className="logo-name"/>
-			  </div> */}
 				<div className="d-flex align-items-center ms-auto me-4">
 					{loggedCoach ? 
                     <ProfileImage photoUrl={store.singleCoach.coach_photo_url} sizeClass="navbar-profile-image" />
@@ -96,7 +96,7 @@ export const Navbar = () => {
 	
 		  <div className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
 			<div className="sidebar-header">
-			  <h5 className="text-secondary">Logo JDW</h5>
+				<img src={sideBarLogo} alt="logo-with-name" className={`${isSidebarOpen ? 'logo-sidebar-open' : 'logo-sidebar-closed'}`}/>
 			  {isSidebarOpen && <button type="button" className="btn-close" onClick={toggleSidebar}></button>}
 			</div>
 			<div className="sidebar-body">

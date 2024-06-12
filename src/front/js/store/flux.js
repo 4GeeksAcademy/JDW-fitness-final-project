@@ -47,11 +47,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 		  noAvailabilityMessage: false,
 		  clientDetails: {
 			client_id: null,
-			email: ""
+			email: "",
+			sidebarOpen: false,
 		  },
   },
 		actions: {
-			
+			toggleSidebar: () => {
+                const { sidebarOpen } = getStore();
+                setStore({ sidebarOpen: !sidebarOpen });
+            },
+            setSidebarOpen: (isOpen) => {
+                setStore({ sidebarOpen: isOpen });
+            },
 	// CLIENT
 	getClients: async () => {
 		try {

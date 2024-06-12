@@ -4,6 +4,12 @@
 body {
     font-family: Poppins;
 }
+.sidebar-open {
+    margin-left: 14.7rem; /* Añade margen izquierdo cuando la sidebar está abierta */
+}  
+.sidebar-close {
+    margin-left: 5rem; /* Añade margen izquierdo cuando la sidebar está abierta */
+}  
 /* Estilo del contenedor principal */
 .app-wrapper {
     display: flex;
@@ -18,7 +24,7 @@ body {
     padding-top: 56px; /* Altura del navbar */
 }
 .footer {
-    background-color: #f3f3f3; /* Color de fondo gris claro */
+    background-color: #f3f3f385; /* Color de fondo gris claro */
 }
 .btn-secondary {
     --bs-btn-color: #fff;

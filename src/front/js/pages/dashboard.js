@@ -55,91 +55,95 @@ export const Dashboard = () => {
     };
 
 	return (
-		<div className="container dashboard" onMouseMove={handleMouseMove}>
-					<div className="col-12 col-xl-8">
+		<div className="container-fluid dashboard" onMouseMove={handleMouseMove}>
+					{/* <div className="col-12 col-xl-10">
                     <div className="d-flex flex-row align-items-center card card-ui-default-1 bg-secondary p-4 col-12">
                         <i className="fa-solid fa-users fs-3 text-secondary"></i>
                         <h4 className="ms-3 fw-semibold mb-0">Welcome to your dashboard {username}!</h4>
                     </div>
-                	</div>
+                	</div> */}
 					<div className="row">
-						<div className="col-4">
-							<div className="card avtivity-card muscle">
+						<div className="col-xl-6 col-12">
+							<div className="card avtivity-card riding">
 								<div className="card-body">
-									<div className="media align-items-center">
-										<span className="activity-icon fa-regular fa-share-from-square fs-3 text-success bgl-success me-md-4 me-3">
-										</span>
-										<div className="media-body">
-											<p className="fs-14 mb-2">How many likes do you send</p>
-											<span className="title text-black font-w600">{totalGivenLikes}</span>
+									<div className="media align-items-center d-flex justify-content-between">
+										<div className="mt-4 ms-4">
+											<span className={`activity-icon text-success bgl-success me-md-4 me-3 ${currentUserList === "client" ? 'fa-regular fa-user fs-3' : 'fa-solid fa-dumbbell fs-3'}`}>
+											</span>
+											<div className="media-body d-flex align-items-center mb-2">
+												<p className="fs-14 mb-2 me-3">Number of {currentUserList}</p>
+												<span className="title text-black font-w600 mb-1">{totalUsers}</span>
+											</div>
 										</div>
-											<Link to={`/${currentUser}/likes/given`}>
-												<button className="btn btn-success">Go to given likes</button>
-											</Link>
+										<Link to={`/${currentUserList}`}>
+											<button className="btn btn-success p-4 me-4 mt-5 rounded-4">Go to {currentUserList} list</button>
+										</Link>
 									</div>
 								</div>
 								<div className="effect bg-success"style={{ top: position.top, left: position.left }}></div>
 							</div>
 						</div>
-						<div className="col-4">
-							<div className="card avtivity-card ciclyng">
+						<div className="col-xl-6 col-12">
+							<div className="card avtivity-card muscle">
 								<div className="card-body">
-									<div className="media align-items-center">
-										<span className="activity-icon fa-regular fa-envelope fs-3 text-danger bgl-danger me-md-4 me-3">
+								<div className="media align-items-center d-flex justify-content-between">
+									<div className="mt-4 ms-4">
+										<span className="activity-icon text-info bgl-info me-md-4 me-3 fa-regular fa-share-from-square fs-3">	
 										</span>
-										<div className="media-body">
-											<p className="fs-14 mb-2">How many likes do you received?:</p>
-											<span className="title text-black font-w600">{totalReceivedLikes}</span>
+										<div className="media-body d-flex align-items-center mb-2">
+											<p className="fs-14 mb-2 me-3">Request sent</p>
+											<span className="title text-black font-w600 mb-1">{totalGivenLikes}</span>
 										</div>
-											<Link to={`/${currentUser}/likes/received`}>
-												<button className="btn btn-danger dashboard">Go to received</button>
-											</Link>
 									</div>
-								</div>
-								<div className="effect bg-danger" style={{ top: position.top, left: position.left }}></div>
-							</div>
-						</div>
-					</div>
-					<div className="row d-flex">
-						<div className="col-4">
-							<div className="card avtivity-card riding">
-								<div className="card-body">
-									<div className="media align-items-center">
-										<span className={`activity-icon text-info bgl-info me-md-4 me-3 ${currentUserList === "client" ? 'fa-regular fa-user fs-3' : 'fa-solid fa-dumbbell fs-3'}`}>
-										</span>
-										<div className="media-body">
-											<p className="fs-14 mb-2">Number of {currentUserList}</p>
-											<span className="title text-black font-w600">{totalUsers}</span>
-										</div>
-										<Link to={`/${currentUserList}`}>
-											<button className="btn btn-info">Go to {currentUserList} list</button>
+										<Link to={`/${currentUser}/likes/given`}>
+												<button className="btn btn-info p-4 me-4 mt-5 rounded-4">Go to my request sent</button>
 										</Link>
 									</div>
 								</div>
 								<div className="effect bg-info" style={{ top: position.top, left: position.left }}></div>
 							</div>
 						</div>
-						<div className="col-4">
+						<div className="col-xl-6 col-12">
+							<div className="card avtivity-card ciclyng">
+								<div className="card-body">
+									<div className="media align-items-center d-flex justify-content-between">
+									<div className="mt-4 ms-4">
+										<span className="activity-icon text-danger bgl-danger me-md-4 me-3 fa-regular fa-envelope fs-3">
+										</span>
+										<div className="media-body d-flex align-items-center mb-2">
+											<p className="fs-14 mb-2 me-3">Pending request</p>
+											<span className="title text-black font-w600 mb-1">{totalReceivedLikes}</span>
+										</div>
+									</div>
+										<Link to={`/${currentUser}/likes/received`}>
+											<button className="btn btn-danger p-4 me-4 mt-5 rounded-4">Go to my received request</button>
+										</Link>
+									</div>
+								</div>
+								<div className="effect bg-danger" style={{ top: position.top, left: position.left }}></div>
+							</div>
+						</div>
+						<div className="col-xl-6 col-12">
 							<div className="card avtivity-card matches">
 								<div className="card-body">
-									<div className="media align-items-center">
-										<span className="activity-icon fa-solid fa-person-running fs-3 text-warning bgl-warning  me-md-4 me-3">
+									<div className="media align-items-center d-flex justify-content-between">
+									<div className="mt-4 ms-4">
+										<span className="activity-icon text-warning bgl-warning me-md-4 me-3 fa-solid fa-person-running fs-3">
 										</span>
-										<div className="media-body">
-											<p className="fs-14 mb-2">Your matches!</p>
-											<span className="title text-black font-w600">
-											{totalMatches}
-											</span>
+										<div className="media-body d-flex align-items-center mb-2">
+											<p className="fs-14 mb-2 me-3">{currentUser === "coach" ? "Your clients ready to train": "Your coaches ready to train you"}</p>
+											<span className="title text-black font-w600 mb-1">{totalMatches}</span>
 										</div>
+									</div>
 										<Link to={`/${currentUser}/match`}>
-											<button className="btn btn-warning">Go to matches</button>
+											<button className="btn btn-warning p-4 me-4 mt-5 rounded-4">{currentUser === "coach" ? "Go to your clients": "Go to your coaches"}</button>
 										</Link>
 									</div>
 								</div>
 								<div className="effect bg-warning" style={{ top: position.top, left: position.left }}></div>
 							</div>
 					</div>
-					</div>
 				</div>
+			</div>
 	);
 };

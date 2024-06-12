@@ -86,7 +86,7 @@ const Layout = () => {
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
                     {isLogedUser && <Navbar />} 
-                    <div className={`main-wrapper ${store.sidebarOpen ? 'sidebar-open' : 'sidebar-close'}`}>
+                    <div className={`main-wrapper ${isLogedUser && `${store.sidebarOpen && isLogedUser ? 'sidebar-open' : 'sidebar-close'}`}`}>
                     <Routes>
                         {isNotLogedUser && <Route path="/" element={<LandingPage />} />}
                         <Route element={<Dashboard />} path="/home" />

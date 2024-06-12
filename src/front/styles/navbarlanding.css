@@ -1,8 +1,10 @@
 .navbar-nav .nav-link {
-    color: #A02CFA; /* Color del texto */
+    color: #000000; /* Color del texto */
     cursor: pointer;
 }
-
+.landing-page .bg-light {
+    background-color: #A02CFA !important;
+}
 .navbar-nav .nav-link:hover {
     color: #f2e2ff; /* Color del texto al pasar el ratón */
 }
@@ -25,13 +27,14 @@
 }
 
 .btn-signup {
+    border: solid 2px;
     border-radius: 30px;
     --bs-btn-color: #fff;
-    --bs-btn-bg: #A02CFA;
-    --bs-btn-border-color: #A02CFA;
-    --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: #8825d5;
-    --bs-btn-hover-border-color: #8023c8;
+    --bs-btn-bg: #000000;
+    --bs-btn-border-color: #fff;
+    --bs-btn-hover-color: #A02CFA;
+    --bs-btn-hover-bg: #ffffff;
+    --bs-btn-hover-border-color: #000000;
     --bs-btn-focus-shadow-rgb: 174, 76, 251;
     --bs-btn-active-color: #fff;
     --bs-btn-active-bg: #8023c8;
@@ -43,9 +46,10 @@
 }
 .btn-login {
     border-radius: 30px;
-    --bs-btn-color: #A02CFA;
+    border: solid 2px;
+    --bs-btn-color: #000000;
     --bs-btn-bg: #ffffff;
-    --bs-btn-border-color: #ffffff;
+    --bs-btn-border-color: #000000;
     --bs-btn-hover-color: #A02CFA;
     --bs-btn-hover-bg: #ede9f1;
     --bs-btn-hover-border-color: #ffffff;

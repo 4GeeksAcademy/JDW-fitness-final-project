@@ -85,7 +85,7 @@ export const SignUp = () => {
                                                 <div className="text-center mb-4">
                                                 <img src={sideBarLogo} alt="logo-with-name" className="logo-sidebar"/>
                                                 </div>
-                                                <h5 className="text-center mb-4">Sign up</h5>
+                                                <h5 className="text-center mb-4">Create an account</h5>
                                                 <form onSubmit={signUp}>
                                                 <div className="form-group">
                                                         <label className="mb-1 form-label"> Username</label>
@@ -167,7 +167,7 @@ export const SignUp = () => {
                                                     </div>
                                                     }
                                                     <div className="text-center">
-                                                        <button type="submit" className="btn btn-secondary light btn-block fw-bolder p-3 w-100">Sign me up</button>
+                                                        <button type="submit" className="btn btn-secondary light btn-block fw-bolder p-3 w-100">Sign up</button>
                                                     </div>
                                                 </form>
                                         <div className="new-account mt-4">

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 import ProfileImage from "../component/profileImage"
 import sideBarLogo from "/workspaces/JDW-fitness-final-project/src/front/img/sidebar-logo.png"
@@ -14,6 +14,7 @@ export const Navbar = () => {
 	const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
 	const loggedClient = JSON.parse(localStorage.getItem("loggedClient"));
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const navigate = useNavigate()
 
 	const fetchSingleClient = async (client_id) => {
 		await actions.getSingleClient(client_id);
@@ -59,7 +60,7 @@ export const Navbar = () => {
 			<div className="container-fluid">
 			  <div className="d-flex align-items-center">
 			  <button className="btn fa-solid fa-bars-staggered mx-3 fs-2 text-secondary" type="button" onClick={toggleSidebar}></button>
-			  <Link to={"/calculator"} className="dropdown-item ai-icon fw-bold fs-5 d-flex">
+			  <Link to={`/${currentUser}/calculator`} className="dropdown-item ai-icon fw-bold fs-5 d-flex">
 			  <i className="fa-solid fa-calculator fs-4"></i>
 			  {!isSidebarOpen &&
 				<h5 className="ms-2 fw-bold">Fitness Calculator</h5>
@@ -93,13 +94,10 @@ export const Navbar = () => {
 				</div>
 			</div>
 		  </nav>
-	
 		  <div className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
 			<div className="sidebar-header">
-
-				<img src={sideBarLogo} alt="logo-with-name" className={`${isSidebarOpen ? 'logo-sidebar-open' : 'logo-sidebar-closed'}`}/>
-
-			  {isSidebarOpen && <button type="button" className="btn-close" onClick={toggleSidebar}></button>}
+				<img src={sideBarLogo} alt="logo-with-name" type="button" className={`${isSidebarOpen ? 'logo-sidebar-open' : 'logo-sidebar-closed'}`} onClick={() => navigate("/home")}/>
+				{isSidebarOpen && <button type="button" className="btn-close" onClick={toggleSidebar}></button>}
 			</div>
 			<div className="sidebar-body">
 			  <ul className="navbar-nav">

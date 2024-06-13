@@ -42,7 +42,7 @@ export const SingleClient = () => {
                 :
             <div className="container-fluid">
                 <div className="row justify-content-center">
-                    <div className="col-lg-10 col-12">
+                    <div class="col-xl-8 col-lg-10 col-12">
                         <div className="card">
                             <div className="card-header">
                                 <h4 className="card-title">Profile {store.singleClient.username}</h4>

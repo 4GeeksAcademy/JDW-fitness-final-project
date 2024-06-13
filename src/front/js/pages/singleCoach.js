@@ -54,7 +54,7 @@ export const SingleCoach = () => {
                 :
             <div className="container-fluid">
                 <div className="row justify-content-center">
-                    <div className="col-lg-10 col-12">
+                    <div class="col-xl-8 col-lg-10 col-12">
                         <div className="card">
                             <div className="card-header">
                                 <h4 className="card-title">Profile {store.singleCoach.username}</h4>
@@ -67,29 +67,13 @@ export const SingleCoach = () => {
                                             <a href="#v-pills-profile" data-bs-toggle="pill" className="nav-link" aria-selected="false" role="tab" tabIndex="-1">More details</a>
                                             <a href="#v-pills-messages" data-bs-toggle="pill" className="nav-link" aria-selected="false" role="tab" tabIndex="-1">Location</a>
                                         </div>
-                                        <div>
-                                            {(loggedCoach && store.singleCoach.id === loggedCoach.id) &&            
-                                            <Link to={`/coach/update/${coachID}`} className="ms-1">
-                                                    <button className="btn btn-secondary ms-auto fw-bold" >Update</button>					
-                                            </Link>
-                                            }
-                                            {loggedCoach ?                
-                                            <Link to="/client">
-                                                <button className="btn btn-request ms-3 fw-bold" >Back to Client list</button>
-                                            </Link>
-                                            :
-                                            <Link to="/coach">
-                                                <button className="btn btn-request ms-3 fw-bold" >Back to Coach list</button>
-                                            </Link>
-                                            }
-                                        </div>
                                     </div>
                                     <div className="col-xl-8">
                                         <div className="tab-content">
                                             <div id="v-pills-home" className="tab-pane fade active show" role="tabpanel">
                                                 <div className="d-flex justify-content-center">
                                                 <ProfileImage
-                                                    photoUrl={store.singleClient.client_photo_url}
+                                                    photoUrl={store.singleCoach.coach_photo_url}
                                                     className="single-user-profile-image"
                                                 />
                                                 </div>
@@ -142,6 +126,22 @@ export const SingleCoach = () => {
                                     </div>
                                 </div>
                             </div>
+                            <div className="card-footer">
+                                            {(loggedCoach && store.singleCoach.id === loggedCoach.id) &&            
+                                            <Link to={`/coach/update/${coachID}`} className="ms-1">
+                                                    <button className="btn btn-secondary ms-auto fw-bold" >Update</button>					
+                                            </Link>
+                                            }
+                                            {loggedCoach ?                
+                                            <Link to="/client">
+                                                <button className="btn btn-request ms-3 fw-bold" >Back to Client list</button>
+                                            </Link>
+                                            :
+                                            <Link to="/coach">
+                                                <button className="btn btn-request ms-3 fw-bold" >Back to Coach list</button>
+                                            </Link>
+                                            }
+                                        </div>
                         </div>
                     </div>
                     </div>

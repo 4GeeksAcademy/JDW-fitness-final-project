@@ -291,6 +291,7 @@ input::placeholder {
 .single-user-profile-image {
     width: 350px;
     height: auto;
+    border-radius: 3%;
 }
 .img-thumbnail {
     aspect-ratio: 1;
@@ -359,6 +360,7 @@ input.form-control {
 .img-fluid {
     max-width: 100%;
     height: auto;
+    aspect-ratio: 1;
 }
 
 li {
@@ -385,4 +387,40 @@ li {
 }  
 .nav-link {
     color: #A02CFA
+}
+/*CALCULATOR COACH*/
+.custom-dropdown-toggle {
+    background-color: #f8f9fa; /* Fondo gris claro */
+    border: 1px solid #ced4da; /* Bordes gris más oscuro */
+    color: #000; /* Color del texto negro */
+}
+
+.custom-dropdown-toggle:hover,
+.custom-dropdown-toggle:focus,
+.custom-dropdown-toggle:active {
+    background-color: #A02CFA; /* Fondo gris oscuro */
+    border-color: #A02CFA; /* Bordes gris oscuro */
+    color: #fff; /* Color del texto blanco */
+}
+
+.custom-dropdown-menu {
+    background-color: #fff; /* Fondo blanco */
+    border: 1px solid #000; /* Bordes negros */
+}
+
+.custom-dropdown-item {
+    background-color: #fff; /* Fondo blanco */
+    color: #000; /* Color del texto negro */
+}
+
+.custom-dropdown-item:hover,
+.custom-dropdown-item:focus,
+.custom-dropdown-item:active {
+    background-color: #A02CFA; /* Fondo gris oscuro */
+    color: #fff; /* Color del texto blanco */
+}
+
+.custom-input-group-text {
+    background-color: #f8f9fa; /* Fondo gris claro */
+    border: 1px solid #ced4da; /* Bordes gris más oscuro */
 }

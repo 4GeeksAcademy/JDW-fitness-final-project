@@ -92,6 +92,11 @@
 .first-letter-uppercase::first-letter {
   text-transform: uppercase;
 }
+/* Restablecer estilos del enlace */
+#reset-link-styles:hover {
+  background-color: #fff !important
+}
+
 
 /* Tamaño para la navbar */
 .navbar-profile-image {

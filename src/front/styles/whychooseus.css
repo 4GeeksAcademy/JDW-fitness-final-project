@@ -1,0 +1,52 @@
+/* landing.css */
+
+.why-choose-us .card-text {
+    color: #000000;
+    font-size: smaller;
+}
+
+.why-choose-us .card-title {
+    color: #000000;
+    font-size: medium;
+}
+
+.why-choose-us .card-label {
+    color: #000000;
+    font-size: large;
+}
+
+.why-choose-us {
+    color: #A02CFA;
+    background: linear-gradient( #ffffff);
+}
+
+.why-choose-us .bg-light {
+    background-color: #A02CFA !important;
+}
+
+.why-choose-us .text-primary {
+    color: #A02CFA !important;
+    border-color: #000000;
+}
+
+.why-choose-us .btn-primary {
+    background-color: #f1dffe !important;
+    border-color: #A02CFA !important;
+    color: #A02CFA !important;
+    font-size: x-small;
+    border-radius: 1rem !important;
+}
+
+.why-choose-us .btn-primary:hover {
+    background-color: #A02CFA !important;
+    color: #f1dffe !important;
+}
+
+.why-choose-us .border-primary {
+    border-color: #000000 !important;
+}
+
+.why-choose-us .card {
+    background-color: #ffffff !important;
+    color: black !important;
+}

@@ -129,7 +129,7 @@ export const Client = () => {
                                                             <span className="badge light badge-warning">Pending</span>
                                                         )}
                                                         {match[client.id] && (
-                                                            <span className="badge light badge-success">Successful</span>
+                                                            <span className="badge light badge-success">Ready to train</span>
                                                         )}
                                                     </div>
                                                 </td>

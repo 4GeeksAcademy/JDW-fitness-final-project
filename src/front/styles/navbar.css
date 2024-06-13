@@ -140,7 +140,6 @@ margin-left: 5rem;
 .header-right .notification_dropdown .nav-link {
   position: relative;
   color: #A02CFA;
-
   border-radius: .625rem;
   padding: 12px;
   line-height: 1;
@@ -255,19 +254,12 @@ h6 {
 .height-no-notifications {
   height: 100px !important;
 }
-
-.notification_dropdown .dropdown-menu-end, .header-profile .dropdown-menu-end {
-  min-width: 19.375rem;
-  width: 19.375rem;
-  top: 100%;
-  box-shadow: rgba(0, 0, 0, 0.08) 0px 8px 24px;
-  position: absolute;
-  inset: 0px 0px auto auto;
-  margin: 0px;
-  transform: translateY(49px) !important;
-  transition: all .2s;
+.dropdown-menu-lg-end {
+width: 19rem;
 }
-
+.dropdown-menu-center {
+  width: 17rem;
+  }
 .notification_dropdown .dropdown-menu-end.show, .header-profile .dropdown-menu-end.show {
   will-change: transform;
   animation: menu-sub-dropdown-animation-fade-in 0.3s ease 1, menu-sub-dropdown-animation-move-up 0.3s ease 1;

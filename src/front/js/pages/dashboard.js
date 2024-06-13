@@ -6,7 +6,6 @@ import "../../styles/home.css";
 export const Dashboard = () => {
 	const { store, actions } = useContext(Context);
 	const [position, setPosition] = useState({ top: '0px', left: '0px' });
-	const [username, setUsername] = useState("");
 	const [currentUser, setCurrentUser] = useState("");
 	const [currentUserList, setCurrentUserList] = useState("");
 	const [totalMatches, setTotalMatches] = useState(0); // Nueva variable de estado para el total de matches
@@ -15,11 +14,12 @@ export const Dashboard = () => {
 	const [totalUsers, setTotalUsers] = useState(0); // Variable de estado para el total de coaches o clients
 	const loggedCoach = JSON.parse(localStorage.getItem("loggedCoach"));
 	const loggedClient = JSON.parse(localStorage.getItem("loggedClient"));
+	const [ loading, setLoading ] = useState(true);
 
 	useEffect(() => {
 		const fetchData = async () => {
+			setLoading(true);
 			if (loggedCoach) {
-				setUsername(loggedCoach.username);
 				setCurrentUser("coach");
 				setCurrentUserList("client");
 				await actions.getGivenLikes(loggedCoach.id);
@@ -27,7 +27,6 @@ export const Dashboard = () => {
 				await actions.getUserMatches(loggedCoach.id);
 				await actions.getClients();
 			} else if (loggedClient) {
-				setUsername(loggedClient.username);
 				setCurrentUser("client");
 				setCurrentUserList("coach");
 				await actions.getGivenLikes(loggedClient.id);
@@ -35,6 +34,7 @@ export const Dashboard = () => {
 				await actions.getUserMatches(loggedClient.id);
 				await actions.getCoaches();
 			}
+			setLoading(false);
 		};
 			fetchData();
 	}, []);
@@ -55,13 +55,11 @@ export const Dashboard = () => {
     };
 
 	return (
+		<>
+        {loading ? 
+            <span className="loader"></span>
+            :
 		<div className="container-fluid dashboard" onMouseMove={handleMouseMove}>
-					{/* <div className="col-12 col-xl-10">
-                    <div className="d-flex flex-row align-items-center card card-ui-default-1 bg-secondary p-4 col-12">
-                        <i className="fa-solid fa-users fs-3 text-secondary"></i>
-                        <h4 className="ms-3 fw-semibold mb-0">Welcome to your dashboard {username}!</h4>
-                    </div>
-                	</div> */}
 					<div className="row">
 						<div className="col-xl-6 col-12">
 							<div className="card avtivity-card riding">
@@ -76,7 +74,7 @@ export const Dashboard = () => {
 											</div>
 										</div>
 										<Link to={`/${currentUserList}`}>
-											<button className="btn btn-success p-4 me-4 mt-5 rounded-4">Go to {currentUserList} list</button>
+											<button className="btn btn-success p-4 me-4 ms-4 mt-5 rounded-4">Go to {currentUserList} list</button>
 										</Link>
 									</div>
 								</div>
@@ -96,7 +94,7 @@ export const Dashboard = () => {
 										</div>
 									</div>
 										<Link to={`/${currentUser}/likes/given`}>
-												<button className="btn btn-info p-4 me-4 mt-5 rounded-4">Go to my request sent</button>
+												<button className="btn btn-info p-4 me-4 ms-4 mt-5 rounded-4">Go to my request sent</button>
 										</Link>
 									</div>
 								</div>
@@ -116,7 +114,7 @@ export const Dashboard = () => {
 										</div>
 									</div>
 										<Link to={`/${currentUser}/likes/received`}>
-											<button className="btn btn-danger p-4 me-4 mt-5 rounded-4">Go to my received request</button>
+											<button className="btn btn-danger p-4 me-4 ms-3 mt-5 rounded-4">Go to my received request</button>
 										</Link>
 									</div>
 								</div>
@@ -136,7 +134,7 @@ export const Dashboard = () => {
 										</div>
 									</div>
 										<Link to={`/${currentUser}/match`}>
-											<button className="btn btn-warning p-4 me-4 mt-5 rounded-4">{currentUser === "coach" ? "Go to your clients": "Go to your coaches"}</button>
+											<button className="btn btn-warning p-4 me-4 ms-4 mt-5 rounded-4">{currentUser === "coach" ? "Go to your clients": "Go to your coaches"}</button>
 										</Link>
 									</div>
 								</div>
@@ -145,5 +143,7 @@ export const Dashboard = () => {
 					</div>
 				</div>
 			</div>
+}
+</>
 	);
 };

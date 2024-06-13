@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 
-export const Calculator = () => {
+export const CalculatorClient = () => {
     const { store, actions } = useContext(Context);
     const [age, setAge] = useState(null);
     const [height, setHeight] = useState(null);
@@ -116,35 +116,44 @@ export const Calculator = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="form-group col-12">
+                                        <div className="form-group col-12 mb-3">
                                             <label>Age</label>
-                                            <input
-                                                type="number"
-                                                className="form-control mt-1 p-3"
+                                            <div className="input-group input-primary mb-3">
+                                                <input 
+                                                type="number" 
+                                                className="form-control py-3" 
+                                                placeholder="30"
                                                 value={age || ""}
                                                 onChange={(e) => setAge(e.target.value)}
-                                                placeholder="years"
-                                            />
+                                                />
+                                                <span className="input-group-text">years</span>
+                                            </div>
                                         </div>
-                                        <div className="form-group col-12">
+                                        <div className="form-group col-12 mb-3">
                                             <label>Height</label>
-                                            <input
-                                                type="number"
-                                                className="form-control mt-1 p-3"
+                                            <div className="input-group input-primary mb-3">
+                                                <input 
+                                                type="number" 
+                                                className="form-control py-3" 
+                                                placeholder="180"
                                                 value={height || ""}
                                                 onChange={(e) => setHeight(e.target.value)}
-                                                placeholder="cm"
-                                            />
+                                                />
+                                                <span className="input-group-text">cm</span>
+                                            </div>
                                         </div>
-                                        <div className="form-group col-12">
+                                        <div className="form-group col-12 mb-3">
                                             <label>Weight</label>
-                                            <input
-                                                type="number"
-                                                className="form-control mt-1 p-3"
+                                            <div className="input-group input-primary mb-3">
+                                                <input 
+                                                type="float" 
+                                                className="form-control py-3" 
+                                                placeholder="80"
                                                 value={weight || ""}
                                                 onChange={(e) => setWeight(e.target.value)}
-                                                placeholder="kg"
-                                            />
+                                                />
+                                                <span className="input-group-text">kg</span>
+                                            </div>
                                         </div>
                                     </div>
                                     {errorCalculator &&                 
@@ -155,7 +164,7 @@ export const Calculator = () => {
                                     <div className="d-flex justify-content-center align-items-center mt-2">
                                         <button
                                             type="submit"
-                                            className="btn btn-secondary light btn-block fw-bolder p-3">
+                                            className="btn btn-secondary btn-request light btn-block fw-bolder p-3">
                                             Calculate
                                         </button>
                                     </div>
@@ -167,7 +176,7 @@ export const Calculator = () => {
                 </div>
                     {(BMI && percentageFat && BMR) &&
                     <div className="row justify-content-center">
-                    <div className="col-lg-4">
+                    <div className="col-xl-4 col-lg-6 col-12">
                         <div className="card">
                             <div className="card-header">
                                 <h4 className="card-title">Your BMI is {BMI}</h4>
@@ -204,7 +213,7 @@ export const Calculator = () => {
                             </div>
                         </div>
                     </div>     
-                    <div className="col-lg-4">
+                    <div className="col-xl-4 col-lg-6 col-12">
                         <div className="card">
                             <div className="card-header">
                                 <h4 className="card-title">Your % Fat is {percentageFat}</h4>
@@ -251,7 +260,7 @@ export const Calculator = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="col-lg-4">
+                    <div className="col-xl-4 col-lg-6 col-12">
                         <div className="card">
                             <div className="card-header">
                                 <h4 className="card-title">Your BMR is {BMR} KCal/Day</h4>

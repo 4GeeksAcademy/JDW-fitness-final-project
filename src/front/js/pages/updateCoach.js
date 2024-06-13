@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import axios from 'axios';
+import { LoadScript, StandaloneSearchBox } from "@react-google-maps/api";
 import { MapComponent } from "../component/mapComponent";
 import { Context } from "../store/appContext";
+
+const libraries = ["places"];
 
 export const UpdateCoach = () => {
     const { store, actions } = useContext(Context);
@@ -10,7 +12,6 @@ export const UpdateCoach = () => {
     const { coachID } = useParams();
     const initialLoad = useRef(true);
     const initialized = useRef(false); // Nueva referencia para inicialización de valores
-
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
@@ -25,8 +26,8 @@ export const UpdateCoach = () => {
     const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
     const [city, setCity] = useState("")
     const tokenCoach = localStorage.getItem("token_coach");
-    const [uploadSuccess, setUploadSuccess] = useState(false);
     const [ loading, setLoading ] = useState(true);
+    const searchBoxRef = useRef(null);
 
     // Redirigir si no hay token
     useEffect(() => {
@@ -61,13 +62,6 @@ export const UpdateCoach = () => {
             initialized.current = true; // Marcar como inicializado
         }
     }, [store.singleCoach]);
-
-    // Navegar de vuelta si la actualización es exitosa
-    useEffect(() => {
-        if (!store.errorForm && handleButton && username && email && password) {
-            setUploadSuccess(true)
-        }
-    }, [store.errorForm, handleButton, username, email, password, navigate]);
 
     // Manejar la carga de imagen y obtener la URL de Cloudinary
     const handleImageChange = async (e) => {
@@ -121,40 +115,27 @@ export const UpdateCoach = () => {
             city,
             coachID
         );
-        setHandleButton(true);
+        await actions.getSingleCoach(coachID);
     };
 
-    const handleGeocode = async () => {
-        try {
-            const response = await axios.get(process.env.BACKEND_URL + '/api/geocode', {
-                params: { address }
-            });
-    
-            if (response.data.results && response.data.results.length > 0) {
-                const location = response.data.results[0].geometry.location;
-                setCoordinates(location);
-    
-                const addressComponents = response.data.results[0].address_components;
-                const localityComponent = addressComponents.find(component => component.types.includes("locality"));
-                if (localityComponent) {
-                    setCity(localityComponent.long_name);
-                } else {
-                    setCity("Unknown city");
-                }
-            } else {
-                console.error("Geocoding response does not contain results.");
-            }
-        } catch (error) {
-            if (error.response) {
-                console.error('Error response:', error.response.data);
-                console.error('Error status:', error.response.status);
-                console.error('Error headers:', error.response.headers);
-            } else if (error.request) {
-                console.error('Error request:', error.request);
-            } else {
-                console.error('Error message:', error.message);
-            }
-            console.error('Error config:', error.config);
+    const handlePlaceChanged = () => {
+        const places = searchBoxRef.current.getPlaces();
+        if (places.length === 0) return;
+        const place = places[0];
+        setAddress(place.formatted_address);
+
+        const location = place.geometry.location;
+        setCoordinates({
+            lat: location.lat(),
+            lng: location.lng()
+        });
+
+        const addressComponents = place.address_components;
+        const localityComponent = addressComponents.find(component => component.types.includes("locality"));
+        if (localityComponent) {
+            setCity(localityComponent.long_name);
+        } else {
+            setCity("Unknown city");
         }
     };
 
@@ -173,6 +154,23 @@ export const UpdateCoach = () => {
                                 <div className="basic-form">
                                     <form onSubmit={updateCoach}>
                                         <div className="row">
+                                        {store.errorForm &&
+                                            <div className="form-group col-12">
+                                                <div className="alert alert-danger alert-dismissible fade show fw-semibold mb-0 mt-2" role="alert">
+                                                    {store.errorForm}
+                                                </div>
+                                            </div>                 
+                                            }
+                                            {store.uploadSuccess &&
+                                            <div className="form-group col-12">                                     
+                                                <div className="alert alert-success alert-dismissible fade show mb-0 mt-2">
+                                                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="me-2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>	
+                                                    <strong>Done!</strong> Your profile has been updated successfully
+                                                    <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            }
                                             <div className="form-group col-md-4">
                                                 <label>Username</label>
                                                 <input 
@@ -200,7 +198,7 @@ export const UpdateCoach = () => {
                                                 value={password} 
                                                 onChange={(e) => setPassword(e.target.value)} 
                                                 />
-                                                <span className="show-pass eye-update" type="button" onClick={() => setShowPassword(!showPassword)} >
+                                                <span className={`show-pass ${store.errorForm || store.uploadSuccess ? "eye-update-error" : "eye-update"}`} type="button" onClick={() => setShowPassword(!showPassword)} >
                                                 {showPassword ? 
                                                     <i className="fa fa-eye"></i>
                                                     :
@@ -265,42 +263,31 @@ export const UpdateCoach = () => {
                                                 </div>
                                             )}
                                         </div>
-                                        <div className=" col-12">
-                                                <div className="input-group col-md-6">
-                                                <input 
-                                                    type="text"
-                                                    value={address} 
-                                                    onChange={(e) => setAddress(e.target.value)}
-                                                    className="form-control" 
-                                                    placeholder="Enter address" 
-                                                    aria-label="Adress" 
-                                                    aria-describedby="geocode"
-                                                />
-                                                <button className="btn btn-btn btn-dark fw-semibold" type="button" id="geocode" onClick={handleGeocode} >Geocode</button>
-                                            </div>
-                                            {(coordinates.lat && coordinates.lng) && (
-                                                <div className="col-12 mt-3">
-                                                    <MapComponent 
-                                                        lat={coordinates.lat}
-                                                        lng={coordinates.lng} 
+                                        <div className="form-group col-12">
+                                            <LoadScript googleMapsApiKey={process.env.GOOGLE_API_KEY} libraries={libraries}>
+                                                <StandaloneSearchBox
+                                                    onLoad={ref => searchBoxRef.current = ref}
+                                                    onPlacesChanged={handlePlaceChanged}
+                                                >
+                                                    <input
+                                                        type="text"
+                                                        value={address}
+                                                        onChange={(e) => setAddress(e.target.value)}
+                                                        className="form-control py-3"
+                                                        placeholder="Enter address"
                                                     />
-                                                </div>
-                                            )}
+                                                </StandaloneSearchBox>
+                                            </LoadScript>
                                         </div>
-                                    </div>
-                                    {uploadSuccess &&                                     
-                                        <div className="alert alert-success alert-dismissible fade show my-4">
-                                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="me-2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>	
-                                            <strong>Done!</strong> Your profile has been updated successfully
-                                            <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                                            </button>
+                                    {(coordinates.lat && coordinates.lng) && (
+                                        <div className="col-12 mt-3">
+                                            <MapComponent 
+                                                lat={coordinates.lat}
+                                                lng={coordinates.lng} 
+                                            />
                                         </div>
-                                    }
-                                    {store.errorForm &&                 
-                                        <div className="alert alert-danger alert-dismissible fade show text-center fw-semibold my-4" role="alert">
-                                            {store.errorForm}
-                                        </div>
-                                    }
+                                    )}
+                                </div>
                                     <div className="d-flex justify-content-center align-items-center mt-4">
                                         <button type="submit" className="btn btn-secondary light btn-block fw-bolder p-3">Save changes</button>
                                         <Link to={`/coach/${coachID}`} className="text-secondary text-decoration-none ms-5">

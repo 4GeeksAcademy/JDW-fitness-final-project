@@ -64,7 +64,8 @@ import { MatchCoach } from "./pages/matchCoach";
 import { AvailabilityCoach } from "./pages/availabilityCoach";
 import { AvailabilityClient } from "./pages/availabilityClient";
 
-import { Calculator } from "./pages/calculator";
+import { CalculatorClient } from "./pages/calculatorClient";
+import { CalculatorCoach } from "./pages/calculatorCoach";
 
 import injectContext from "./store/appContext";
 
@@ -100,7 +101,8 @@ const Layout = () => {
                         <Route element={<Dashboard />} path="/home" />
                         <Route element={<SignUp />} path="/signup" />
                         <Route element={<Login />} path="/login" />
-                        <Route element={<Calculator />} path="/calculator" />
+                        <Route element={<CalculatorClient />} path="/client/calculator" />
+                        <Route element={<CalculatorCoach />} path="/coach/calculator" />
                         {/* AVAILABILITY ROUTES */}  
                         <Route element={<Availability />} path="/availability" />
                         <Route element={<SingleAvailability />} path="/availability/:availabilityID" />

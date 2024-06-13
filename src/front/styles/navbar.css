@@ -78,7 +78,24 @@
 .sidebar.open a:hover i {
   color: #A02CFA; /* Color del icono al hacer hover */
 }
+/* Personaliza la barra de desplazamiento */
+.sidebar::-webkit-scrollbar {
+  width: 8px;
+}
 
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #D8BFD8;
+  border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar {
+  scrollbar-width: thin; /* Para Firefox */
+  scrollbar-color: #D8BFD8 transparent; /* Para Firefox */
+}
 .navbar {
   background-color: #fff;
 }
@@ -92,6 +109,11 @@
 .first-letter-uppercase::first-letter {
   text-transform: uppercase;
 }
+/* Restablecer estilos del enlace */
+#reset-link-styles:hover {
+  background-color: #fff !important
+}
+
 
 /* Tamaño para la navbar */
 .navbar-profile-image {
@@ -114,3 +136,149 @@ margin-left: 5rem;
 .navbar-main-open {
   margin-left: 9.7rem;
   }
+/*NOTIFICATIONS*/
+.header-right .notification_dropdown .nav-link {
+  position: relative;
+  color: #A02CFA;
+  border-radius: .625rem;
+  padding: 12px;
+  line-height: 1;
+}  
+.ai-icon-notification {
+  background: #f1dffe;
+  padding: 0.7rem;
+}
+.pulse-css {
+  width: 1rem;
+  height: 1rem;
+  border-radius: .5rem;
+  border-radius: 3.5rem;
+  height: 13px;
+  position: absolute;
+  background: #A02CFA;
+  right: -4px;
+  top: -3px;
+  width: 13px;
+}
+.pulse-css:after, .pulse-css:before {
+  content: '';
+  width: 1rem;
+  height: 1rem;
+  border-radius: .5rem;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: -.1rem;
+  background-color: #A02CFA;
+  margin: auto;
+  -webkit-transform: scale(0.3);
+  transform: scale(0.3);
+  -webkit-transform-origin: center center;
+  transform-origin: center center;
+  -webkit-animation: pulse-me 3s linear infinite;
+  animation: pulse-me 3s linear infinite;
+}
+*::before {
+  margin: 0;
+  padding: 0;
+}
+*::after {
+  margin: 0;
+  padding: 0;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+@keyframes pulse-me {
+  0% {
+    transform: scale(0.3);
+    opacity: 0.5;
+  }
+  70% {
+    transform: scale(2.3);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+}
+.widget-media .timeline .timeline-panel {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+.h6 {
+  margin-top: 0;
+  margin-bottom: .5rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--bs-heading-color);
+}
+h6 {
+    font-size: 0.9rem 
+}
+.media-body {
+  flex: 1;
+}
+.dz-scroll-notifications {
+  overflow-y: scroll;
+  position: relative;
+  max-height: 380px; /* Limita la altura para permitir el desplazamiento */
+}
+
+.dz-scroll-notifications::-webkit-scrollbar {
+    width: 8px; /* Cambia el ancho de la barra de desplazamiento */
+}
+
+.dz-scroll-notifications::-webkit-scrollbar-thumb {
+    background-color: #f1dffe; /* Cambia el color de la barra de desplazamiento */
+    border-radius: 10px; /* Añade bordes redondeados a la barra de desplazamiento */
+}
+
+.dz-scroll-notifications::-webkit-scrollbar-track {
+    background: transparent; /* Fondo de la pista de la barra de desplazamiento */
+}
+
+/* Estilos para Firefox */
+.dz-scroll-notifications {
+    scrollbar-width: thin; /* Reduce el ancho de la barra de desplazamiento */
+    scrollbar-color: #D8BFD8 transparent; /* Cambia el color de la barra de desplazamiento y la pista */
+}
+.height380 {
+  height: 200px;
+}
+.height-no-notifications {
+  height: 100px !important;
+}
+.dropdown-menu-lg-end {
+width: 19rem;
+}
+.dropdown-menu-center {
+  width: 17rem;
+  }
+.notification_dropdown .dropdown-menu-end.show, .header-profile .dropdown-menu-end.show {
+  will-change: transform;
+  animation: menu-sub-dropdown-animation-fade-in 0.3s ease 1, menu-sub-dropdown-animation-move-up 0.3s ease 1;
+}
+
+@keyframes menu-sub-dropdown-animation-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes menu-sub-dropdown-animation-move-up {
+  from {
+    transform: translateY(20px);
+  }
+  to {
+    transform: translateY(0px);
+  }
+}

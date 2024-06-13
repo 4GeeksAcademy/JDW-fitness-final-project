@@ -6,6 +6,12 @@ import { NavbarLanding } from "../component/navbarLanding";
 import { Testimonials } from "../component/testimonials";
 import { FooterDesign } from "../component/footerNew";
 import headerimg from "/workspaces/JDW-fitness-final-project/src/front/img/headerimg.webp";
+import sampleimg from "/workspaces/JDW-fitness-final-project/src/front/img/dashobard.png"
+import calculator from "/workspaces/JDW-fitness-final-project/src/front/img/calculator.png"
+import clientlist from "/workspaces/JDW-fitness-final-project/src/front/img/client_list.png"
+import coachlist from "/workspaces/JDW-fitness-final-project/src/front/img/coach_list.png"
+import matchlist from "/workspaces/JDW-fitness-final-project/src/front/img/match_list.png"
+import profile from "/workspaces/JDW-fitness-final-project/src/front/img/location.png"
 
 export const OurFunctionalities = () => {
     const { store, actions } = useContext(Context);
@@ -21,125 +27,43 @@ export const OurFunctionalities = () => {
                 height: '65vh' // Ajusta la altura según sea necesario
             }}>
             </header>
-            <section id="services" className="py-5">
-                <div className="container">
-                    <h2 className="text-center mb-5 text-dark fw-bold">What You could do in JDW Fitness as a coach?</h2>
-                    <div className="row">
-                        <div className="col-md-4 d-flex">
-                            <div className="card flex-fill text-center border-primary">
-                                <div className="card-body">
-                                    <h5 className="card-title">Contact with personal trainers</h5>
-                                    <p className="card-text" >You can find personal trainers in your city and match with them to get the best training plans</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4 d-flex">
-                            <div className="card flex-fill text-center border-primary">
-                                <div className="card-body">
-                                    <h5 className="card-title">Are u a personal trainer?</h5>
-                                    <p className="card-text">Look for clients and people who want to be trained here to get experience for your CV</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4 d-flex">
-                            <div className="card flex-fill text-center border-primary">
-                                <div className="card-body">
-                                    <h5 className="card-title">Customize your gymrat profile!</h5>
-                                    <p className="card-text">Customizing your profile going to help you to get personal trainers easier!</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section id="services" className="py-5">
-                <div className="container">
-                    <h2 className="text-center mb-5 text-dark fw-bold">What You could do in JDW Fitness as a client?</h2>
-                    <div className="row">
-                        <div className="col-md-4 d-flex">
-                            <div className="card flex-fill text-center border-primary">
-                                <div className="card-body">
-                                    <h5 className="card-title">Contact with personal trainers</h5>
-                                    <p className="card-text" >You can find personal trainers in your city and match with them to get the best training plans</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4 d-flex">
-                            <div className="card flex-fill text-center border-primary">
-                                <div className="card-body">
-                                    <h5 className="card-title">Are u a personal trainer?</h5>
-                                    <p className="card-text">Look for clients and people who want to be trained here to get experience for your CV</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4 d-flex">
-                            <div className="card flex-fill text-center border-primary">
-                                <div className="card-body">
-                                    <h5 className="card-title">Customize your gymrat profile!</h5>
-                                    <p className="card-text">Customizing your profile going to help you to get personal trainers easier!</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section id="why-choose-us" className="py-5">
+            <section id="functionalities" className="py-5">
                 <div className="container">
                     <h2 className="text-center mb-5 text-dark fw-bold">Our special functionalities</h2>
                     <p className="text-center text-dark fw-bold">Because we are the best service that gives you the posibility to match with trainers or clients with your same needs</p>
-                    <div className="row text-center">
-                        <div className="col-md-4">
-                            <div className="card border-primary text-center">
+                    <div className="row text-center justify-content-center">
+                    <div className="col-md-10 ">
+                    <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <span className="h1 d-block text-primary fw-bold">Sample image</span>
-                                    <span className="label fw-semibold">Dashboard consulting</span>
-                                </div>
+                                    <h4 className="card-title fw-semibold">Contact with users who are ready to train with you</h4>
+                                    <img src={matchlist} alt="Card image" className="img-fluid rounded mt-3 mb-3 w-100" style={{ maxWidth: '100%', height: 'auto' }}/>
+                                    <p className="card-text fw-semibold" >You can find users who you request to train and both part accepted the conditions to train together and send them a message!</p>                                </div>
                             </div>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="card border-primary text-center">
-                                <div className="card-body">
-                                    <span className="h1 d-block text-primary fw-bold">Sample image</span>
-                                    <span className="label fw-semibold">IMC Calculator</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="card border-primary text-center">
-                                <div className="card-body">
-                                    <span className="h1 d-block text-primary fw-bold">Sample image</span>
-                                    <span className="label fw-semibold">Sending, receiving and matching </span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-                </div>
-            </section>
-            <section id="offers" className="py-5">
-                <div className="container">
-                    <h2 className="text-center mb-5 text-dark fw-bold">Other functionalities</h2>
-                    <div className="row">
-                        <div className="col-md-4 d-flex">
-                            <div className="card flex-fill text-center border-primary">
+                    <div className="col-md-10 ">
+                    <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <h5 className="card-title">Matching gymrats with trainers</h5>
-                                </div>
+                                    <h4 className="card-title fw-semibold">As a client use our fitness calculator</h4>
+                                    <img src={calculator} alt="Card image" className="img-fluid rounded mt-3 mb-3 w-100" style={{ maxWidth: '100%', height: 'auto' }}/>
+                                    <p className="card-text fw-semibold" >You can calculate your BMI and other important things to know for your training!</p>                                </div>
                             </div>
-                        </div>
-                        <div className="col-md-4 d-flex">
-                            <div className="card flex-fill text-center border-primary">
+                    </div>
+                    <div className="col-md-10 ">
+                    <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <h5 className="card-title">Giving the posibility to our clients trainers and gymrats to customize their profiles</h5>
-                                </div>
+                                    <h4 className="card-title fw-semibold">Edit your personal profile</h4>
+                                    <img src={profile} alt="Card image" className="img-fluid rounded mt-3 mb-3 w-100" style={{ maxWidth: '100%', height: 'auto' }}/>
+                                    <p className="card-text fw-semibold" >You can edit your personal profile as a trainer or as a client and you can upload your own profile image and your favorite location to train!</p>                                </div>
                             </div>
-                        </div>
-                        <div className="col-md-4 d-flex">
-                            <div className="card flex-fill text-center border-primary">
+                    </div>
+                    <div className="col-md-10 ">
+                    <div className="card flex-fill text-center border-primary">
                                 <div className="card-body">
-                                    <h5 className="card-title">Giving information about location, needs and availability of both users!</h5>
-                                </div>
+                                    <h4 className="card-title fw-semibold">See all data in your dashboard</h4>
+                                    <img src={sampleimg} alt="Card image" className="img-fluid rounded mt-3 mb-3 w-100" style={{ maxWidth: '100%', height: 'auto' }}/>
+                                    <p className="card-text fw-semibold" >You can see how many coaches are active and other features in our personal dashboard to know all about!</p>                                </div>
                             </div>
-                        </div>
+                    </div>  
                     </div>
                 </div>
             </section>

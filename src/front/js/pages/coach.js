@@ -88,7 +88,7 @@ export const Coach = () => {
                 <div className="col-lg-12">
                     <div className="card">
                         <div className="card-header-list mb-5">
-                            <i className="fa-solid fa-users fs-3 text-secondary me-2"></i>
+                            <i className="fa-solid fa-dumbbell fs-3 text-secondary me-2"></i>
                             <h4 className="card-title">Coach List</h4>
                         </div>
                         <div className="card-body px-4">

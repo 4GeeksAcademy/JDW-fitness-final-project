@@ -328,6 +328,11 @@ input.form-control {
     right: 2.2rem;
     top: 8.7rem;
 }
+.eye-update-error {
+    position: absolute;
+    right: 2.2rem;
+    top: 15.3rem;
+}
 .card-header:first-child {
     border-radius: var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius) 0 0;
 }

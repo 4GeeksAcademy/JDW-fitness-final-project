@@ -2,6 +2,10 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import { MapComponent } from "../component/mapComponent";
 import ProfileImage from "../component/profileImage"
+import { LoadScript } from "@react-google-maps/api";
+
+const libraries = ["places"];
+
 
 import { Context } from "../store/appContext";
 
@@ -42,7 +46,7 @@ export const SingleClient = () => {
                 :
             <div className="container-fluid">
                 <div className="row justify-content-center">
-                    <div class="col-xl-8 col-lg-10 col-12">
+                    <div className="col-xl-8 col-lg-10 col-12">
                         <div className="card">
                             <div className="card-header">
                                 <h4 className="card-title">Profile {store.singleClient.username}</h4>
@@ -132,12 +136,14 @@ export const SingleClient = () => {
                                             </div>
                                             <div id="v-pills-messages" className="tab-pane fade" role="tabpanel">
                                             {store.singleClient.latitude && store.singleClient.longitude && (
-                                            <div className="">
-                                            <MapComponent 
-                                                lat={store.singleClient.latitude}
-                                                lng={store.singleClient.longitude} 
-                                            />
-                                            </div>
+                                                        <div className="">
+                                                        <LoadScript googleMapsApiKey={process.env.GOOGLE_API_KEY} libraries={libraries}>
+                                                            <MapComponent
+                                                                lat={store.singleClient.latitude}
+                                                                lng={store.singleClient.longitude}
+                                                            />
+                                                        </LoadScript>
+                                                    </div>
                                             )}
                                             </div>
                                         </div>

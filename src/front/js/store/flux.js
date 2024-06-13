@@ -10,6 +10,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			coaches: [],
 			singleCoach: {},
 			errorForm: null,
+			uploadSuccess: false,
 			authCoach: false,
 			authClient: false,
 			availability: [],
@@ -154,10 +155,10 @@ const getState = ({ getStore, getActions, setStore }) => {
         const data = await response.json();
 
         if (response.status === 200) {
-          setStore({ errorForm: null, singleClient: data });
+          setStore({ errorForm: null, singleClient: data, uploadSuccess: true });
           console.log("Perfil del cliente actualizado con éxito:", data);
         } else {
-          setStore({ errorForm: data.error });
+          setStore({ errorForm: data.error, uploadSuccess: false });
         }
       } catch (error) {
         console.error("Error updating client profile:", error);
@@ -325,10 +326,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json();
 			
 					if (response.status === 200) {
-						setStore({ errorForm: null, singleCoach: data });
+						setStore({ errorForm: null, singleCoach: data, uploadSuccess: true });
 						console.log("Perfil del coach actualizado con éxito:", data);
 					} else {
-						setStore({ errorForm: data.error });
+						setStore({ errorForm: data.error, uploadSuccess: false });
 					}
 				} catch (error) {
 					console.error("Error updating coach profile:", error);

@@ -1,17 +1,13 @@
 import React, { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 import "../../styles/landing.css";
 import { NavbarLanding } from "../component/navbarLanding";
-import { Testimonials } from "../component/testimonials";
 import { FooterDesign } from "../component/footerNew";
-import headerimg from "/workspaces/JDW-fitness-final-project/src/front/img/headerimg.webp";
-import sampleimg from "/workspaces/JDW-fitness-final-project/src/front/img/dashobard.png"
-import calculator from "/workspaces/JDW-fitness-final-project/src/front/img/calculator.png"
-import clientlist from "/workspaces/JDW-fitness-final-project/src/front/img/client_list.png"
-import coachlist from "/workspaces/JDW-fitness-final-project/src/front/img/coach_list.png"
-import matchlist from "/workspaces/JDW-fitness-final-project/src/front/img/match_list.png"
-import profile from "/workspaces/JDW-fitness-final-project/src/front/img/location.png"
+import headerimg from "../../img/headerimg.webp";
+import sampleimg from "../../img/dashobard.png"
+import calculator from "../../img/calculator.png"
+import matchlist from "../../img/match_list.png"
+import profile from "../../img/location.png"
 
 export const OurFunctionalities = () => {
     const { store, actions } = useContext(Context);

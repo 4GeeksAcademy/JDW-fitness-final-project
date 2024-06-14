@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import defaultImg from "/workspaces/JDW-fitness-final-project/src/front/img/default-image.jpg";
+import defaultImg from "../../img/default-image.jpg";
 
 const ProfileImage = ({ photoUrl, altText = "Profile Image", className = "", style = {}, rounded = false }) => {
     const combinedStyle = {

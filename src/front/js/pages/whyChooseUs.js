@@ -5,8 +5,8 @@ import "../../styles/whychooseus.css";
 import { NavbarLanding } from "../component/navbarLanding";
 import { Testimonials } from "../component/testimonials";
 import { FooterDesign } from "../component/footerNew";
-import headerimg from "/workspaces/JDW-fitness-final-project/src/front/img/headerimg.webp";
-import sampleimg from "/workspaces/JDW-fitness-final-project/src/front/img/sample.png"
+import headerimg from "../../img/headerimg.webp";
+import sampleimg from "../../img/sample.png"
 
 export const WhyChooseUs = () => {
     const { store, actions } = useContext(Context);

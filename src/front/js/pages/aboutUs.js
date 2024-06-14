@@ -6,10 +6,10 @@ import "../../styles/landing.css";
 import { NavbarLanding } from "../component/navbarLanding";
 import { Testimonials } from "../component/testimonials";
 import { FooterDesign } from "../component/footerNew";
-import headerimg from "/workspaces/JDW-fitness-final-project/src/front/img/headerimg.webp";
-import teamImg from "/workspaces/JDW-fitness-final-project/src/front/img/team.jpg";
-import jorgeImg from "/workspaces/JDW-fitness-final-project/src/front/img/jorge 4.jpg";
-import daniImg from "/workspaces/JDW-fitness-final-project/src/front/img/dani4.jpg";
+import headerimg from "../../img/headerimg.webp";
+import teamImg from "../../img/team.jpg";
+import jorgeImg from "../../img/jorge 4.jpg";
+import daniImg from "../../img/dani4.jpg";
 
 export const AboutUs = () => {
     const { store, actions } = useContext(Context);

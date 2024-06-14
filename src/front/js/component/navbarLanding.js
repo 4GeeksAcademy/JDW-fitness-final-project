@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import '../../styles/navbarlanding.css';
-import navbarlogo from "/workspaces/JDW-fitness-final-project/src/front/img/sidebar-logo.png"
+import navbarlogo from "../../img/sidebar-logo.png"
 
 export const NavbarLanding = () => {
 

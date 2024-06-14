@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import sideBarLogo from "/workspaces/JDW-fitness-final-project/src/front/img/sidebar-logo.png"
+import sideBarLogo from "../../img/sidebar-logo.png"
 
 import { Context } from "../store/appContext";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import "/workspaces/JDW-fitness-final-project/src/front/styles/footerlanding.css"; // Archivo CSS para los estilos del footer
+import "../../styles/footerlanding.css"; // Archivo CSS para los estilos del footer
 
 export const FooterDesign = () => {
   return (

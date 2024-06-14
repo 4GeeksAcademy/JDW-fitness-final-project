@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import feedback1 from "/workspaces/JDW-fitness-final-project/src/front/img/feedback1.jpg";
-import feedback2 from "/workspaces/JDW-fitness-final-project/src/front/img/feedback2.jpg";
-import feedback3 from "/workspaces/JDW-fitness-final-project/src/front/img/feedback3.jpg";
+import feedback1 from "../../img/feedback1.jpg";
+import feedback2 from "../../img/feedback2.jpg";
+import feedback3 from "../../img/feedback3.jpg";
 
 const feedbackData = [
   {

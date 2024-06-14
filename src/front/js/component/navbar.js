@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 import ProfileImage from "../component/profileImage"
-import sideBarLogo from "/workspaces/JDW-fitness-final-project/src/front/img/sidebar-logo.png"
+import sideBarLogo from "../../img/sidebar-logo.png"
 import "../../styles/navbar.css";
 
 export const Navbar = () => {

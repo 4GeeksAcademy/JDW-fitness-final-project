@@ -5,7 +5,7 @@ import "../../styles/landing.css";
 import { NavbarLanding } from "../component/navbarLanding";
 import { Testimonials } from "../component/testimonials";
 import { FooterDesign } from "../component/footerNew";
-import headerimg from "/workspaces/JDW-fitness-final-project/src/front/img/headerimg.webp";
+import headerimg from "../../img/headerimg.webp";
 
 export const LandingPage = () => {
     const { store, actions } = useContext(Context);
